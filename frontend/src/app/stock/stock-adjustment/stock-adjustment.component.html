@@ -1,0 +1,59 @@
+<ul class="nav nav-pills mb-3 border-bottom border-secondary" id="pills-tab" role="tablist">
+  <li class="nav-item">
+    <a class="nav-link active" id="stockTakeLabelName" data-toggle="pill" href="#pills-new" role="tab"
+      aria-controls="pills-home" aria-selected="true">Stock Take</a>
+  </li>
+</ul>
+<div class="tab-content" id="pills-tabContent">
+
+  <div class="tab-pane fade show active" id="pills-new" role="tabpanel" aria-labelledby="pills-home-tab">
+
+    <h6 class="border border-primary p-2 mt-3 mb-4 bg-light text-white" id="stockTakeDetailsLabel">Stock Take Details
+    </h6>
+
+    <div class="row">
+      <div class="col-lg-3">
+        <form class="form-inline">
+          <input class="form-control no-right-border-radius" id="itemNameSearch" type="text"
+            placeholder="Item Name or Rack.. " aria-label="Search" [(ngModel)]="searchKey"
+            [ngModelOptions]="{standalone:true}">
+          <button class="btn btn-primary no-left-border-radius" id="itemNameSearchButton"
+            (click)="searchItemName()">Search</button>
+        </form>
+      </div>
+      <div class="col-lg-3">
+        <form class="form-inline">
+          <input class="form-control no-right-border-radius" id="barcodeSearch" type="text"
+            placeholder="Scan QR/Barcode " aria-label="Search" [(ngModel)]="scannedBarcode"
+            [ngModelOptions]="{standalone:true}" (mouseup)="onMouseEnter()" (keyup.enter)="onEnterSearch()">
+          <button class="btn btn-primary no-left-border-radius" id="barcodeSearchButton"
+            (click)="searchByBarcode()">Search</button>
+        </form>
+      </div>
+      <div class="row pt-6">
+        <div class="col">
+          <form class="form-inline" [formGroup]="stockSearchForm">
+            <input class="form-control no-right-border-radius" [(ngModel)]="rackKey" formControlName="rackNo"
+              type="text" placeholder="Rack.." aria-label="Search"
+              id="searchKey">
+            <input class="form-control no-right-border-radius" id="itemNameSearch" type="text" placeholder="Shelf.."
+              aria-label="Search" [(ngModel)]="shelfKey" formControlName="shelfNo">
+            <button id="editItembtnSearch" (click)="searchStockWithRackAndShelf()" [disabled]="checkFormDisability()"
+              class="btn btn-primary no-left-border-radius">Search</button>
+          </form>
+        </div>
+      </div>
+    </div>
+   
+
+    <div class="row">
+      <div class="col-12 py-3">
+        <ag-grid-angular style="width: 100%; height: 577px;" class="ag-theme-fresh" [gridOptions]="stockGridOptions"
+          id="stockTakeGrid" [rowData]="stockItemArray" [columnDefs]="columnDefs" [pagination]="true"
+          [paginationPageSize]="paginationSize" (cell-clicked)="onCellClicked($event)">
+        </ag-grid-angular>
+      </div>
+    </div>
+  </div>
+</div>
+<ng4-loading-spinner [loadingText]="'Please wait...'" [timeout]="400000000"> </ng4-loading-spinner>

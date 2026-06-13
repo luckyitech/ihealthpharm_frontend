@@ -1,0 +1,12 @@
+.min-height-83 {
+    min-height: 83px;
+}
+@media (min-width: 576px) {
+    .modal-dialog {
+        max-width: 80%;
+    }
+}
+
+.modal-content {
+    width:108%;
+}

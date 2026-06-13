@@ -1,0 +1,559 @@
+<div class="tab-content" id="pills-tabContent">
+
+  <div class="tab-pane fade show active" id="pills-new" role="tabpanel" aria-labelledby="pills-home-tab">
+
+    <form #creditNoteForm="ngForm" [formGroup]="creditNoteInformationForm" (keydown.enter)="$event.preventDefault()"
+      (ngSubmit)="onSubmit()" class="full-height">
+
+      <h6 class="border border-primary p-2 mt-3 mb-4 bg-light text-white">Credit Note Details</h6>
+
+      <div class="row" id="purchaseReturns">
+        <div class="col-lg-3">
+          <div class="form-group row">
+            <label for="" class="col-sm-4 col-form-label px-0 text-right" id="debitCreditNoteLabelCn#">CN #
+              <span class="text-danger">*</span>
+            </label>
+            <div class="col-sm-8">
+              <input type="text" class="form-control" id="debitCreditNoteCn#" placeholder="CN Number"
+                [(ngModel)]="creditNoteNo" formControlName="creditNoteNo" disabled>
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="" class="col-sm-4 col-form-label px-0 text-right" id="debitCreditNoteLabelCnDates">Date
+              <span class="text-danger">*</span>
+            </label>
+            <div class="col-sm-8">
+              <input type="date" class="form-control" id="debitCreditNoteCnDates" placeholder=""
+                formControlName="creditDate" disabled>
+              <div *ngIf="creditNoteInformationForm.get('creditDate')?.touched" class="error-msg-common text-danger">
+                <div *ngIf="creditNoteInformationForm.get('creditDate').errors?.required">
+                  * required field
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+
+
+          <div class="form-group row">
+            <label for="" class="col-sm-4 col-form-label px-0 text-right" id="paymentsLabelRoundOff">Status</label>
+            <div class="col-sm-8">
+              <ng-select placeholder="-- select --" [items]="status" bindLabel="name" [(ngModel)]="selectedStatus"
+                formControlName="selectedStatus" (change)="statusSelected($event)">
+              </ng-select>
+              <div *ngIf="creditNoteInformationForm.get('selectedStatus')?.touched"
+                class="error-msg-common text-danger">
+                <div *ngIf="creditNoteInformationForm.get('selectedStatus').errors?.required">
+                  * required field
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group row">
+            <label for="" class="col-sm-8 col-form-label px-0 text-center h3" id="paymentsLabelAmtPaid">Net Amount
+              :</label>
+            <div class="col-sm-0 text-center pt-0">
+              <h5 class="mb-0 pt-2"> {{netAmount}}</h5>
+
+            </div>
+          </div>
+
+
+        </div>
+
+        <div class="col-lg-6">
+          <div class="row">
+            <div class="col-sm-6">
+              <div class="form-group">
+                <div class="col-sm-12 justify-content-end d-flex pt-2 px-0">
+                  <div class="d-inline mr-3">
+                    <label id="" class="mb-0">Return Type</label>
+                  </div>
+                  <div class="custom-control d-inline custom-radio mr-3">
+                    <input (change)="onTypeChanged($event)" name="ret-type" type="radio" value="Y"
+                      class="custom-control-input" id="purchase" [ngModelOptions]="{standalone: true}"
+                      [(ngModel)]="type1" name="type1">
+                    <label id="" class="custom-control-label" for="purchase">Purchase</label>
+                  </div>
+                  <div class="custom-control d-inline custom-radio">
+                    <input (change)="onTypeChanged($event)" name="ret-type" type="radio" value="N"
+                      class="custom-control-input" id="sales" [ngModelOptions]="{standalone: true}" [(ngModel)]="type1"
+                      name="type1">
+                    <label id="" class="custom-control-label" for="sales">Sales</label>
+                  </div>
+                </div>
+              </div>
+              <div class="form-group row pt-2" id="creditInvoice">
+                <label for="" class="col-sm-4 col-form-label px-0 text-right" id="debitCreditNoteLabelInvoice">Invoice
+                  No<span class="text-danger">*</span></label>
+                <div class="col-sm-8">
+                  <input type="text" class="form-control" id="debitcreditNoteInvoice" placeholder="Invoice Number"
+                    formControlName="invoiceId" [(ngModel)]="invoiceId">
+                  <div *ngIf="creditNoteInformationForm.get('invoiceId')?.touched" class="error-msg-common text-danger">
+                    <div *ngIf="creditNoteInformationForm.get('invoiceId').errors?.required">
+                      * required field
+                    </div>
+                  </div>
+                  <div *ngIf="creditNoteInformationForm.get('invoiceId')?.invalid" class="error-msg-common text-danger">
+                    <div
+                      *ngIf="!creditNoteInformationForm.get('invoiceId').errors?.required && creditNoteInformationForm?.get('invoiceId')?.errors">
+                      * not a valid input
+                    </div>
+                  </div>
+                </div>
+
+                <div class="form-group row pt-2" id="creditInvoice">
+                  <label for="" class="col-sm-4 col-form-label px-0 text-right" id="debitCreditNoteLabelInvoice">Tax
+                    <span class="text-danger">*</span></label>
+                  <div class="col-sm-8">
+                    <input type="text" class="form-control" id="debitNoteFirstTaxInvoice" placeholder="Enter Value"
+                      formControlName="tax" (keyup)="taxEntered($event)" [(ngModel)]="taxAmt">
+                    <div *ngIf="creditNoteInformationForm.get('tax')?.invalid" class="error-msg-common text-danger">
+                      <div
+                        *ngIf="!creditNoteInformationForm.get('tax').errors?.required && creditNoteInformationForm?.get('tax')?.errors">
+                        * not a valid input
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+
+              <div *ngIf="showApproveByDate" class="form-group row">
+                <label for="" class="col-sm-4 col-form-label px-0 text-right" id="debitCreditNoteLabelDnDate">Approved
+                  By </label>
+                <div class="col-sm-8">
+                  <input type="text" class="form-control" id="debitApprovedBy" placeholder="Approved By"
+                    formControlName="approvedByEmp" value={{this.approvedEmpName}} disabled>
+
+                </div>
+              </div>
+            </div>
+            <div class="col-sm-6">
+              <div class="form-group row">
+                <div class="col-sm-12">
+                  <ng-select [items]="purchaseReturns" bindLabel="purchase" id=""
+                    placeholder="purchase / sales return types" [(ngModel)]="purchaseReturnType"
+                    formControlName="returnTypeReason">
+                  </ng-select>
+                  <div *ngIf="creditNoteInformationForm.get('returnTypeReason')?.touched"
+                    class="error-msg-common text-danger">
+                    <div *ngIf="creditNoteInformationForm.get('returnTypeReason').errors?.required">
+                      * required field
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="form-group row">
+                <label for="" class="col-sm-4 col-form-label px-0 text-right"
+                  id="debitCreditNoteLabelName">Supplier</label>
+                <div class="col-sm-8">
+                  <ng-select [(ngModel)]="selectedSupplier" formControlName="selectedSupplier"
+                    placeholder="-- select --" [items]="suppliers" bindLabel="name" id="creditInputSupplier">
+                  </ng-select>
+
+                </div>
+              </div>
+
+              <div class="form-group row pt-2" id="creditInvoice">
+                <label for="" class="col-sm-4 col-form-label px-0 text-right"
+                  id="CreditNoteLabelInvoice">Discount</label>
+                <div class="col-sm-8">
+                  <input type="text" class="form-control" id="debitcreditNoteInvoice"
+                    (keyup)="onDiscountEntered($event)" placeholder="Enter Disc %" formControlName="discount">
+                  <div *ngIf="creditNoteInformationForm.get('discount')?.invalid" class="error-msg-common text-danger">
+                    <div
+                      *ngIf="!creditNoteInformationForm.get('discount').errors?.required && creditNoteInformationForm?.get('discount')?.errors">
+                      * not a valid input
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+
+              <div *ngIf="showApproveByDate" class="form-group row">
+                <label for="" class="col-sm-4 col-form-label px-0 text-right" id="debitNoteApprovedDateLabel">Approved
+                  Date</label>
+                <div class="col-sm-8">
+                  <input type="date" class="form-control" id="debitApprovedDate" placeholder=""
+                    formControlName="approvedDate" disabled>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-3">
+          <div class="form-group row">
+            <label for="" class="col-sm-4 col-form-label px-0 text-right" id="debitCreditNoteLabelCreAmt">Amount
+              <span class="text-danger">*</span>
+            </label>
+            <div class="col-sm-8">
+              <input type="text" class="form-control" id="debitCreditNoteCreAmt" placeholder="Amount"
+                formControlName="amount" [(ngModel)]="amount" (keyup)="amountEntered($event)">
+              <div *ngIf="creditNoteInformationForm.get('amount')?.touched" class="error-msg-common text-danger">
+                <div *ngIf="creditNoteInformationForm.get('amount').errors?.required">
+                  * required field
+                </div>
+              </div>
+              <div *ngIf="creditNoteInformationForm.get('amount')?.invalid" class="error-msg-common text-danger">
+                <div
+                  *ngIf="!creditNoteInformationForm.get('amount').errors?.required && creditNoteInformationForm?.get('amount')?.errors">
+                  * not a valid input
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="" class="col-sm-4 col-form-label px-0 text-right" id="debitCreditNoteLabelPaymentStatus">Pay
+              Type
+              <span class="text-danger">*</span>
+            </label>
+            <div class="col-sm-8">
+              <ng-select placeholder="-- select --" [items]="paymentTypes" bindLabel="type"
+                [(ngModel)]="selectedPaymentType" formControlName="paymentType">
+              </ng-select>
+
+              <div *ngIf="creditNoteInformationForm.get('paymentType')?.touched" class="error-msg-common text-danger">
+                <div *ngIf="creditNoteInformationForm.get('paymentType').errors?.required">
+                  * required field
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+
+
+
+        </div>
+      </div>
+      <div class="row" id="salesReturns" style="display:none">
+        <div class="col-lg-3">
+          <div class="form-group row">
+            <label for="" class="col-sm-4 col-form-label px-0 text-right" id="debitCreditNoteLabelCn#">CN #
+              <span class="text-danger">*</span>
+            </label>
+            <div class="col-sm-8">
+              <input type="text" class="form-control" id="debitCreditNoteCn#" placeholder="CN Number"
+                formControlName="creditNoteNo" disabled>
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="" class="col-sm-4 col-form-label px-0 text-right" id="debitCreditNoteLabelCnDates">Date
+              <span class="text-danger">*</span>
+            </label>
+            <div class="col-sm-8">
+              <input type="date" class="form-control" id="debitCreditNoteCnDates" placeholder=""
+                formControlName="creditDate" disabled>
+              <div *ngIf="creditNoteInformationForm.get('creditDate')?.touched" class="error-msg-common text-danger">
+                <div *ngIf="creditNoteInformationForm.get('creditDate').errors?.required">
+                  * required field
+                </div>
+              </div>
+            </div>
+
+          </div>
+          <div class="form-group row">
+            <label for="" class="col-sm-4 col-form-label px-0 text-right" id="paymentsLabelRoundOff">Status</label>
+            <div class="col-sm-8">
+              <ng-select placeholder="-- select --" [items]="status" bindLabel="name" [(ngModel)]="selectedStatus"
+                formControlName="selectedStatus" (change)="statusSelected($event)">
+              </ng-select>
+              <div *ngIf="creditNoteInformationForm.get('selectedStatus')?.touched"
+                class="error-msg-common text-danger">
+                <div *ngIf="creditNoteInformationForm.get('selectedStatus').errors?.required">
+                  * required field
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group row">
+            <label for="" class="col-sm-8 col-form-label px-0 text-center h3" id="paymentsLabelAmtPaid">Net Amount
+              :</label>
+            <div class="col-sm-0 text-center pt-0">
+              <h5 class="mb-0 pt-2"> {{netAmount}}</h5>
+
+            </div>
+          </div>
+
+
+        </div>
+
+        <div class="col-lg-6">
+          <div class="row">
+            <div class="col-sm-6">
+              <div class="form-group">
+                <div class="col-sm-12 justify-content-end d-flex pt-2 px-0">
+                  <div class="d-inline mr-3">
+                    <label id="" class="mb-0">Return Type </label>
+                  </div>
+                  <div class="custom-control d-inline custom-radio mr-3">
+                    <input name="ret-type" type="radio" value="Y" class="custom-control-input" id="purchase"
+                      [ngModelOptions]="{standalone: true}" [(ngModel)]="type2" name="type2">
+                    <label id="" class="custom-control-label" for="purchase">Purchase</label>
+                  </div>
+                  <div class="custom-control d-inline custom-radio">
+                    <input name="ret-type" type="radio" value="N" class="custom-control-input" id="sales"
+                      [ngModelOptions]="{standalone: true}" [(ngModel)]="type2" name="type2">
+                    <label id="" class="custom-control-label" for="sales">Sales</label>
+                  </div>
+                </div>
+              </div>
+              <div class="form-group row pt-2" id="creditInvoice">
+                <label for="" class="col-sm-4 col-form-label px-0 text-right" id="debitCreditNoteLabelInvoice">Bill
+                  No<span class="text-danger">*</span></label>
+                <div class="col-sm-8">
+                  <input type="text" class="form-control" id="debitcreditNoteInvoice" placeholder="Bill Number"
+                    formControlName="billId" [(ngModel)]="billId" (keyup)="onBillIdEnter($event)">
+                  <div *ngIf="creditNoteInformationForm.get('billId')?.touched" class="error-msg-common text-danger">
+                    <div *ngIf="creditNoteInformationForm.get('billId').errors?.required">
+                      * required field
+                    </div>
+                  </div>
+                  <div *ngIf="creditNoteInformationForm.get('billId')?.invalid" class="error-msg-common text-danger">
+                    <div
+                      *ngIf="!creditNoteInformationForm.get('billId').errors?.required && creditNoteInformationForm?.get('billId')?.errors">
+                      * not a valid input
+                    </div>
+                  </div>
+                </div>
+
+                <div class="form-group row pt-2" id="creditInvoice">
+                  <label for="" class="col-sm-4 col-form-label px-0 text-right" id="debitCreditNoteLabelInvoice">Tax
+                    <span class="text-danger">*</span></label>
+                  <div class="col-sm-8">
+                    <input type="text" class="form-control" id="creditNoteInvoice" placeholder="Enter Value"
+                      formControlName="tax" (keyup)="taxEntered($event)" [(ngModel)]="taxAmt">
+                    <div *ngIf="creditNoteInformationForm.get('tax')?.invalid" class="error-msg-common text-danger">
+                      <div
+                        *ngIf="!creditNoteInformationForm.get('tax').errors?.required && creditNoteInformationForm?.get('tax')?.errors">
+                        * not a valid input
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+
+              <div *ngIf="showApproveByDate" class="form-group row">
+                <label for="" class="col-sm-4 col-form-label px-0 text-right" id="CreditNoteLabelApproved">Approved
+                  By
+
+                </label>
+                <div class="col-sm-8">
+
+                  <input type="text" class="form-control" id="CreditNoteApprover" placeholder="Approved By"
+                    formControlName="approvedByEmp" value={{this.approvedEmpName}} disabled>
+
+                </div>
+              </div>
+
+            </div>
+            <div class="col-sm-6">
+              <div class="form-group row">
+                <div class="col-sm-12">
+                  <ng-select [items]="salesReturn" bindLabel="sales" id="" placeholder="purchase / sales return types"
+                    [(ngModel)]="salesReturnType" formControlName="returnTypeReason">
+                  </ng-select>
+                  <div *ngIf="creditNoteInformationForm.get('returnTypeReason')?.touched"
+                    class="error-msg-common text-danger">
+                    <div *ngIf="creditNoteInformationForm.get('returnTypeReason').errors?.required">
+                      * required field
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="form-group row">
+                <label for="" class="col-sm-4 col-form-label px-0 text-right"
+                  id="debitCreditNoteLabelName">Customer<span class="text-danger">*</span></label>
+                <div class="col-sm-8">
+                  <ng-select placeholder="-- select --" id="receiptPayment" [items]="customers" bindLabel="customerName"
+                    formControlName="selectedCustomer" (search)="onCustomerSearch($event)"
+                    [(ngModel)]="selectedCustomer" (change)="onSelectedCustomer($event)">
+                  </ng-select>
+                  <div *ngIf="creditNoteInformationForm.get('selectedCustomer')?.touched"
+                    class="error-msg-common text-danger">
+                    <div *ngIf="creditNoteInformationForm.get('selectedCustomer').errors?.required">
+                      * required field
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+
+              <div class="form-group row pt-2" id="creditInvoice">
+                <label for="" class="col-sm-4 col-form-label px-0 text-right"
+                  id="debitCreditNoteLabelInvoice">Discount</label>
+                <div class="col-sm-8">
+                  <input type="text" class="form-control" id="debitcreditNoteInvoice" placeholder="Enter Disc %"
+                    (keyup)="onDiscountEntered($event)" formControlName="discount">
+
+                  <div *ngIf="creditNoteInformationForm.get('discount')?.invalid" class="error-msg-common text-danger">
+                    <div
+                      *ngIf="!creditNoteInformationForm.get('discount').errors?.required && creditNoteInformationForm?.get('discount')?.errors">
+                      * not a valid input
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+
+              <div *ngIf="showApproveByDate" class="form-group row">
+                <label for="" class="col-sm-4 col-form-label px-0 text-right" id="CreditLabelDnDate">Approved
+                  Date </label>
+                <div class="col-sm-8">
+                  <input type="date" class="form-control" id="CreditDateValue" placeholder=""
+                    formControlName="approveDate" disabled>
+                </div>
+              </div>
+
+
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-3">
+          <div class="form-group row">
+            <label for="" class="col-sm-4 col-form-label px-0 text-right" id="debitCreditNoteLabelCreAmt">Amount
+              <span class="text-danger">*</span>
+            </label>
+            <div class="col-sm-8">
+              <input type="text" class="form-control" id="debitCreditNoteCreAmt" placeholder="Amount"
+                [(ngModel)]="amount" formControlName="amount" (keyup)="amountEntered($event)">
+              <div *ngIf="creditNoteInformationForm.get('amount')?.touched" class="error-msg-common text-danger">
+                <div *ngIf="creditNoteInformationForm.get('amount').errors?.required">
+                  * required field
+                </div>
+              </div>
+              <div *ngIf="creditNoteInformationForm.get('amount')?.invalid" class="error-msg-common text-danger">
+                <div
+                  *ngIf="!creditNoteInformationForm.get('amount').errors?.required && creditNoteInformationForm?.get('amount')?.errors">
+                  * not a valid input
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="" class="col-sm-4 col-form-label px-0 text-right" id="debitCreditNoteLabelPaymentStatus">Pay
+              Type
+              <span class="text-danger">*</span>
+            </label>
+            <div class="col-sm-8">
+              <ng-select placeholder="-- select --" [items]="paymentTypes" bindLabel="type"
+                [(ngModel)]="selectedPaymentType" formControlName="paymentType" (change)="selectPayType($event)">
+              </ng-select>
+              <div *ngIf="creditNoteInformationForm.get('paymentType')?.touched" class="error-msg-common text-danger">
+                <div *ngIf="creditNoteInformationForm.get('paymentType').errors?.required">
+                  * required field
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group row">
+            <label for="" class="col-sm-4 col-form-label px-0 text-right" id="CreditNoteLabelBillType">Bill
+              Type
+              <span class="text-danger">*</span>
+            </label>
+            <div class="col-sm-8">
+              <ng-select placeholder="-- select --" [items]="listOfBillTypes" bindLabel="type"
+                [(ngModel)]="selectedBillType" formControlName="billType" (change)="selectBillType($event)">
+              </ng-select>
+              <div *ngIf="creditNoteInformationForm.get('billType')?.touched" class="error-msg-common text-danger">
+                <div *ngIf="creditNoteInformationForm.get('billType').errors?.required">
+                  * required field
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-3"></div>
+        <div class="col-6">
+          <label for="" class="col-form-label px-0 text-center w-100" id="debitCreditNoteLabelRMarks">Remarks</label>
+          <textarea name="" class="form-control" id="debitCreditNoteRMarks" cols="30" rows="6"
+            formControlName="remarks"></textarea>
+        </div>
+        <div class="col-3"></div>
+      </div>
+
+      <div class="row">
+        <div class="col mb-3 pt-2 text-center">
+          <button class="btn btn-primary px-4" [disabled]="checkFormDisability()">Save</button>
+          <input type="button" class="btn btn-secondary px-4 ml-3" (click)="onResetCreditNote()" value="Cancel">
+        </div>
+      </div>
+
+
+
+      <div *ngIf="statusGrid" class="StatusSelectedModal" id="itemSearchModal" tabindex="-1" role="dialog"
+        aria-labelledby="itemSearchModalLabel">
+        <div class="modal-dialog" style="margin-top: 220px" role="document">
+          <div class="modal-content" style="height: 250px">
+            <div class="modal-body">
+
+              <div class="row">
+                <div class="col-lg-6">
+                  <div class="form-group row">
+                    <label for="" class="col-sm-4 col-form-label px-0 text-right" id="CreditNoteLabelDnDate">Approved By
+
+                    </label>
+                    <div class="col-sm-8">
+                      <ng-select placeholder="-- select --" id="CreditNoteDnDate" [items]="employees"
+                        (change)="selectEmployee($event)" bindLabel="empName" formControlName="approvedBy"
+                        [ngModel]="approvedBy">
+                      </ng-select>
+
+
+                    </div>
+                  </div>
+                  <div class="form-group row">
+                    <label for="" class="col-sm-4 col-form-label px-0 text-right" id="CreditNoteLabelDnDate">Approved
+                      Pin
+                    </label>
+                    <div class="col-sm-8">
+                      <div class="buttonInside">
+                        <input type="text" (keyup)="pinEnter($event)" placeholder="Approved Pin"
+                          [type]="show ? 'text' : 'password'" class="form-control" id="debitCreditNoteApprovedPin"
+                          formControlName="approvedPin">
+
+                      </div>
+                      <div *ngIf="creditNoteInformationForm.get('approvedPin')?.invalid"
+                        class="error-msg-common text-danger">
+                        <div
+                          *ngIf="!creditNoteInformationForm.get('approvedPin').errors?.required && creditNoteInformationForm?.get('approvedPin')?.errors">
+                          * not a valid input
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+
+
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" data-dismiss="modal" class="btn btn-primary px-4 mr-2" (click)="savePin()"
+                [disabled]="makePin">OK</button>
+
+              <button type="button" class="btn btn-secondary px-4" data-dismiss="modal" (click)="close()">Close</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </form>
+
+  </div>
+
+</div>
+<ng4-loading-spinner [loadingText]="'Please wait...'" [timeout]="400000000"> </ng4-loading-spinner> 

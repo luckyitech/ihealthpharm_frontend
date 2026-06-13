@@ -1,0 +1,116 @@
+<div id="itemGenericGrid" class="row pt-3">
+  <!--   <div class="col">
+      <form class="form-inline">
+        <input class="form-control no-right-border-radius" type="text" placeholder="Search here.." aria-label="Search">
+        <button id="editGenericBtnSearch"class="btn btn-primary no-left-border-radius">Search</button>
+      </form>
+    </div> -->
+    <div class="col text-right">
+      <button class="btn btn-primary px-4 edit-btn common-grids-btn"
+        [disabled]="itemGridOptions?.api?.getSelectedRows()?.length === 0" id="" (click)="editGrid()">Edit</button>
+    </div>
+  </div>
+  
+  <div class="row grid-area">
+    <div class="col py-3">
+      <ag-grid-angular style="width: 100%; height: 620px;" class="ag-theme-balham commons-grid" [rowData]="rowData"
+        *ngIf="showGrid" [gridOptions]="itemGridOptions" [columnDefs]="columnDefs" >
+      </ag-grid-angular>
+    </div>
+  </div>
+  <div class="" id="generic-Information" style="display: none">
+    <form [formGroup]="itemGenericForm" (keydown.enter)="$event.preventDefault()" (ngSubmit)="onSubmit()">
+      <h6 class="border border-primary p-2 mt-3 mb-4 bg-light text-white">Generic Details</h6>
+  
+      <div class="row">
+        <div class="col-lg-4">
+          <div class="form-group row">
+            <label id="editGenericLabelCode" for="" class="col-sm-3 col-form-label pr-0 text-right">Code <span class="text-danger">*</span></label>
+            <div class="col-sm-9">
+              <input id="editGenericCode" type="text" class="form-control"  formControlName="genericCode" placeholder="Generic Code">
+              <div *ngIf="f.genericCode?.touched" class="error-msg-common text-danger">
+                <div *ngIf="f.genericCode.errors?.required">
+                  Required Field
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="form-group row">
+            <label id="editGenericLabelDesc" for="" class="col-sm-3 col-form-label pr-0 text-right">Description <span
+                class="text-danger">*</span></label>
+            <div class="col-sm-9">
+              <input id="editGenericDesc" type="text" class="form-control" id="" formControlName="genericName"
+                placeholder="Generic Description">
+              <div *ngIf="f.genericName?.touched" class="error-msg-common text-danger">
+                <div *ngIf="f.genericName.errors?.required">
+                  Required Field
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-4">
+          <div class="form-group row">
+            <label id="editGenericLabelGrpCode" for="" class="col-sm-3 col-form-label pr-0 text-right">Group Code
+            </label>
+            <div class="col-sm-9">
+              <ng-select id="editGenericGrpCode" [items]="itemGroups" bindLabel="groupCode" [(ngModel)]="selectedGroupCode"
+                (change)="onGroupCodeChanged($event)"
+                [ngModelOptions]="{standalone: true}" placeholder="-- Select --">
+              </ng-select>
+            </div>
+          </div>
+          <div class="form-group row">
+            <div class="col-sm-12 d-flex align-items-center justify-content-end">
+              <div class="d-inline mr-3">
+                <label id="editGenericLabelType" class="mb-0">Item Type</label>
+              </div>
+              <div class="custom-control d-inline custom-radio mr-3">
+                <input name="medicalOrNonMedical" value="M" type="radio" formControlName="medicalOrNonMedical"
+                  class="custom-control-input" id="me">
+                <label id="editGenericLabelMedical" class="custom-control-label" for="me">Medical</label>
+              </div>
+              <div class="custom-control d-inline custom-radio">
+                <input name="medicalOrNonMedical" value="N" type="radio" formControlName="medicalOrNonMedical"
+                  class="custom-control-input" id="non-me">
+                <label id="editGenericLabelNonMedical" class="custom-control-label" for="non-me">Non Medical</label>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-4 d-flex align-items-center justify-content-center">
+          <div class="form-group row">
+            <div class="col-sm-12 d-flex">
+              <div class="d-inline mr-3">
+                <label id="editGenericLabelStatus" class="mb-0">Status</label>
+              </div>
+              <div class="custom-control d-inline custom-radio mr-3">
+                <input  name="activeS" value="Y" formControlName="activeS" type="radio" class="custom-control-input"
+                  id="ac">
+                <label id="editGenericLabelActivate" class="custom-control-label" for="ac">Activate</label>
+              </div>
+              <div class="custom-control d-inline custom-radio">
+                <input name="activeS" value="N" formControlName="activeS" type="radio" class="custom-control-input"
+                  id="de-ac">
+                <label id="editGenericLabelDeActivate" class="custom-control-label" for="de-ac">De Activate</label>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+  
+      <div class="row">
+        <div class="col mb-3 pt-2 text-center">
+          <button (click)="onSubmit()" type="submit" [disabled]="checkFormDisability()" class="btn btn-primary px-4 gen-saved">
+            Update
+          </button>
+          <input type="button" class="btn btn-secondary px-4 ml-3  cancel-gen"
+            (click)="reset()"
+            value="Cancel" />
+  
+        </div>
+      </div>
+  
+    </form>
+  </div>
+  <ng4-loading-spinner [loadingText]="'Please wait...'" [timeout]="400000000"> </ng4-loading-spinner>

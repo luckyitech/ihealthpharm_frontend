@@ -1,0 +1,60 @@
+
+
+.modal-dialog.model-dialog-newwidth{
+  max-width: 1200px !important;
+   /*  margin: 0 auto !important; */
+    position: relative;
+}
+@media (max-width: 576px){
+.modal-dialog.model-dialog-newwidth{
+  max-width: 340px !important;
+   /*  margin: 0 auto !important; */
+    padding: 1px;
+    left: 0px;
+}
+}
+
+ul#menu li {
+  display:inline;
+  font-size: 1rem;
+}
+
+ul.tabs li {
+  list-style: none;
+  float: left;
+  padding-left: 20px;
+}
+ul.tabs li:before {
+  content: '\ffed';
+  margin-right: 0.5em;
+}
+
+@media (min-width: 576px) {
+  .modal-dialog {
+      max-width: 845px;
+  }
+}
+
+// label instructions 
+.itemSearchModal{
+  background-color:rgba(0,0,0,0.6);
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:250vh;
+}
+
+/* .modal-content{
+  height: 360px;
+  margin-top:-290px ;
+} */
+
+#tableWidth{
+  width: 214%
+}
+
+#tdWidth{
+  width:38%
+}
+

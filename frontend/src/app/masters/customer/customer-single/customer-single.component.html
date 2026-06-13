@@ -1,0 +1,286 @@
+<form #customerForm="ngForm" [formGroup]="customerInformationForm" (keydown.enter)="$event.preventDefault()"
+  (ngSubmit)="onCustomerSubmit()" class="full-height ">
+
+  <h6 class="border border-primary p-2 mt-3 mb-4 bg-light text-white">Generic Details</h6>
+
+  <div class="row">
+    <div class="col-lg-4">
+      <div class="form-group row">
+        <label for="" class="col-sm-3 col-form-label pr-0 text-right" id="addCustomerLabelFirstName">First Name <span
+            class="text-danger">*</span></label>
+        <div class="col-sm-9">
+          <input formControlName="customerName" type="text" class="form-control" id="addCustomerInputFirstName"
+            placeholder="First Name">
+          <div *ngIf="customerInformationForm.get('customerName')?.touched" class="error-msg-common text-danger">
+            <div *ngIf="customerInformationForm.get('customerName').errors?.required">
+              * required field
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="form-group row">
+        <label for="" class="col-sm-3 col-form-label pr-0 text-right" id="addCustomerLabelLastName">Last Name </label>
+        <div class="col-sm-9">
+          <input formControlName="lastName" type="text" class="form-control" id="addCustomerInputLastName"
+            placeholder="Last Name">
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-4">
+      <div class="form-group row">
+        <label for="" class="col-sm-3 col-form-label pr-0 text-right" id="addCustomerLabelGender">Gender </label>
+        <div class="col-sm-9">
+          <ng-select id="addCustomerInputGender" placeholder="-- select --" [items]="genders" bindLabel="name"
+            [(ngModel)]="selectedGender" [ngModelOptions]="{standalone:true}">
+          </ng-select>
+
+        </div>
+      </div>
+      <div class="form-group row">
+        <label for="" class="col-sm-3 col-form-label pr-0 text-right" id="addCustomerLabelDateOfBirth">DOB <span
+            class="text-danger">*</span></label>
+        <div class="col-sm-9">
+
+          <input formControlName="dateOfBirth" type="date" class="form-control" id="addCustomerInputDateOfBirth"
+            placeholder="">
+          <div *ngIf="customerInformationForm.get('dateOfBirth')?.touched" class="error-msg-common text-danger">
+            <div *ngIf="customerInformationForm.get('dateOfBirth').errors?.required">
+              * required field
+            </div>
+          </div>
+
+          <div class="error-msg-common text-danger" *ngIf="customerInformationForm.get('dateOfBirth').errors &&
+            customerInformationForm.get('dateOfBirth').dirty &&
+            customerInformationForm.get('dateOfBirth').errors.invalidDob">
+            not valid date
+          </div>
+
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-4">
+      <div class="form-group row">
+        <label for="" class="col-sm-3 col-form-label pr-0 text-right" id="addCustomerLabelPhoneNumber">Phone <span
+            class="text-danger">*</span></label>
+        <div class="col-sm-9">
+          <input formControlName="phoneNumber" type="text" class="form-control" id="addCustomerInputPhoneNumber"
+            placeholder="Phone">
+          <div *ngIf="customerInformationForm.get('phoneNumber')?.touched" class="error-msg-common text-danger">
+            <div *ngIf="customerInformationForm.get('phoneNumber').errors?.required">
+              * required field
+            </div>
+          </div>
+          <div *ngIf="customerInformationForm.get('phoneNumber')?.invalid" class="error-msg-common text-danger">
+            <div
+              *ngIf="!customerInformationForm.get('phoneNumber').errors?.required && customerInformationForm?.get('phoneNumber')?.errors">
+              * not a valid input
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="form-group row">
+        <label for="" class="col-sm-3 col-form-label pr-0 text-right" id="addCustomerLabelEmail">Email </label>
+        <div class="col-sm-9">
+          <input formControlName="emailId" type="text" class="form-control" id="addCustomerInputEmail"
+            placeholder="Email">
+          <div *ngIf="customerInformationForm.get('emailId')?.touched" class="error-msg-common text-danger">
+            <div *ngIf="customerInformationForm.get('emailId').errors?.required">
+              * required field
+            </div>
+          </div>
+          <div *ngIf="customerInformationForm.get('emailId')?.invalid" class="error-msg-common text-danger">
+            <div
+              *ngIf="!customerInformationForm.get('emailId').errors?.required && customerInformationForm?.get('emailId')?.errors">
+              * not a valid input
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h6 class="border border-primary p-2 mt-3 mb-4 bg-light text-white">Address Details</h6>
+
+  <div class="row">
+    <div class="col-lg-4">
+      <div class="form-group row">
+        <label for="" class="col-sm-3 col-form-label pr-0 text-right" id="addCustomerLabelCountry">Country <span
+            class="text-danger">*</span></label>
+        <div class="col-sm-9">
+
+          <ng-select id="addCustomerInputCountry" [(ngModel)]="selectedCountry" formControlName="country"
+            (change)="onCountrySelected($event)" placeholder="-- select --" [items]="countries" bindLabel="countryName">
+
+          </ng-select>
+          <div *ngIf="customerInformationForm.get('country')?.touched" class="error-msg-common text-danger">
+            <div *ngIf="customerInformationForm.get('country').errors?.required">
+              * required field
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="form-group row">
+        <label for="" class="col-sm-3 col-form-label pr-0 text-right" id="addCustomerLabelState">State / Province<span
+            class="text-danger">*</span></label>
+        <div class="col-sm-9">
+          <ng-select id="addCustomerInputState" [(ngModel)]="selectedState" (change)="onStateSelected($event)"
+            formControlName="state" placeholder="-- select --" [items]="states" bindLabel="provinceName">
+          </ng-select>
+          <div *ngIf="customerInformationForm.get('state')?.touched" class="error-msg-common text-danger">
+            <div *ngIf="customerInformationForm.get('state').errors?.required">
+              * required field
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-4">
+      <div class="form-group row">
+        <label for="" class="col-sm-3 col-form-label pr-0 text-right" id="addCustomerLabelCity">City </label>
+        <div class="col-sm-9">
+          <input formControlName="city" type="text" class="form-control" id="addCustomerInputCity" placeholder="City">
+        </div>
+      </div>
+      <div class="form-group row">
+        <label for="" class="col-sm-3 col-form-label pr-0 text-right" id="addCustomerLabelPin">Pin Code </label>
+        <div class="col-sm-9">
+          <input type="text" class="form-control" formControlName="pinCode" placeholder="Pin Code"
+            id="addCustomerInputPin">
+
+          <div *ngIf="customerInformationForm.get('pinCode')?.invalid" class="error-msg-common text-danger">
+            <div
+              *ngIf="!customerInformationForm.get('pinCode').errors?.required && customerInformationForm?.get('pinCode')?.errors">
+              * not a valid input
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-4">
+      <div class="form-group row">
+        <label for="" class="col-sm-3 col-form-label pr-0 text-right" id="addCustomerLabelAddress1">Address 1 </label>
+        <div class="col-sm-9">
+          <input formControlName="addressLine1" type="text" class="form-control" id="addCustomerInputAddress1"
+            placeholder="Address Line 1">
+        </div>
+      </div>
+      <div class="form-group row">
+        <label for="" class="col-sm-3 col-form-label pr-0 text-right" id="addCustomerLabelAddress2">Address 2 </label>
+        <div class="col-sm-9">
+          <input formControlName="addressLine2" type="text" class="form-control" id="addCustomerInputAddress2"
+            placeholder="Address Line 2">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row py-3">
+    <div class="col-lg-4">
+      <div class="form-group row">
+        <div class="col-sm-12 justify-content-end d-flex pt-2">
+          <div class="d-inline mr-3">
+            <label class="mb-0" id="addCustomerLabelStatus">Status</label>
+          </div>
+          <div class="custom-control d-inline custom-radio mr-3">
+            <input name="activeS" type="radio" value="Y" class="custom-control-input" formControlName="activeS"
+              id="activate">
+            <label class="custom-control-label" for="activate">Activate</label>
+          </div>
+          <div class="custom-control d-inline custom-radio">
+            <input name="activeS" type="radio" value="N" class="custom-control-input" formControlName="activeS"
+              id="deactivate">
+            <label class="custom-control-label" for="deactivate">De Activate</label>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h6 class="border border-primary p-2 mt-3 mb-4 bg-light text-white">Type Details</h6>
+
+  <div class="row">
+    <div class="col-lg-4">
+      <div class="form-group row">
+        <div class="col-sm-12 justify-content-end d-flex pt-2">
+          <div class="d-inline mr-3">
+            <label class="mb-0" id="addCustomerLabelStatus">Type</label>
+          </div>
+          <div class="custom-control d-inline custom-radio mr-3 customradio">
+            <input name="corporate" type="radio" value="Y" class="custom-control-input" formControlName="corporate"
+              id="c-activate" (change)="onChangeCorporate($event)">
+            <label class="custom-control-label" for="c-activate">Corporate</label>
+          </div>
+          <div class="custom-control d-inline custom-radio customradio">
+            <input name="corporate" type="radio" value="N" class="custom-control-input" formControlName="corporate"
+              id="c-deactivate" (change)="nonCorporate($event)">
+            <label class="custom-control-label" for="c-deactivate">Non-Corporate</label>
+          </div>
+          <div class="custom-control d-inline custom-radio customradio" style="margin-left: 14px;">
+            <input name="corporate" type="radio" value="S" class="custom-control-input" formControlName="corporate"
+              id="staff" (change)="nonCorporate($event)">
+            <label class="custom-control-label" for="staff">Staff</label>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-4">
+      <div class="form-group row">
+        <label for="" class="col-sm-3 col-form-label pr-0 text-right" id="addCustomerLabelDisc">Customer ID </label>
+        <div class="col-sm-9">
+
+          <input type="file" class="form-control-file" id="addCustomerIdImage" accept="image/*;application/pdf"
+            (change)="selectedImage($event)">
+
+        </div>
+      </div>
+
+    </div>
+
+
+  </div>
+  <div class="row" *ngIf="corporateData">
+
+    <div class="col-lg-4">
+      <div class="form-group row">
+        <label for="" class="col-sm-3 col-form-label pr-0 text-right" id="taxNoLabel">Tax No </label>
+        <div class="col-sm-9">
+          <input placeholder="Tax Number" formControlName="taxNumber" type="text" class="form-control" id="tax">
+        </div>
+      </div>
+
+    </div>
+    <div class="col-lg-4">
+      <div class="form-group row">
+        <label for="" class="col-sm-3 col-form-label pr-0 text-right" id="contactFirstNameLabel">Contact First Name
+        </label>
+        <div class="col-sm-9">
+          <input placeholder="First Name" formControlName="contactFirstName" type="text" class="form-control"
+            id="contactFirstName">
+        </div>
+      </div>
+
+    </div>
+    <div class="col-lg-4">
+      <div class="form-group row">
+        <label for="" class="col-sm-3 col-form-label pr-0 text-right" id="contactLastNameLabel">Contact Last Name
+        </label>
+        <div class="col-sm-9">
+          <input placeholder="Last Name" formControlName="contactLastName" type="text" class="form-control"
+            id="contactLastName">
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+  <div class="row pt-4">
+    <div class="col mb-3 pt-2 text-center">
+      <button (click)="onCustomerSubmit()" class="btn btn-primary px-4" [disabled]="checkFormDisability()"
+        id="mu-adduser-save">Save</button>
+      <input type="button" class="btn btn-secondary px-4 ml-3" (click)="reset();customerInformationForm.controls.activeS.setValue('Y');
+       this.customerInformationForm.get('corporate').setValue('N');" id="mu-adduser-cancel" value="Cancel">
+    </div>
+  </div>
+
+</form>
+<ng4-loading-spinner [loadingText]="'Please wait...'" [timeout]="400000000"> </ng4-loading-spinner>

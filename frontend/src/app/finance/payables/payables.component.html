@@ -1,0 +1,32 @@
+<ul class="nav nav-pills mb-3 border-bottom border-secondary" id="pills-tab" role="tablist">
+  <li class="nav-item">
+    <a class="nav-link active" id="accPayables" data-toggle="pill" (click)="selectedTab = 'add'" href="#pills-add"
+      role="tab" aria-controls="pills-add" aria-selected="true">Account Payables</a>
+  </li>
+  <li class="nav-item">
+    <a *ngIf="chequeApproval" class="nav-link" id="Cheques" data-toggle="pill" (click)="selectedTab = 'edit'"
+      href="#pills-edit" role="tab" aria-controls="pills-edit" aria-selected="true">Cheques Approval</a>
+  </li>
+  <li class="nav-item">
+    <a *ngIf="approvedCheques" class="nav-link" id="Cheques" data-toggle="pill" (click)="selectedTab = 'approved'"
+      href="#pills-edit" role="tab" aria-controls="pills-edit" aria-selected="true">Approved Cheques </a>
+  </li>
+</ul>
+<div class="tab-content" id="pills-tabContent">
+
+  <div *ngIf="selectedTab === 'add'" class="tab-pane fade show active" id="pills-add" role="tabpanel"
+    aria-labelledby="pills-add-tab">
+    <app-payments></app-payments>
+  </div>
+
+  <div *ngIf="selectedTab === 'edit'" class="tab-pane fade show" id="pills-edit" role="tabpanel"
+    aria-labelledby="pills-edit-tab">
+    <app-approved-payables></app-approved-payables>
+  </div>
+
+  <div *ngIf="selectedTab === 'approved'" class="tab-pane fade show" id="pills-edit" role="tabpanel"
+    aria-labelledby="pills-edit-tab">
+    <app-cheque-approved-payables></app-cheque-approved-payables>
+  </div>
+
+</div>

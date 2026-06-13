@@ -1,0 +1,390 @@
+<ul class="nav nav-pills mb-3 border-bottom border-secondary" id="pills-tab" role="tablist">
+  <li class="nav-item">
+    <a class="nav-link active" id="" data-toggle="pill" href="#pills-new" role="tab" aria-controls="pills-home"
+      aria-selected="true">New Purchase Order</a>
+  </li>
+</ul>
+<div class="tab-content" id="pills-tabContent">
+
+  <div class="tab-pane fade show active" id="pills-new" role="tabpanel" aria-labelledby="pills-home-tab">
+
+
+    <form #purchaseOrderForm="ngForm" [formGroup]="purchaseOrderInformationForm"
+      (keydown.enter)="$event.preventDefault()" class="">
+      <h6 class="border border-primary p-2 mt-3 mb-4 bg-light text-white">New Purchase Order</h6>
+      <div class="form-group row">
+        <div class="col-12 pb-2">
+          <div class="custom-control d-inline custom-radio mr-3">
+            <input type="radio" class="custom-control-input form-control" formControlName="medicalOrNonMedical"
+              value="M" id="medical" checked>
+            <label class="custom-control-label" for="medical">Medical</label>
+          </div>
+          <div class="custom-control d-inline custom-radio mr-3">
+            <input type="radio" class="custom-control-input form-control" formControlName="medicalOrNonMedical"
+              value="N" id="non medical">
+            <label class="custom-control-label" for="non medical">Non Medical</label>
+          </div>
+          <div class="custom-control d-inline custom-checkbox mr-3">
+            <input (change)="onEmergencyChange($event)" [checked]="emergencyValue" formControlName="emergency"
+              name="check" type="checkbox" class="custom-control-input form-control" id="emergency">
+            <label class="custom-control-label" for="emergency">Emergency</label>
+          </div>
+          <!-- <div class="custom-control d-inline custom-checkbox">
+            <input (change)="onCashChange($event)" [checked]="cashValue" class="form-data-radio" formControlName="cash"
+              name="check" type="checkbox" class="custom-control-input form-control" id="cash">
+            <label class="custom-control-label" for="cash">Cash</label>
+          </div> -->
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-lg-4">
+          <div class="form-group row">
+            <label for="" class="col-sm-3 col-form-label pr-0 text-right">PO No
+              <span class="text-danger">*</span></label>
+            <div class="col-sm-9">
+              <input readonly type="text" formControlName="purchaseOrderNo" class="form-control" id=""
+                placeholder="PO Number">
+              <div *ngIf="purchaseOrderInformationForm.get('purchaseOrderNo')?.touched"
+                class="error-msg-common text-danger">
+                <div *ngIf="purchaseOrderInformationForm.get('purchaseOrderNo').errors?.required">
+                  * required field
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="" class="col-sm-3 col-form-label pr-0 text-right">Qtn No</label>
+            <div class="col-sm-9">
+              <ng-select placeholder="Select Quotation No" [items]="quotations" bindLabel="quotationNo"
+                [(ngModel)]="selectedQuote" [ngModelOptions]="{standalone: true}"
+                (change)="onSelectedQuotation($event)"  (keyup)="onQtnSearch($event)">
+              </ng-select>
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="" class="col-sm-3 col-form-label pr-0 text-right">Del Time <span
+                class="text-danger">*</span></label>
+            <div class="col-sm-9">
+              <div class="input-group">
+                <input type="number" min="0" formControlName="deliveryTime" class="form-control"
+                  placeholder="Delivery Time">
+                <div class="input-group-append">
+                  <span class="input-group-text bg-extra-light border-0">Hrs</span>
+                </div>
+                <div *ngIf="purchaseOrderInformationForm.get('deliveryTime')?.touched"
+                  class="error-msg-common text-danger">
+                  <div *ngIf="purchaseOrderInformationForm.get('deliveryTime').errors?.required">
+                    * required field
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+        <div class="col-lg-4">
+          <div class="form-group row">
+            <label for="" class="col-sm-3 col-form-label pr-0 text-right">PO Date <span
+                class="text-danger">*</span></label>
+            <div class="col-sm-9">
+              <input readonly type="date" class="form-control" id="" formControlName="purchaseOrderDate"
+                placeholder="PO Date">
+              <div *ngIf="purchaseOrderInformationForm.get('purchaseOrderDate')?.touched"
+                class="error-msg-common text-danger">
+                <div *ngIf="purchaseOrderInformationForm.get('purchaseOrderDate').errors?.required">
+                  * required field
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="" class="col-sm-3 col-form-label pr-0 text-right">Qtn Date</label>
+            <div class="col-sm-9">
+              <input readonly type="date" class="form-control" id="" formControlName="quotationDate"
+                placeholder="Quotation Date">
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="" class="col-sm-3 col-form-label pr-0 text-right">Del Type </label>
+            <div class="col-sm-9">
+              <ng-select id="delType" placeholder="Select Delivery Type" bindLabel="type" [items]="deliveries"
+                [(ngModel)]="selectedDeliveryId" [ngModelOptions]="{standalone: true}">
+              </ng-select>
+            </div>
+          </div>
+
+
+        </div>
+        <div class="col-lg-4">
+          <div class="form-group row">
+            <label for="" class="col-sm-3 col-form-label pr-0 text-right">PO Desc</label>
+            <div class="col-sm-9">
+              <input type="text" class="form-control" id="" formControlName="poDesc" placeholder="PO Description">
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="" class="col-sm-3 col-form-label pr-0 text-right">Sh Addr</label>
+            <div class="col-sm-9">
+              <input type="text" class="form-control" formControlName="shippingAddress" id=""
+                placeholder="Shipping Address">
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="" class="col-sm-3 col-form-label pr-0 text-right">Del Date</label>
+            <div class="col-sm-9">
+              <input type="date" class="form-control" id="" formControlName="deliveryDate" placeholder="Delivery Date">
+            </div>
+          </div>
+
+
+        </div>
+      </div>
+
+      <h6 class="border border-primary p-2 mt-3 mb-4 bg-light text-white">Supplier Details</h6>
+
+      <div class="row">
+        <div class="col-lg-4">
+          <div class="form-group row">
+            <label for="" class="col-sm-3 col-form-label pr-0 text-right">Supplier</label>
+            <div class="col-sm-9">
+              <ng-select [items]="suppliers" bindLabel="name" placeholder="Select Supplier"
+                [(ngModel)]="selectedSupplier" [ngModelOptions]="{standalone: true}"
+                (change)="onSupplierChange($event)"   [disabled]="(supplierEnable)">
+              </ng-select>
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="" class="col-sm-3 col-form-label pr-0 text-right">SL No</label>
+            <div class="col-sm-9">
+              <input readonly type="text" class="form-control" id="" placeholder="SL Number" value="{{dlNumber}}">
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="" class="col-sm-3 col-form-label pr-0 text-right">Pay Type</label>
+            <div class="col-sm-9">
+              <ng-select (change)="onPaymentTypeChange($event)" placeholder="Select Payment Type" [items]="paymentTypes"
+                bindLabel="type" [(ngModel)]="selectedPaymentType" [ngModelOptions]="{standalone: true}">
+              </ng-select>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-8">
+          <div class="form-group row">
+            <div class="col-12">
+              <input readonly type="text" class="form-control" id="" placeholder="" value="{{supplierName}}">
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="" class="col-sm-3 col-form-label pr-0 text-right">Address</label>
+            <div class="col-sm-9">
+              <input readonly type="text" class="form-control" id="" placeholder="Address" value="{{supplierAddress}}">
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="" class="col-sm-3 col-form-label pr-0 text-right">Payment</label>
+            <div class="col-sm-9">
+              <div class="input-group">
+                <input type="number" min="0" formControlName="paymentTime" class="form-control"
+                  placeholder="Net Payment" value="{{selectedSupplier?.paymentCreditNetDays}}" disabled>
+                <div class="input-group-append">
+                  <span class="input-group-text bg-extra-light border-0">Days</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <h6 class="border border-primary p-2 mt-3 mb-4 bg-light text-white">Item Details</h6>
+
+      <input type="button" (click)="onRemoveSelected()" style="margin-left: 946px;margin-bottom: 15px;" value="Delete"
+        class="btn btn-primary px-4">
+
+      <div class="row">
+        <div class="col-12 pb-4">
+          <ag-grid-angular id="purchaseGrid" [gridOptions]="purchaseOrderGridOptions"
+            style="width: 100%; height: 200px;" class="ag-theme-balham" [getRowNodeId]="getRowNodeId"
+            [rowData]="rowData" (gridReady)="onGridReady($event)" [rowSelection]="rowSelection"
+            (cellValueChanged)="getTotalQuantity($event)" (cellClicked)='onCellClicked($event)' [pagination]="true"
+            [paginationPageSize]="paginationSize">
+          </ag-grid-angular>
+        </div>
+      </div>
+
+      <h6 class="border border-primary p-2 mt-3 mb-4 bg-light text-white">Total Charges</h6>
+
+      <div class="row">
+        <div class="col-lg-4">
+          <div class="form-group row">
+            <label for="" class="col-sm-3 col-form-label pr-0 text-right">Items</label>
+            <div class="col-sm-9">
+              <input type="text" class="form-control mb-0" value="{{getTotalItems}}" readonly>
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="" class="col-sm-3 col-form-label pr-0 text-right">Qty</label>
+            <div class="col-sm-9">
+              <input readonly type="text" class="form-control mb-0" value="{{getTotalQ || 0}}">
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="" class="col-sm-3 col-form-label pr-0 text-right">Amount</label>
+            <div class="col-sm-9">
+              <input type="number" (input)="poValueCalculate($event)" formControlName="totalAmount"
+                class="form-control mb-0" value="{{getTotalA || 0}}" readonly>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-4">
+          <div class="form-group row">
+            <label for="" class="col-sm-3 col-form-label pr-0 text-right">Advance</label>
+            <div class="col-sm-9">
+              <input type="number" min="0" class="form-control" (input)="poValueCalculate()" formControlName="advance">
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="" class="col-sm-3 col-form-label pr-0 text-right">Balance</label>
+            <div class="col-sm-9">
+              <input type="number" min="0" class="form-control" (input)="poValueCalculate()" formControlName="balance">
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="" class="col-sm-3 col-form-label pr-0 text-right">Charges</label>
+            <div class="col-sm-9">
+              <input type="number" min="0" class="form-control" (input)="poValueCalculate()"
+                formControlName="otherCharges">
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-4">
+          <div class="form-group row">
+            <label for="" class="col-sm-3 col-form-label pr-0 text-right">Tax Amt</label>
+            <div class="col-sm-9">
+              <input type="number" min="0" class="form-control" formControlName="taxAmt" readonly>
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="" class="col-sm-3 col-form-label pr-0 text-right">Disc Amt</label>
+            <div class="col-sm-9">
+              <input type="number" min="0" class="form-control" formControlName="discount" readonly>
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="" class="col-sm-3 col-form-label pr-0 text-right">PO Value</label>
+            <div class="col-sm-9">
+              <input type="number" min="0" class="form-control" formControlName="poValue" readonly>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-6">
+          <div class="form-group row">
+            <label for="" class="col-12 col-form-label pr-0 text-center">Terms <span
+                class="text-danger">*</span></label>
+            <div class="col-12">
+              <textarea class="form-control min-height-83" id="" placeholder="Pharmacy terms" type="text"
+                formControlName="poTerm"></textarea>
+            </div>
+            <div *ngIf="purchaseOrderInformationForm.get('poTerm')?.touched" class="error-msg-common text-danger">
+              <div *ngIf="purchaseOrderInformationForm.get('poTerm').errors?.required">
+                * required field
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-6">
+          <div class="form-group row">
+            <label for="" class="col-12 col-form-label pr-0 text-center">Remarks <span
+                class="text-danger">*</span></label>
+            <div class="col-12">
+              <textarea class="form-control min-height-83" id="" formControlName="remarks"
+                placeholder="Remarks"></textarea>
+            </div>
+            <div *ngIf="purchaseOrderInformationForm.get('remarks')?.touched" class="error-msg-common text-danger">
+              <div *ngIf="purchaseOrderInformationForm.get('remarks').errors?.required">
+                * required field
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col mb-3 pt-2 text-center">
+          <button (click)="onSubmitPurchaseOrder('pending')"
+            [disabled]="checkFormDisability() || purchaseOrderGridOptions?.rowData?.length === 0 "
+            class="btn btn-primary px-4">Submit for Approval</button>
+          <button (click)="onSubmitPurchaseOrder('later')"
+            [disabled]="checkFormDisability() || purchaseOrderGridOptions?.rowData?.length === 0"
+            class="btn btn-secondary px-4 ml-3">Submit Later</button>
+        </div>
+      </div>
+
+    </form>
+
+  </div>
+</div>
+
+
+<!-- Modal -->
+<div class="modal fade" id="itemSearchModal" tabindex="-1" role="dialog" aria-labelledby="itemSearchModalLabel"
+  data-backdrop="static" data-keyboard="false">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content" style="width: 115%;
+    height: 425px;">
+      <div class="modal-body">
+
+        <div class="form-group row">
+          <div class="col-sm-5">
+            <input type="text" [disabled]="itemParameter.length === 0" [(ngModel)]="itemSearchTerm"
+              [ngModelOptions]="{standalone: true}" class="form-control" id="searchTerm" 
+              (mouseup)="onMouseEnter()" (keyup.enter)="onEnter()" #myInput>
+              {{ myInput.focus() }}
+          </div>
+          <div class="col-sm-5">
+            <!--  <select class="form-control" [(ngModel)]="itemParameter" [ngModelOptions]="{standalone: true}"
+              id="itemParams">
+              <option value="" disabled selected>-- Select --</option>
+              <option value="itemCode">Item Code</option>
+              <option value="itemName">Item Name</option>
+              <option value="description">Description</option>
+              <option value="genericName">Generic Name</option>
+              <option value="batchNumber">Batch Number</option>
+            </select> -->
+            <ng-select id="searchType" placeholder="Select Search Type" bindLabel="name" [items]="searchPerameter"
+              [(ngModel)]="itemParameter" [ngModelOptions]="{standalone: true}" >
+            </ng-select>
+          </div>
+
+          <div class="col-sm-2">
+            <button type="button" (click)="onSeachTermClick()" class="btn btn-primary btn-block">Search</button>
+          </div>
+        </div>
+
+        <div class="form-group row">
+          <div class="col-sm-12">
+            <ag-grid-angular *ngIf="showItemGrid" style="width: 100%; height: 300px;" class="ag-theme-balham"
+              [gridOptions]="itemGridOptions" [pagination]="true" [paginationPageSize]="paginationSize2">
+            </ag-grid-angular>
+          </div>
+
+          <div class="col-sm-12 text-center pt-3">
+            <button type="button" (click)="onItemSelected()" data-dismiss="modal"
+              [disabled]="itemGridOptions?.api?.getSelectedRows()?.length === 0"
+              class="btn btn-primary px-4 mr-2">OK</button>
+              <button type="button" (click)="close()" class="btn btn-secondary px-4 mr-2"
+              data-dismiss="modal">Close</button>
+            <button type="button" (click)="noSelection()" class="btn btn-secondary px-4"
+              data-dismiss="modal">Rest & Close</button>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+</div>
+<ng4-loading-spinner [loadingText]="'Please wait...'" [timeout]="400000000"> </ng4-loading-spinner>

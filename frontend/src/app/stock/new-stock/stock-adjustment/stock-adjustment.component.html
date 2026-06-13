@@ -1,0 +1,76 @@
+<form class="">
+
+  <h6 class="border border-primary p-2 mt-3 mb-4 bg-light text-white">Stock Adjustment Details</h6>
+
+  <div class="row">
+    <div class="col-lg-3">
+      <div class="form-group row">
+        <label for="" class="col-sm-4 col-form-label px-0 text-right" id="newStockLabelItemCd">Search By</label>
+        <div class="col-sm-8">
+          <input type="text" class="form-control" id="stockAjustmentSearch" [(ngModel)]="search" [ngModelOptions]="{standalone:true}"
+            placeholder="">
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-3">
+      <div class="form-group row">
+        <div class="col-sm-12">
+          <ng-select [items]="items" bindLabel="name" placeholder="-- Select --" [(ngModel)]="selectedItem"
+            [ngModelOptions]="{standalone:true}" [loading]="Loading" id="newStockBatch#" (change)="onClickItem($event)">
+          </ng-select>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-3">
+      <div class="form-group row">
+        <div class="col-sm-12">
+          <input type="text" placeholder="batchno" class="form-control"    [(ngModel)]="batchNumber"  [ngModelOptions]="{standalone: true}">
+          <input type="date" placeholder="expiry date" class="form-control"   [(ngModel)]="expiryDt"  [ngModelOptions]="{standalone: true}">
+          <button class="btn btn-primary" (click)="onQuickChanged()" data-toggle="modal"
+            data-target="#itemSearchModal">Search</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-12 py-3">
+      <ag-grid-angular style="width: 100%; height: 200px;" class="ag-theme-balham" [gridOptions]="stockGridOptions"
+        [rowData]="stockItemArray" [columnDefs]="columnDefsformain">
+      </ag-grid-angular>
+    </div>
+  </div>
+
+
+
+  <div class="row">
+    <div class="col mb-3 pt-2 text-center">
+      <button class="btn btn-primary px-4" id="stockAdjustmentUpdateButton" (click)="onSubmit()">Update Stock</button>
+    </div>
+  </div>
+
+</form>
+
+<!-- Modal -->
+<div class="modal fade" id="itemSearchModal" tabindex="-1" role="dialog" aria-labelledby="itemSearchModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-body">
+        <div class="form-group row">
+          <div class="col-sm-12">
+            <ag-grid-angular style="width: 100%; height: 200px;" class="ag-theme-balham" [rowData]="rowData"
+              [columnDefs]="columnDefs" [rowSelection]="rowSelection" [gridOptions]="itemGridOptions">
+            </ag-grid-angular>
+          </div>
+
+          <div class="col-sm-12 text-center pt-3">
+            <button type="button" data-dismiss="modal"
+              [disabled]="itemGridOptions?.api?.getSelectedRows()?.length === 0" class="btn btn-primary px-4 mr-2" id="stockAjustmentOkButton"
+              (click)="getSelectedStockItems()">OK</button>
+            <button type="button" class="btn btn-secondary px-4" data-dismiss="modal" id="stockAjustmentCancel" (click)="close()">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

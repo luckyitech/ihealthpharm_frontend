@@ -1,0 +1,28 @@
+<div class="col left-menu p-0 border-right-lg bg-light">
+  <div class="accordion left-accordion-menu" id="left-accordion-menu">
+    <div class="card bg-light">
+      <div class="card-header p-0">
+        <h2 class="mb-0 border-bottom border-white">
+          <button class="btn btn-link btn-block text-left py-2 px-3 text-white no-childern"
+            [routerLink]="['/sales/salesbilling']" type="button">
+            <fa-icon [icon]="faFileInvoice" class="mr-2"></fa-icon><span>Sales Billing</span>
+          </button>
+        </h2>
+      </div>
+      <div class="card-header p-0">
+        <h2 class="mb-0 border-bottom border-white">
+          <button class="btn btn-link btn-block text-left py-2 px-3 text-white no-childern"
+            [routerLink]="['/sales/salesreturns']" type="button">
+            <fa-icon [icon]="faMoneyCheckAlt" class="mr-2"></fa-icon><span>Sales Returns</span>
+          </button>
+        </h2>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="col-lg right-content bg-extra-light p-0">
+  <div class="p-4">
+    <router-outlet></router-outlet>
+  </div>
+</div>

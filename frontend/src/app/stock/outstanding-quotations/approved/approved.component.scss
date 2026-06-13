@@ -1,0 +1,30 @@
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  #email {
+      visibility: hidden;
+  }
+  #approve, #approve * {
+    visibility: visible;
+  }
+  #approve {
+    position: absolute;
+    left: 0;
+    top: 0;
+  }
+  button {
+      visibility: hidden;
+  }
+  input {
+      visibility: hidden;
+  }
+
+ 
+}
+@media (min-width: 576px){
+  .modal-dialog {
+      max-width: 80%;
+      margin: 1.75rem auto;
+  }
+    }

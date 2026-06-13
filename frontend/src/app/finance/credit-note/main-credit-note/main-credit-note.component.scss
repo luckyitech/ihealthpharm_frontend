@@ -1,0 +1,118 @@
+.StatusSelectedModal{
+    background-color:rgba(0,0,0,0.6);
+    position:fixed;
+
+    top:0;
+    left:0;
+    width:100%;
+    height:200vh;
+}
+
+@media (min-width: 576px) {
+    .modal-dialog {
+        max-width: 845px;
+    }
+}
+
+button#showPassword{
+    position:absolute;
+    right: 0px;
+    top: 4px;
+    border:none;
+    height:20px;
+    width:20px;
+    border-radius:100%;
+    outline:none;
+    text-align:center;
+   // font-weight:bold;
+    padding:2px;
+    margin-right: 22px;
+    padding-bottom: 18px;
+    padding-top: 0px;
+  }
+
+  #creditInvoice{
+    margin-top: 8px;
+    padding-left: 28px;
+  }
+
+  #debitcreditNoteInvoice{
+    width: 177px;
+  }
+
+  #debitCreditNoteLabelDnDate{
+    margin-top: -13px;
+    margin-left: -19px;
+  }
+
+  #debitCreditNoteDnDate{
+    margin-top: -12px;
+    margin-left: 19px;
+  }
+
+  #debitCreditNoteLabelInvoice{
+    margin-top: -7px;
+    margin-left: -37px;
+  }
+
+  #debitCreditNoteApprovedPin{
+    margin-top: 6px;
+    margin-left: 1px;
+  }
+
+  #debitcreditNoteTaxInvoice{
+    margin-left: 8px;
+  }
+
+  #debitApprovedBy{
+    margin-left: 5px;
+    margin-top: -8px;
+  }
+
+  #debitNoteApprovedDateLabel{
+    margin-top: -6px;
+  }
+
+  #debitApprovedDate{
+    margin-top: 5px;
+    margin-left: 3px;
+
+  }
+  #debitNoteFirstTaxInvoice{
+    margin-left: 12px;
+    width: 175px;
+  }
+
+  #CreditNoteLabelInvoice{
+    margin-left: -18px
+  }
+
+  #CreditNoteLabelDnDate{ 
+    margin-left: -20px;
+  }
+
+  
+
+  #CreditNoteLabelApproved{
+    margin-left: -29px;
+    margin-top: -16px;
+  }
+
+  #CreditNoteApprover{
+    margin-top: -13px;
+    margin-left: 11px;
+  }
+
+  #CreditLabelDnDate{
+    margin-top: -6px;
+    margin-left: -20px;
+  }
+
+  #CreditDateValue{
+    margin-top: -2px;
+  }
+
+  #creditNoteInvoice{
+    width: 184px;
+    margin-left: 4px;
+  }

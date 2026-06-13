@@ -1,0 +1,20 @@
+.heading{
+    color: red;
+    margin-left: 97px;
+    margin-top: 20px;
+    //border-bottom: 2px solid orangered;
+}
+h1{
+    font-size: 36px;
+    margin-left:-90px;
+}
+.border {
+    margin-top:10px;
+    border: 2px solid red !important;
+}
+.highcharts-scrolling{
+    width: 678px;
+    /* max-width: 700px; */
+    max-height: 300px !important;
+    overflow-y: scroll !important;
+}

@@ -1,0 +1,75 @@
+<ul class="nav nav-pills mb-3 border-bottom border-secondary" id="pills-tab" role="tablist">
+    <li class="nav-item">
+      <a class="nav-link active" id="" data-toggle="pill" href="#pills-new" role="tab" aria-controls="pills-home"
+        aria-selected="true">Notifications</a>
+    </li>
+  </ul>
+  <div class="row">
+    <div class="col mb-3 pt-2">
+      <button class="btn btn-secondary px-4 ml-3" (click)="createNotification()">Create</button>
+    </div>
+  </div>
+<form #createNotificationForm="ngForm" [formGroup]="addNotificationInformationForm" (ngSubmit)="onSave()" 
+(keydown.enter)="$event.preventDefault()" class="full-height">
+  <div class="container" style="margin-left:119px;" *ngIf="createNote">
+      <div class="form-group row">
+        <label class="col-sm-3 col-form-label pr-0 text-right">Email Id:</label> 
+        <div class="col-sm-4">
+          <input type="text" class="form-control" formControlName="email">
+          <div *ngIf="addNotificationInformationForm.get('email')?.touched" class="error-msg-common text-danger">
+            <div *ngIf="addNotificationInformationForm.get('email').errors?.required">
+              * required field
+            </div>
+          </div>
+          <div
+            *ngIf="addNotificationInformationForm.get('email')?.invalid && addNotificationInformationForm.get('email')?.touched"
+            class="error-msg-common text-danger">
+            <div
+              *ngIf="!addNotificationInformationForm.get('email').errors?.required && addNotificationInformationForm?.get('email')?.errors">
+              * not a valid input
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="form-group row">
+        <label class="col-sm-3 col-form-label pr-0 text-right">Date:</label>
+        <div class="col-sm-4">
+          <input type="date" class="form-control" formControlName="date">
+          <div *ngIf="addNotificationInformationForm.get('date')?.touched" class="error-msg-common text-danger">
+            <div *ngIf="addNotificationInformationForm.get('date').errors?.required">
+              * required field
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="form-group row">
+        <label class="col-sm-3 col-form-label pr-0 text-right">Title:</label>
+        <div class="col-sm-4">
+          <input type="text" class="form-control" formControlName="title">
+          <div *ngIf="addNotificationInformationForm.get('title')?.touched" class="error-msg-common text-danger">
+            <div *ngIf="addNotificationInformationForm.get('title').errors?.required">
+              * required field
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="form-group row">
+        <label class="col-sm-3 col-form-label pr-0 text-right">Description:</label>
+        <div class="col-sm-4">
+          <textarea class="form-control" cols="30" rows="6" formControlName="description"></textarea>
+          <div *ngIf="addNotificationInformationForm.get('description')?.touched" class="error-msg-common text-danger">
+            <div *ngIf="addNotificationInformationForm.get('description').errors?.required">
+              * required field
+            </div>
+          </div>
+        </div>
+      </div>
+  </div>
+  <div class="row" *ngIf="createNote">
+    <div class="col mb-3 pt-2 text-center">
+     <button type="submit" class="btn btn-primary px-4" 
+     id="mu-adduser-save" [disabled]="checkFormDisability()">Submit</button>
+     <input type="button" class="btn btn-secondary px-4 ml-3" value="Cancel" (click)="cancelAdd()">
+    </div>
+  </div>
+</form>

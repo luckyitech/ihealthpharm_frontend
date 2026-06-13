@@ -1,0 +1,227 @@
+<ul class="nav nav-pills mb-3 border-bottom border-secondary" id="pills-tab" role="tablist">
+  <li class="nav-item">
+    <a class="nav-link active" id="pills-home-tab" data-toggle="pill" href="#pills-home" role="tab"
+      aria-controls="pills-home" aria-selected="true">New Quotation</a>
+  </li>
+</ul>
+<div class="tab-content" id="pills-tabContent">
+  <div class="tab-pane fade show active" id="pills-home" role="tabpanel" aria-labelledby="pills-home-tab">
+
+    <form #purchaseOrderForm="ngForm" [formGroup]="quotationInformationForm" (keydown.enter)="$event.preventDefault()"
+      (ngSubmit)="onSubmit()" class="">
+      <h6 class="border border-primary p-2 mt-3 mb-4 bg-light text-white">Quotation Details</h6>
+
+      <div class="row">
+        <div class="col-lg-4">
+          <div class="form-group row">
+            <label id="requestQuotLabelNumber" for="" class="col-sm-3 col-form-label pr-0 text-right">Qtn No <span
+                class="text-danger">*</span></label>
+            <div class="col-sm-9">
+              <input type="text" disabled formControlName="quotationNo" class="form-control" id="requestQuotNumber"
+                placeholder="Quotation Number" required>
+              <div *ngIf="quotationInformationForm.get('quotationNo')?.touched" class="error-msg-common text-danger">
+                <div *ngIf="quotationInformationForm.get('quotationNo').errors?.required">
+                  * required field
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="form-group row">
+            <label id="requestQuotLabelRequested" for="" class="col-sm-3 col-form-label pr-0 text-right">Requested By
+              <span class="text-danger">*</span></label>
+            <div class="col-sm-9">
+              <ng-select id="requestQuotRequested" [items]="employees" [(ngModel)]="selectedEmployee"
+                formControlName="reqBy" bindLabel="firstName" placeholder="Select Employee" required
+                (change)="onRequestEmpSelected($event)">
+              </ng-select>
+              <div *ngIf="quotationInformationForm.get('reqBy')?.touched" class="error-msg-common text-danger">
+                <div *ngIf="quotationInformationForm.get('reqBy').errors?.required">
+                  * required field
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="form-group row">
+            <label id="requestQuotLabelCreated" for="" class="col-sm-3 col-form-label pr-0 text-right">Created By <span
+                class="text-danger">*</span></label>
+            <div class="col-sm-9">
+              <input disabled (keypress)="onlyCharKey($event)" type="text" class="form-control"
+                formControlName="created" id="requestQuotCreated" placeholder="Created By" required>
+              <div *ngIf="quotationInformationForm.get('created')?.touched" class="error-msg-common text-danger">
+                <div *ngIf="quotationInformationForm.get('created').errors?.required">
+                  * required field
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-4">
+          <div class="form-group row">
+            <label id="requestQuotLabelDated" for="" class="col-sm-3 col-form-label pr-0 text-right">Date <span
+                class="text-danger">*</span></label>
+            <div class="col-sm-9">
+              <input type="date" formControlName="quotationDt" class="form-control" id="requestQuotDated"
+                placeholder="Quotation Date" readonly required>
+              <div *ngIf="quotationInformationForm.get('quotationDt')?.touched" class="error-msg-common text-danger">
+                <div *ngIf="quotationInformationForm.get('quotationDt').errors?.required">
+                  * required field
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="form-group row">
+            <label id="requestQuotLabelExpiry" for="" class="col-sm-3 col-form-label pr-0 text-right">Expiry <span
+                class="text-danger">*</span></label>
+            <div class="col-sm-9">
+              <input type="date" formControlName="quotationExpiryDt" class="form-control" id="requestQuotExpiry"
+                placeholder="Quotation Expiry Date" [min]="today" (ngModelChange)="changeDate($event)" required>
+              <div *ngIf="quotationInformationForm.get('quotationExpiryDt')?.touched"
+                class="error-msg-common text-danger">
+                <div *ngIf="quotationInformationForm.get('quotationExpiryDt').errors?.required">
+                  * required field
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-4">
+          <div class="form-group row">
+            <label id="requestQuotLabelAdd" for="" class="col-sm-3 col-form-label pr-0 text-right">Add New</label>
+            <div class="col-sm-9 ">
+              <button class="btn btn-info mr-2" (click)="item_supplier()">Item-Supplier</button>
+              <button class="btn btn-info" (click)="supplier_item()">Supplier-Item</button>
+            </div>
+          </div>
+          <div class="form-group row">
+            <label id="requestQuotLabelDesc" for="" class="col-sm-3 col-form-label pr-0 text-right">Desc <span
+                class="text-danger">*</span></label>
+            <div class="col-sm-9">
+              <textarea formControlName="description" class="form-control min-height-83" id="requestQuotDesc"
+                placeholder="Quotation Description" required></textarea>
+              <div *ngIf="quotationInformationForm.get('description')?.touched" class="error-msg-common text-danger">
+                <div *ngIf="quotationInformationForm.get('description').errors?.required">
+                  * required field
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <h6 class="border border-primary p-2 mt-3 mb-4 bg-light text-white">Item Details</h6>
+
+      <div class="row">
+        <!-- <div class="col-2 ml-3">
+          <div class="custom-control d-inline custom-checkbox mr-3">
+            <input (change)="onAutoQuotCheck($event)" [checked]="autoQuotCheck" name="check" type="checkbox"
+              class="custom-control-input" id="auto-quot">
+            <label class="custom-control-label" for="auto-quot">Auto Quotation</label>
+          </div>
+        </div> -->
+        <div class="col-12 text-right">
+          <!-- <button class="btn btn-primary mr-2">Edit</button> -->
+          <button [disabled]="checkFormDisability2() || quotationGridOptions?.api?.getSelectedRows()?.length === 0"
+            class="btn btn-primary" (click)="deleteQuotationItem()">Delete</button>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col py-3">
+          <ag-grid-angular id="quotGrid" style="width: 100%; height: 200px;" class="ag-theme-balham"
+            [gridOptions]="quotationGridOptions" [getRowNodeId]="getRowNodeId" [rowData]="rowData"
+            (gridReady)="onGridReady($event)" [rowSelection]="rowSelection" (cellClicked)="onCellClicked($event)">
+          </ag-grid-angular>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-4"></div>
+        <div class="col-4">
+          <div class="form-group row">
+            <label for="" class="col-12 col-form-label pr-0 text-center">Remarks </label>
+            <div class="col-12">
+              <textarea class="form-control min-height-83" id="" formControlName="remarks"
+                placeholder="Remarks"></textarea>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col mb-3 pt-2 text-center">
+          <button (click)="onQuotationSubmit('pending')"
+            [disabled]=" checkFormDisability() || quotationGridOptions?.rowData?.length === 0"
+            class="btn btn-primary px-4 submit-for-approval">Submit For Approval</button>
+          <button (click)="onQuotationSubmit('later')"
+            [disabled]=" checkFormDisability() || quotationGridOptions?.rowData?.length === 0"
+            class="btn btn-secondary px-4 ml-3 submit-later">Submit Later</button>
+        </div>
+      </div>
+
+    </form>
+
+  </div>
+</div>
+
+
+<!-- Modal -->
+<div class="modal fade" id="itemSearchModal" tabindex="-1" role="dialog" aria-labelledby="itemSearchModalLabel"
+  data-keyboard="false" data-backdrop="static">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-body">
+
+        <div class="form-group row">
+          <label for="" class="col-sm-2 col-form-label pr-0 text-right">Search Using <span
+              class="text-danger">*</span></label>
+          <div class="col-sm-3">
+            <!-- <select class="form-control" [(ngModel)]="itemParameter" [ngModelOptions]="{standalone: true}"
+              id="itemParams">
+             
+              <option value="itemCode">Item Code</option>
+              <option selected="selected" value="itemName">Item Name</option>
+              <option value="description">Description</option>
+              <option value="barcode">Barcode</option>
+             
+            </select> -->
+            <ng-select id="searchType" placeholder="Select Search Type" bindLabel="name" [items]="searchPerameter"
+            [(ngModel)]="itemParameter" [ngModelOptions]="{standalone: true}" >
+          </ng-select>
+          </div>
+          <label for="" class="col-sm-2 col-form-label pr-0 text-right">Search For Item <span
+              class="text-danger">*</span></label>
+          <div class="col-sm-3">
+            <input id="searchTerm" type="text" [disabled]="itemParameter.length === 0" [(ngModel)]="itemSearchTerm"
+              [ngModelOptions]="{standalone: true}" class="form-control"
+               (mouseup)="onMouseEnter()" (keyup.enter)="onEnter()" #focusInput>
+
+          </div>
+          <div class="col-sm-2">
+            <button type="button" (click)="onSeachTermClick()" class="btn btn-primary btn-block">Search</button>
+          </div>
+        </div>
+
+        <div class="form-group row">
+          <div class="col-sm-12">
+            <ag-grid-angular *ngIf="showItemGrid" style="width: 100%; height: 430px;" class="ag-theme-balham"
+              [gridOptions]="itemGridOptions">
+            </ag-grid-angular>
+          </div>
+
+          <div class="col-sm-12 text-center pt-3">
+            <button type="button" (click)="onItemSelected()" data-dismiss="modal"
+              [disabled]="itemGridOptions?.api?.getSelectedRows()?.length === 0"
+              class="btn btn-primary px-4 mr-2">OK</button>
+            <button type="button" (click)="noSelection()" class="btn btn-secondary px-4"
+              data-dismiss="modal">Close</button>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<ng4-loading-spinner [loadingText]="'Please wait...'" [timeout]="400000000"> </ng4-loading-spinner>

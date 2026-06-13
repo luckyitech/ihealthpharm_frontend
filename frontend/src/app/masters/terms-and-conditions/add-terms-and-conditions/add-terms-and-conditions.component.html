@@ -1,0 +1,48 @@
+<form #companyTermsForm="ngForm" [formGroup]="termsInformationForm" (keydown.enter)="$event.preventDefault()"
+  (ngSubmit)="onSubmit()" class="full-height">
+
+  <h6 class="border border-primary p-2 mt-3 mb-4 bg-light text-white">Company Terms and Conditions</h6>
+
+  <div class="row">
+    <div class="col-lg-6">
+      <div class="form-group row">
+        <label id="addTermsLabelTerms&Cond" for="" class="col-sm-3 col-form-label pr-0 text-right">Terms & Conditions <span
+            class="text-danger">*</span></label>
+        <div class="col-sm-9">
+          <textarea formControlName="termsAndConditions" name="" id="addTermsTextTerms&Cond" class="form-control" cols="30" rows="6"></textarea>
+          <div *ngIf="termsInformationForm.get('termsAndConditions')?.touched" class="error-msg-common text-danger">
+            <div *ngIf="termsInformationForm.get('termsAndConditions').errors?.required">
+             * required field
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-6 align-items-center justify-content-end d-flex">
+      <div class="form-group row">
+        <div class="col-sm-12">
+          <div class="d-inline mr-3">
+            <label id="addTermsLabelStatus" class="mb-0">Status</label>
+          </div>
+          <div class="custom-control d-inline custom-radio mr-3">
+            <input name="activeS" value="Y" formControlName="activeS" type="radio" class="custom-control-input" id="activate">
+            <label id="addTermsLabelActive" class="custom-control-label" for="activate">Activate</label>
+          </div>
+          <div class="custom-control d-inline custom-radio">
+            <input  name="activeS" value="N" formControlName="activeS" type="radio" class="custom-control-input" id="deactivate">
+            <label id="addTermsLabelDeActive" class="custom-control-label" for="deactivate">De Activate</label>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col mb-3 pt-2 text-center">
+      <button type="submit" [disabled]="checkFormDisability()"  class="btn btn-primary px-4">Save</button>
+      <input type="button" value="Cancel" class="btn btn-secondary px-4 ml-3" (click)="termsInformationForm.reset(); termsInformationForm.controls.activeS.setValue('Y')">
+    </div>
+  </div>
+
+</form>
+<ng4-loading-spinner [loadingText]="'Please wait...'" [timeout]="400000000"> </ng4-loading-spinner>

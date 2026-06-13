@@ -1,0 +1,109 @@
+<form #chartForm="ngForm" [formGroup]="hourChartInformationForm" (keydown.enter)="$event.preventDefault()"
+    class="full-height ">
+    <ul class="nav nav-pills mb-3 border-bottom border-secondary" id="pills-tab" role="tablist">
+        <li class="nav-item">
+            <a class="nav-link active" id="" data-toggle="pill" href="#pills-new" role="tab" aria-controls="pills-home"
+                aria-selected="true">Line Chart</a>
+        </li>
+    </ul>
+    <div class="row">
+        <div class="col-lg-4">
+            <div class="form-group row">
+                <label for="" class="col-sm-3 col-form-label pr-0 text-right">Name  <span class="text-danger">*</span></label>
+                <div class="col-sm-9">
+                    <ng-select placeholder="-- Select --" [items]="empNames" bindLabel="firstName"
+                        [(ngModel)]="selectedEmployeeName" formControlName="firstName" [multiple]="true"
+                        (change)="onEmployeeSelected($event)">
+                    </ng-select>
+                    <div *ngIf="hourChartInformationForm.get('firstName')?.touched"
+                        class="error-msg-common text-danger">
+                        <div *ngIf="hourChartInformationForm.get('firstName').errors?.required">
+                            * required field
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="form-group row">
+                <label for="" id="addItemSupplierLabelValidityItemSupplier"
+                    class="col-sm-3 col-form-label pr-0 text-right">From
+                    Time
+                    <span class="text-danger">*</span>
+                </label>
+                <div class="col-sm-9">
+                    <!-- <input type="time" class="form-control" formControlName="fromTime"
+                    (change)="onSelectedStartDate($event)" [(ngModel)]="date" /> -->
+                    <ng-select placeholder="-- Select --" [items]="time" bindLabel="hours"
+                        [(ngModel)]="selectedFromTime" formControlName="fromTime">
+                    </ng-select>
+                    <div *ngIf="hourChartInformationForm.get('fromTime')?.touched" class="error-msg-common text-danger">
+                        <div *ngIf="hourChartInformationForm.get('fromTime').errors?.required">
+                            * required field
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="form-group row">
+                <label for="" id="addItemSupplierLabelValidityItemSupplier"
+                    class="col-sm-3 col-form-label pr-0 text-right">To
+                    Time
+                    <span class="text-danger">*</span>
+                </label>
+                <div class="col-sm-9">
+                    <ng-select placeholder="-- Select --" [items]="time" bindLabel="hours" [(ngModel)]="selectedToTime"
+                        formControlName="toTime" (change)="onToSelected()">
+                    </ng-select>
+                    <div *ngIf="hourChartInformationForm.get('toTime')?.touched" class="error-msg-common text-danger">
+                        <div *ngIf="hourChartInformationForm.get('toTime').errors?.required">
+                            * required field
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-4">
+            <div class="form-group row">
+                <label for="" class="col-sm-3 col-form-label pr-0 text-right">Date </label>
+                <div class="col-sm-9">
+                    <input type="date" class="form-control" formControlName="date" />
+                    <div *ngIf="hourChartInformationForm.get('date')?.touched" class="error-msg-common text-danger">
+                        <div *ngIf="hourChartInformationForm.get('date').errors?.required">
+                            * required field
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col mb-3 pt-2 text-center">
+            <button class="btn btn-primary px-4" id="submitButton"  [disabled]="checkFormDisability()" (click)="onGenerateChart()">Generate
+                Chart</button>
+            <input type="button" value="Cancel" class="btn btn-secondary px-4 ml-3" (click)="onCancel()"
+                id="mu-adduser-cancel">
+        </div>
+    </div>
+    <div class="row">
+        <div  class="container">
+           
+                <div class="col-sm-8 chart-center">
+                    <canvas id="lineChart"  width="600" height="300"></canvas>
+                </div>
+            
+        </div>
+    </div>
+</form>
+
+
+<!-- <div id="chart">
+  <highcharts-chart [Highcharts]="Highcharts" [constructorType]="chartConstructor" [options]="chartOptions"
+    [callbackFunction]="chartCallback" [(update)]="updateFlag" [oneToOne]="oneToOneFlag"
+    [runOutsideAngular]="runOutsideAngularFlag" style="display: block; margin-left: 280px; height: 350px;">
+  </highcharts-chart>
+</div> -->
+<ng4-loading-spinner [loadingText]="'Please wait...'" [timeout]="400000000"> </ng4-loading-spinner>

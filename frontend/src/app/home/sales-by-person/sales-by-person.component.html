@@ -1,0 +1,15 @@
+<div  id="chart">
+    <highcharts-chart 
+    [Highcharts]="Highcharts"
+   
+    [constructorType]="chartConstructor"
+    [options]="chartOptions"
+    [callbackFunction]="chartCallback"
+   
+    [(update)]="updateFlag"
+    [oneToOne]="oneToOneFlag"
+    [runOutsideAngular]="runOutsideAngularFlag"
+   
+    style="display: block; margin-left: 280px; height: 350px;margin-top: 50px;">
+  </highcharts-chart> 
+ </div>

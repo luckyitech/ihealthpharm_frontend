@@ -1,0 +1,753 @@
+<div class="row pt-3" id="supplierGridSearch">
+    <div class="col">
+      <form class="form-inline">
+        <input class="form-control no-right-border-radius" type="text" placeholder="Search here.." aria-label="Search"
+        [(ngModel)]="key" [ngModelOptions]="{standalone:true}">
+        <button id="editSupplierSearch" class="btn btn-primary no-left-border-radius" (click)="search()">Search</button>
+      </form>
+    </div>
+    <div class="col text-right">
+      <button   data-toggle="modal" id="common-grid-btn"  [disabled]="supplierGridOptions?.api?.getSelectedRows()?.length === 0"
+        (click)="editGrid()" class="btn btn-primary px-4 edit-btn">Edit</button>
+    </div>
+  </div>
+
+  <div class="row grid-area">
+    <div class="col py-3">
+      <ag-grid-angular id="common-grid" style="width: 100%; height: 600px;" class="ag-theme-balham"
+      *ngIf="showGrid"  [rowData]="rowData"
+      [gridOptions]="supplierGridOptions" [columnDefs]="columnDefs" [singleClickEdit]="true" >
+      </ag-grid-angular>
+    </div>
+  </div>
+
+  <div class="hospitalInformationForm" id="hospital-Information" style="display:none">
+      <form #supplierForm="ngForm" [formGroup]="supplierInformationForm" (keydown.enter)="$event.preventDefault()"
+      (ngSubmit)="onSubmit()" class="full-height">
+
+      <h6 class="border border-primary p-2 mt-3 mb-4 bg-light text-white">Generic Details</h6>
+
+      <div class="row">
+        <div class="col-lg-4">
+          <div class="form-group row">
+            <label for="" id="editSupplierLabelName" class="col-sm-3 col-form-label pr-0 text-right">Name <span class="text-danger">*</span></label>
+            <div class="col-sm-9">
+              <input type="text" id="editSupplierName" class="form-control" formControlName="name" placeholder="Name">
+              <div *ngIf="supplierInformationForm.get('name')?.touched" class="error-msg-common text-danger">
+                <div *ngIf="supplierInformationForm.get('name').errors?.required">
+                  * required field
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="" id="editSupplierLabelLicense" class="col-sm-3 col-form-label pr-0 text-right">TIN No <span class="text-danger">*</span></label>
+            <div class="col-sm-9">
+              <input type="text" id="editSupplierLicense" class="form-control" formControlName="license" placeholder="License">
+              <div *ngIf="supplierInformationForm.get('license')?.touched" class="error-msg-common text-danger">
+                <div *ngIf="supplierInformationForm.get('license').errors?.required">
+                  * required field
+                </div>
+              </div>
+              <div *ngIf="supplierInformationForm.get('license')?.invalid" class="error-msg-common text-danger">
+                  <div
+                    *ngIf="!supplierInformationForm.get('license').errors?.required && supplierInformationForm?.get('license')?.errors">
+                    * not a valid input
+                  </div>
+                </div>
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="" id="editSupplierLabelSLNo" class="col-sm-3 col-form-label pr-0 text-right">SL No </label>
+            <div class="col-sm-9">
+              <input type="text" id="editSupplierSLNo" class="form-control" formControlName="dlNo" placeholder="SL Number">
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-4">
+          <div class="form-group row">
+            <label for="" id="editSupplierLabelCST" class="col-sm-3 col-form-label pr-0 text-right">CST </label>
+            <div class="col-sm-9">
+              <input type="text" id="editSupplierCST" formControlName="cstNo" class="form-control" id="" placeholder="CST Number">
+            </div>
+          </div>
+   <!--        <div class="form-group row">
+              <label for="" id="editSupplierPinNo" class="col-sm-3 col-form-label pr-0 text-right">Pin No </label>
+              <div class="col-sm-9">
+
+                <input type="text" class="form-control" formControlName="pinNo" id="editSupplierPinNo" placeholder="Pin Number">
+
+              </div>
+            </div> -->
+          <div class="form-group row">
+            <label for="" id="editSupplierLabelFax" class="col-sm-3 col-form-label pr-0 text-right">FAX </label>
+            <div class="col-sm-9">
+              <input type="text" class="form-control" id="editSupplierFax" formControlName="fax" placeholder="Fax Number">
+              <div *ngIf="supplierInformationForm.get('fax')?.invalid && supplierInformationForm.get('fax')?.touched"
+                class="error-msg-common text-danger">
+                <div
+                  *ngIf="!supplierInformationForm.get('fax').errors?.required && supplierInformationForm?.get('fax')?.errors">
+                  * not a valid input
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="form-group row">
+              <label for="" id="editSupplierLabelEmail" class="col-sm-3 col-form-label pr-0 text-right">Email </label>
+              <div class="col-sm-9">
+
+                <input type="text" class="form-control" id="editSupplierEmail" formControlName="emailId" placeholder="Email">
+
+                <div
+                  *ngIf="supplierInformationForm.get('emailId')?.invalid && supplierInformationForm.get('emailId')?.touched"
+                  class="error-msg-common text-danger">
+                  <div
+                    *ngIf="!supplierInformationForm.get('emailId').errors?.required && supplierInformationForm?.get('emailId')?.errors">
+                    * not a valid input
+                  </div>
+                </div>
+              </div>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="form-group row">
+                <label for="" id="editSupplierLabelPhone" class="col-sm-3 col-form-label pr-0 text-right">Phone <span class="text-danger">*</span></label>
+                <div class="col-sm-9">
+
+                  <input type="text" class="form-control" id="editSupplierPhone" formControlName="phoneNumber" placeholder="Phone">
+
+                  <div *ngIf="supplierInformationForm.get('phoneNumber')?.touched" class="error-msg-common text-danger">
+                    <div *ngIf="supplierInformationForm.get('phoneNumber').errors?.required">
+                      * required field
+                    </div>
+                  </div>
+                  <div *ngIf="supplierInformationForm.get('phoneNumber')?.invalid" class="error-msg-common text-danger">
+                    <div
+                      *ngIf="!supplierInformationForm.get('phoneNumber').errors?.required && supplierInformationForm?.get('phoneNumber')?.errors">
+                      * not a valid input
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="form-group row">
+                  <label for="" id="editSupplierLabelWebsite" class="col-sm-3 col-form-label pr-0 text-right">Website </label>
+                  <div class="col-sm-9">
+
+                    <input type="text" class="form-control" formControlName="website" id="editSupplierWebsite" placeholder="Website URL">
+
+
+          <div *ngIf="supplierInformationForm.get('website')?.invalid" class="error-msg-common text-danger">
+              <div
+                *ngIf="!supplierInformationForm.get('website').errors?.required && supplierInformationForm?.get('website')?.errors">
+                * not a valid input
+              </div>
+            </div>
+                  </div>
+                </div>
+
+        </div>
+      </div>
+
+      <h6 class="border border-primary p-2 mt-3 mb-4 bg-light text-white">Contact Person Details</h6>
+
+      <!-- <div class="row">
+        <div class="col-lg-4">
+          <div class="form-group row">
+            <label for="" id="editSupplierLabelFirstName" class="col-sm-3 col-form-label pr-0 text-right">First Name <span
+                class="text-danger">*</span></label>
+            <div class="col-sm-9">
+              <input type="text" class="form-control" id="editSupplierFirstName" formControlName="contactPersonFirstName"
+                placeholder="First Name">
+              <div *ngIf="supplierInformationForm.get('contactPersonFirstName')?.touched"
+                class="error-msg-common text-danger">
+                <div *ngIf="supplierInformationForm.get('contactPersonFirstName').errors?.required">
+                  * required field
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="" id="editSupplierLabelMidName" class="col-sm-3 col-form-label pr-0 text-right">Mid Name
+            </label>
+            <div class="col-sm-9">
+              <input type="text" class="form-control" formControlName="contactPersonMiddleName" id="editSupplierMidName"
+                placeholder="Middle Name">
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-4">
+          <div class="form-group row">
+            <label for="" id="editSupplierLabelLastName" class="col-sm-3 col-form-label pr-0 text-right">Last Name <span
+                class="text-danger">*</span></label>
+            <div class="col-sm-9">
+              <input type="text" class="form-control" id="editSupplierLastName" formControlName="contactPersonLastName" placeholder="Last Name">
+              <div *ngIf="supplierInformationForm.get('contactPersonLastName')?.touched"
+                class="error-msg-common text-danger">
+                <div *ngIf="supplierInformationForm.get('contactPersonLastName').errors?.required">
+                  * required field
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="" id="editSupplierLabelPhoneNo" class="col-sm-3 col-form-label pr-0 text-right">Phone <span class="text-danger">*</span></label>
+            <div class="col-sm-9">
+              <input type="text" class="form-control" id="editSupplierPhoneNo" formControlName="contactPersonPhoneNumber"
+                placeholder="Phone Number">
+              <div *ngIf="supplierInformationForm.get('contactPersonPhoneNumber')?.touched"
+                class="error-msg-common text-danger">
+                <div *ngIf="supplierInformationForm.get('contactPersonPhoneNumber').errors?.required">
+                  * required field
+                </div>
+              </div>
+              <div *ngIf="supplierInformationForm.get('contactPersonPhoneNumber')?.invalid"
+                class="error-msg-common text-danger">
+                <div
+                  *ngIf="!supplierInformationForm.get('contactPersonPhoneNumber').errors?.required && supplierInformationForm?.get('contactPersonPhoneNumber')?.errors">
+                  * not a valid input
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-4">
+          <div class="form-group row">
+            <label for="" id="editSupplierLabelEmailId" class="col-sm-3 col-form-label pr-0 text-right">Email </label>
+            <div class="col-sm-9">
+              <input type="text" class="form-control" formControlName="contactPersonEmailID" id="editSupplierEmailId" placeholder="Email">
+              <div
+                *ngIf="supplierInformationForm.get('contactPersonEmailID')?.invalid && supplierInformationForm.get('contactPersonEmailID')?.touched"
+                class="error-msg-common text-danger">
+                <div
+                  *ngIf="!supplierInformationForm.get('contactPersonEmailID').errors?.required && supplierInformationForm?.get('contactPersonEmailID')?.errors">
+                  * not a valid input
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div> -->
+
+      <div class="row">
+        <div class="col-lg-4">
+          <div class="form-group row">
+            <label for="" id="addSupplierLabelFirstName" class="col-sm-3 col-form-label pr-0 text-right">First Name <span
+                class="text-danger">*</span></label>
+            <div class="col-sm-9">
+    
+              <input type="text" class="form-control" id="addSupplierFirstName" formControlName="contactPersonFirstName"
+                placeholder="First Name">
+              <div *ngIf="supplierInformationForm.get('contactPersonFirstName')?.touched"
+                class="error-msg-common text-danger">
+                <div *ngIf="supplierInformationForm.get('contactPersonFirstName').errors?.required">
+                  * required field
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="" id="addSupplierLabelPhoneNo" class="col-sm-3 col-form-label pr-0 text-right">Phone <span
+                class="text-danger">*</span></label>
+            <div class="col-sm-9">
+              <input type="text" class="form-control" id="addSupplierPhoneNo" formControlName="contactPersonPhoneNumber"
+                placeholder="Phone Number">
+              <div *ngIf="supplierInformationForm.get('contactPersonPhoneNumber')?.touched"
+                class="error-msg-common text-danger">
+                <div *ngIf="supplierInformationForm.get('contactPersonPhoneNumber').errors?.required">
+                  * required field
+                </div>
+              </div>
+              <div *ngIf="supplierInformationForm.get('contactPersonPhoneNumber')?.invalid"
+                class="error-msg-common text-danger">
+                <div
+                  *ngIf="!supplierInformationForm.get('contactPersonPhoneNumber').errors?.required && supplierInformationForm?.get('contactPersonPhoneNumber')?.errors">
+                  * not a valid input
+                </div>
+              </div>
+            </div>
+    
+    
+          </div>
+    
+          <div class="form-group row">
+            <label for="" id="addSupplierLabelEmailIdThree" class="col-sm-3 col-form-label pr-0 text-right">Email 3</label>
+            <div class="col-sm-9">
+              <input type="text" class="form-control" formControlName="contactPersonEmailIdThree" id="addSupplierEmailIdThree"
+                placeholder="Email">
+                <div
+                *ngIf="supplierInformationForm.get('contactPersonEmailIdThree')?.invalid && supplierInformationForm.get('contactPersonEmailIdThree')?.touched"
+                class="error-msg-common text-danger">
+                <div
+                  *ngIf="!supplierInformationForm.get('contactPersonEmailIdThree').errors?.required && supplierInformationForm?.get('contactPersonEmailIdThree')?.errors">
+                  * not a valid input
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-4">
+          <div class="form-group row">
+            <label for="" id="addSupplierLabelLastName" class="col-sm-3 col-form-label pr-0 text-right">Last Name <span
+                class="text-danger">*</span></label>
+            <div class="col-sm-9">
+    
+              <input type="text" class="form-control" id="addSupplierLastName" formControlName="contactPersonLastName"
+                placeholder="Last Name">
+    
+              <div *ngIf="supplierInformationForm.get('contactPersonLastName')?.touched"
+                class="error-msg-common text-danger">
+                <div *ngIf="supplierInformationForm.get('contactPersonLastName').errors?.required">
+                  * required field
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="" id="addSupplierLabelEmailId" class="col-sm-3 col-form-label pr-0 text-right">Email 1
+              <!-- <span class="text-danger">*</span> -->
+            </label>
+            <div class="col-sm-9">
+              <input type="text" class="form-control" formControlName="contactPersonEmailID" id="addSupplierEmailId"
+                placeholder="Email">
+              <div
+                *ngIf="supplierInformationForm.get('contactPersonEmailID')?.invalid && supplierInformationForm.get('contactPersonEmailID')?.touched"
+                class="error-msg-common text-danger">
+                <div
+                  *ngIf="!supplierInformationForm.get('contactPersonEmailID').errors?.required && supplierInformationForm?.get('contactPersonEmailID')?.errors">
+                  * not a valid input
+                </div>
+              </div>
+            </div>
+          </div>
+    
+          <div class="form-group row">
+            <label for="" id="addSupplierLabelEmailIdFour" class="col-sm-3 col-form-label pr-0 text-right">Email 4</label>
+            <div class="col-sm-9">
+              <input type="text" class="form-control" formControlName="contactPersonEmailIdFour" id="addSupplierEmailIdFour"
+                placeholder="Email">
+                <div
+                *ngIf="supplierInformationForm.get('contactPersonEmailIdFour')?.invalid && supplierInformationForm.get('contactPersonEmailIdFour')?.touched"
+                class="error-msg-common text-danger">
+                <div
+                  *ngIf="!supplierInformationForm.get('contactPersonEmailIdFour').errors?.required && supplierInformationForm?.get('contactPersonEmailIdFour')?.errors">
+                  * not a valid input
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-4">
+          <div class="form-group row">
+            <label for="" id="addSupplierLabelMidName" class="col-sm-3 col-form-label pr-0 text-right">Mid Name
+            </label>
+            <div class="col-sm-9">
+    
+              <input type="text" class="form-control" formControlName="contactPersonMiddleName" id="addSupplierMidName"
+                placeholder="Middle Name">
+            </div>
+          </div>
+    
+          <div class="form-group row">
+            <label for="" id="addSupplierLabelEmailIdTwo" class="col-sm-3 col-form-label pr-0 text-right">Email 2</label>
+            <div class="col-sm-9">
+              <input type="text" class="form-control" formControlName="contactPersonEmailIdTwo" id="addSupplierEmailIdTwo"
+                placeholder="Email">
+                <div
+                *ngIf="supplierInformationForm.get('contactPersonEmailIdTwo')?.invalid && supplierInformationForm.get('contactPersonEmailIdTwo')?.touched"
+                class="error-msg-common text-danger">
+                <div
+                  *ngIf="!supplierInformationForm.get('contactPersonEmailIdTwo').errors?.required && supplierInformationForm?.get('contactPersonEmailIdTwo')?.errors">
+                  * not a valid input
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <h6 class="border border-primary p-2 mt-3 mb-4 bg-light text-white">Address</h6>
+
+      <div class="row">
+        <div class="col-lg-4">
+          <div class="form-group row">
+            <label for="" id="editSupplierLabelAddressOne" class="col-sm-3 col-form-label pr-0 text-right">Address 1 <span
+                class="text-danger">*</span></label>
+            <div class="col-sm-9">
+              <input type="text" class="form-control" id="editSupplierAddressOne" formControlName="addressLine1" placeholder="Address 1">
+              <div *ngIf="supplierInformationForm.get('addressLine1')?.touched" class="error-msg-common text-danger">
+                <div *ngIf="supplierInformationForm.get('addressLine1').errors?.required">
+                  * required field
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="" id="editSupplierLabelAddressTwo" class="col-sm-3 col-form-label pr-0 text-right">Address 2
+            </label>
+            <div class="col-sm-9">
+              <input type="text" class="form-control" id="editSupplierAddressTwo" formControlName="addressLine2" placeholder="Address 2">
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-4">
+          <div class="form-group row">
+            <label for="" id="editSupplierLabelCity" class="col-sm-3 col-form-label pr-0 text-right">City </label>
+            <div class="col-sm-9">
+              <input type="text" class="form-control" id="editSupplierCity" formControlName="cityName" placeholder="City">
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="" id="editSupplierLabelCountry" class="col-sm-3 col-form-label pr-0 text-right">Country <span class="text-danger">*</span></label>
+            <div class="col-sm-9">
+              <ng-select (change)="onCountrySelected($event)" id="editSupplierCountry" placeholder="-- Select --" [(ngModel)]="selectedCoutry" formControlName="country"
+                [items]="countries" bindLabel="countryName">
+              </ng-select>
+              <div *ngIf="supplierInformationForm.get('country')?.touched" class="error-msg-common text-danger">
+                <div *ngIf="supplierInformationForm.get('country').errors?.required">
+                  * required field
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-4">
+          <div class="form-group row">
+            <label for="" id="editSupplierLabelState" class="col-sm-3 col-form-label pr-0 text-right">State / Province<span class="text-danger">*</span></label>
+            <div class="col-sm-9">
+              <ng-select  [items]="states" [(ngModel)]="stateSelected" id="editSupplierState" formControlName="state" placeholder="-- Select --" bindLabel="provinceName">
+              </ng-select>
+              <div *ngIf="supplierInformationForm.get('state')?.touched" class="error-msg-common text-danger">
+                <div *ngIf="supplierInformationForm.get('state').errors?.required">
+                  * required field
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="form-group row">
+              <label for="" id="editSupplierLabelPinCode" class="col-sm-3 col-form-label pr-0 text-right">Pin Code <span
+                  class="text-danger">*</span></label>
+              <div class="col-sm-9">
+
+                <input type="text" class="form-control" formControlName="zipCode" placeholder="Pin Code" id="editSupplierPinCode">
+                <div *ngIf="supplierInformationForm.get('zipCode')?.touched" class="error-msg-common text-danger">
+                  <div *ngIf="supplierInformationForm.get('zipCode').errors?.required">
+                    * required field
+                  </div>
+                </div>
+                <div *ngIf="supplierInformationForm.get('zipCode')?.invalid" class="error-msg-common text-danger">
+                  <div
+                    *ngIf="!supplierInformationForm.get('zipCode').errors?.required && supplierInformationForm?.get('zipCode')?.errors">
+                    * not a valid input
+                  </div>
+                </div>
+              </div>
+            </div>
+        </div>
+      </div>
+
+      <h6 class="border border-primary p-2 mt-3 mb-4 bg-light text-white">Terms and Conditions</h6>
+
+      <div class="row">
+        <div class="col-lg-4">
+          <div class="form-group row">
+            <label for="" id="editSupplierLabelTerms" class="col-sm-3 col-form-label pr-0 text-right">Terms </label>
+            <div class="col-sm-9">
+              <input type="text" id="editSupplierTerms" class="form-control" formControlName="paymentTerms" placeholder="Payment Terms">
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="" class="col-sm-3 col-form-label pr-0 text-right">Pay Type</label>
+            <div class="col-sm-9">
+              <ng-select  placeholder="Select Payment Type" [items]="paymentTypes"
+                bindLabel="type" [(ngModel)]="selectedPaymentType" formControlName="paymentType">
+              </ng-select>
+            </div>
+          </div>
+
+        </div>
+        <div class="col-lg-4">
+          <div class="form-group row">
+            <label for="" id="editSupplierLabelRetCredit" class="col-sm-3 col-form-label pr-0 text-right">Ret Credit <span
+                class="text-danger">*</span></label>
+            <div class="col-sm-9">
+              <ng-select [items]="returnCreditTypes" id="editSupplierRetCredit" placeholder="-- Select --" formControlName="returnCreditTypeId" [(ngModel)]="returnCreditTypeSelected"
+                bindLabel="type">
+              </ng-select>
+              <div *ngIf="supplierInformationForm.get('returnCreditTypeId')?.touched"
+                class="error-msg-common text-danger">
+                <div *ngIf="supplierInformationForm.get('returnCreditTypeId').errors?.required">
+                  * required field
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="" id="editSupplierLabelCredit" class="col-sm-3 col-form-label pr-0 text-right">Credit </label>
+            <div class="col-sm-9">
+              <input type="text" id="editSupplierCredit" class="form-control" formControlName="paymentCreditNetDays" placeholder="Credit Net Days">
+            </div>
+          </div>
+          <!-- <div class="form-group row">
+            <label for="" id="editSupplierLabelInterest" class="col-sm-3 col-form-label pr-0 text-right">Interest
+            </label>
+            <div class="col-sm-9">
+              <input type="text" class="form-control" id="editSupplierInterest" formControlName="latePaymentInterest"
+                placeholder="Late Pay Interest">
+            </div>
+          </div> -->
+        </div>
+        <div class="col-lg-4">
+            <div class="form-group row">
+                <div class="col-sm-12 justify-content-end d-flex pt-3">
+                  <div class="d-inline mr-3">
+                    <label id="addSupplierLabelExpiryReturns" class="mb-0">Expiry Returns</label>
+                  </div>
+                  <div class="custom-control d-inline custom-radio mr-3">
+                    <input name="acceptExpireReturns" type="radio" class="custom-control-input"
+                      formControlName="acceptExpireReturns" value="Y" id="yes">
+                    <label id="addSupplierLabelExpiryReturnsYes" class="custom-control-label" for="yes">Yes</label>
+                  </div>
+                  <div class="custom-control d-inline custom-radio">
+                    <input name="acceptExpireReturns" type="radio" class="custom-control-input"
+                      formControlName="acceptExpireReturns" value="N" id="no">
+                    <label id="addSupplierLabelExpiryReturnsNo" class="custom-control-label" for="no">No</label>
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-group row">
+                <div class="col-sm-12 justify-content-end d-flex pt-2">
+                  <div class="d-inline mr-3">
+                    <label id="addSupplierLabelStatus" class="mb-0">Status</label>
+                  </div>
+                  <div class="custom-control d-inline custom-radio mr-3">
+                    <input name="activeS" type="radio" value="Y" class="custom-control-input" formControlName="activeS"
+                      id="activate">
+                    <label id="addSupplierLabelActivate" class="custom-control-label" for="activate">Activate</label>
+                  </div>
+                  <div class="custom-control d-inline custom-radio">
+                    <input name="activeS" type="radio" value="N" class="custom-control-input" formControlName="activeS" id="deactivate">
+                    <label id="addSupplierLabelDeActivate" class="custom-control-label" for="deactivate">De Activate</label>
+                  </div>
+                </div>
+              </div>
+        </div>
+      </div>
+
+      <h6 class="border border-primary p-2 mt-3 mb-4 bg-light text-white">Bank Details</h6>
+
+  <div class="row">
+    <div class="col-lg-4">
+      <div class="form-group row">
+        <label for="" id="addSupplierLabelTerms" class="col-sm-3 col-form-label pr-0 text-right">Bank Name </label>
+        <div class="col-sm-9">
+          <input type="text" class="form-control" id="addSupplierTerms" formControlName="bankName"
+            placeholder="Bank Name">
+        </div>
+      </div>
+
+    </div>
+    <div class="col-lg-4">
+    <div class="form-group row">
+        <label for="" id="addSupplierLabelCredit" class="col-sm-3 col-form-label pr-0 text-right">Acc No </label>
+        <div class="col-sm-9">
+          <input type="text" id="addSupplierCredit" class="form-control" formControlName="accountNumber" placeholder="Account Number">
+          <div *ngIf="supplierInformationForm.get('accountNumber')?.invalid" class="error-msg-common text-danger">
+              <div
+                *ngIf="!supplierInformationForm.get('accountNumber').errors?.required && supplierInformationForm?.get('accountNumber')?.errors">
+                * not a valid input
+              </div>
+            </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-4">
+      <div class="form-group row">
+        <label for="" id="addSupplierLabelRetCredit" class="col-sm-3 col-form-label pr-0 text-right">IFSC code </label>
+        <div class="col-sm-9">
+
+            <input type="text" id="addSupplierCredit" class="form-control" formControlName="ifscCode" placeholder="IFSC Code">
+            <div *ngIf="supplierInformationForm.get('ifscCode')?.invalid" class="error-msg-common text-danger">
+              <div
+                *ngIf="!supplierInformationForm.get('ifscCode').errors?.required && supplierInformationForm?.get('ifscCode')?.errors">
+                * not a valid input
+              </div>
+            </div>
+
+        </div>
+      </div>
+
+    </div>
+    <div class="col-lg-4">
+
+
+      <div class="form-group row">
+          <label for="" id="addSupplierLabelInterest" class="col-sm-3 col-form-label pr-0 text-right">MICR Code
+          </label>
+          <div class="col-sm-9">
+            <input type="text" class="form-control" id="addSupplierInterest" formControlName="micrCode"
+              placeholder="MICR Code">
+              <div *ngIf="supplierInformationForm.get('micrCode')?.invalid" class="error-msg-common text-danger">
+                <div
+                  *ngIf="!supplierInformationForm.get('micrCode').errors?.required && supplierInformationForm?.get('micrCode')?.errors">
+                  * not a valid input
+                </div>
+              </div>
+          </div>
+        </div>
+    </div>
+  </div>
+
+      <h6 class="border border-primary p-2 mt-3 mb-4 bg-light text-white">Order Types and Others</h6>
+
+      <div class="row">
+        <div class="col-lg-6">
+            <div class="form-group row">
+                <div class="col-sm-12 justify-content-end d-flex">
+                  <div class="d-inline mr-3">
+                    <label id="addSupplierLabelPhoneOrders" class="mb-0">Allow Phone Orders</label>
+                  </div>
+                  <div class="custom-control d-inline custom-radio mr-3">
+                    <input name="allowPhoneOrders" type="radio" formControlName="allowPhoneOrders" class="custom-control-input"
+                      value="Y" id="allowYes">
+                    <label id="addSupplierLabelPhoneOrdersYes" class="custom-control-label" for="allowYes">Yes</label>
+                  </div>
+                  <div class="custom-control d-inline custom-radio">
+                    <input name="allowPhoneOrders" type="radio" formControlName="allowPhoneOrders" class="custom-control-input"
+                      value="N" id="allowNo">
+                    <label id="addSupplierLabelPhoneOrdersNo" class="custom-control-label" for="allowNo">No</label>
+                  </div>
+                </div>
+              </div>
+              <div class="form-group row">
+                  <div class="col-sm-12 justify-content-end d-flex">
+                    <div class="d-inline mr-3">
+                      <label id="addSupplierLabelOnlineOrders" class="mb-0">Allow Online Orders</label>
+                    </div>
+                    <div class="custom-control d-inline custom-radio mr-3">
+                      <input name="allowOnlineOrders" type="radio" formControlName="allowOnlineOrders"
+                        class="custom-control-input" value="Y" id="onlineYes">
+                      <label id="addSupplierLabelOnlineOrdersYes" class="custom-control-label" for="onlineYes">Yes</label>
+                    </div>
+                    <div class="custom-control d-inline custom-radio">
+                      <input name="allowOnlineOrders" type="radio" formControlName="allowOnlineOrders"
+                        class="custom-control-input" value="N" id="onlineNo">
+                      <label id="addSupplierLabelOnlineOrdersNo" class="custom-control-label" for="onlineNo">No</label>
+                    </div>
+                  </div>
+                </div>
+
+        </div>
+        <div class="col-lg-6">
+
+            <div class="form-group row">
+                <div class="col-sm-12 justify-content-end d-flex">
+                  <div class="d-inline mr-3">
+                    <label id="addSupplierLabelManualOrders" class="mb-0">Allow Manual Orders</label>
+                  </div>
+                  <div class="custom-control d-inline custom-radio mr-3">
+                    <input name="allowManualOrders" type="radio" formControlName="allowManualOrders"
+                      class="custom-control-input" value="Y" id="manualYes">
+                    <label id="addSupplierLabelManualOrdersYes" class="custom-control-label" for="manualYes">Yes</label>
+                  </div>
+                  <div class="custom-control d-inline custom-radio">
+                    <input name="allowManualOrders" type="radio" formControlName="allowManualOrders"
+                      class="custom-control-input" value="N" id="manualNo">
+                    <label id="addSupplierLabelManualOrdersNo" class="custom-control-label" for="manualNo">No</label>
+                  </div>
+                </div>
+              </div>
+              <div class="form-group row">
+                  <div class="col-sm-12 justify-content-end d-flex">
+                    <div class="d-inline mr-3">
+                      <label id="addSupplierLabelDamaged" class="mb-0">Accept Damaged Returns</label>
+                    </div>
+                    <div class="custom-control d-inline custom-radio mr-3">
+                      <input name="acceptDamagedReturns" type="radio" formControlName="acceptDamagedReturns"
+                        class="custom-control-input" value="Y" id="acceptYes">
+                      <label id="addSupplierLabelDamagedYes" class="custom-control-label" for="acceptYes">Yes</label>
+                    </div>
+                    <div class="custom-control d-inline custom-radio">
+                      <input name="acceptDamagedReturns" type="radio" formControlName="acceptDamagedReturns"
+                        class="custom-control-input" value="N" id="acceptNo">
+                      <label id="addSupplierLabelDamagedNo" class="custom-control-label" for="acceptNo">No</label>
+                    </div>
+                  </div>
+                </div>
+
+        </div>
+      </div>
+
+      <div class="row pt-4">
+        <div class="col-lg-6">
+            <div class="form-group row">
+                <div class="col-sm-12 justify-content-end d-flex">
+                  <div class="d-inline mr-3">
+                    <label id="addSupplierLabelGood" class="mb-0">Accept Good Returns</label>
+                  </div>
+                  <div class="custom-control d-inline custom-radio mr-3">
+                    <input name="acceptGoodReturns" type="radio" formControlName="acceptGoodReturns"
+                      class="custom-control-input" value="Y" id="goodYes">
+                    <label id="addSupplierLabelGoodYes" class="custom-control-label" for="goodYes">Yes</label>
+                  </div>
+                  <div class="custom-control d-inline custom-radio">
+                    <input name="acceptGoodReturns" type="radio" formControlName="acceptGoodReturns"
+                      class="custom-control-input" value="N" id="goodNo">
+                    <label id="addSupplierLabelGoodNo" class="custom-control-label" for="goodNo">No</label>
+                  </div>
+                </div>
+              </div>
+              <div class="form-group row">
+                  <div class="col-sm-12 justify-content-end d-flex">
+                    <div class="d-inline mr-3">
+                      <label id="addSupplierLabelAlsoManufacturer" class="mb-0">Supplier also Manufacturer</label>
+                    </div>
+                    <div class="custom-control d-inline custom-radio mr-3">
+                      <input name="supplierAlsoManufacturer" type="radio" formControlName="supplierAlsoManufacturer"
+                        class="custom-control-input" value="Y" id="supplierYes">
+                      <label id="addSupplierLabelAlsoManufacturerYes" class="custom-control-label" for="supplierYes">Yes</label>
+                    </div>
+                    <div class="custom-control d-inline custom-radio">
+                      <input name="supplierAlsoManufacturer" type="radio" formControlName="supplierAlsoManufacturer"
+                        class="custom-control-input" value="N" id="supplierNo">
+                      <label id="addSupplierLabelAlsoManufacturerNo" class="custom-control-label" for="supplierNo">No</label>
+                    </div>
+                  </div>
+                </div>
+
+        </div>
+        <div class="col-lg-6">
+            <div class="form-group row">
+                <div class="col-sm-12 justify-content-end d-flex pt-3">
+                  <div class="d-inline mr-3">
+                    <label id="addSupplierLabelSupplies" class="mb-0">Supplies</label>
+                  </div>
+                  <div class="custom-control d-inline custom-radio mr-3">
+                    <input name="suppliesMedicalNonMedicalBoth" type="radio" class="custom-control-input"
+                      formControlName="suppliesMedicalNonMedicalBoth" value="M" id="medical">
+                    <label id="addSupplierLabelSuppliesMedical" class="custom-control-label" for="medical">Medical</label>
+                  </div>
+                  <div class="custom-control d-inline custom-radio mr-3">
+                    <input name="suppliesMedicalNonMedicalBoth" type="radio" class="custom-control-input"
+                      formControlName="suppliesMedicalNonMedicalBoth" value="N" id="non-medical">
+                    <label id="addSupplierLabelSuppliesNonMedical" class="custom-control-label" for="non-medical">Non Medical</label>
+                  </div>
+                  <div class="custom-control d-inline custom-radio">
+                    <input name="suppliesMedicalNonMedicalBoth" type="radio" class="custom-control-input"
+                      formControlName="suppliesMedicalNonMedicalBoth" value="B" id="both">
+                    <label id="addSupplierLabelSuppliesBoth" class="custom-control-label" for="both">Both</label>
+                  </div>
+                </div>
+              </div>
+        </div>
+      </div>
+
+      <div class="row pt-4">
+        <div class="col mb-3 pt-2 text-center">
+          <button id="editSupplierUpdatebtn" (click)="onSubmit()" [disabled]="checkFormDisability()" class="btn btn-primary px-4 mu-edit-save">Update</button>
+         <input type="reset" value="Cancel" (click)="reset();supplierInformationForm.controls.activeS.setValue('Y')" class="btn btn-secondary px-4 ml-3" id="mu-adduser-cancel" >
+    </div>
+      </div>
+
+    </form>
+  </div>
+  <ng4-loading-spinner [loadingText]="'Please wait...'" [timeout]="400000000"> </ng4-loading-spinner>

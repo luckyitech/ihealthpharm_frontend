@@ -1,0 +1,53 @@
+<div class="d-flex justify-content-center h-100">
+
+    <div class="card">
+        <div class="card-header text-center">
+            <img src="../../assets/images/Docpharm.png" class="img-fluid" alt="">
+        </div>
+        <div class="card-body pb-0">
+
+            <form #loginInformation="ngForm" [formGroup]="loginInformationForm" (keydown.enter)="$event.preventDefault()"
+            (ngSubmit)="onSubmit()" class="login-form">
+                <div class="input-group form-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text bg-secondary"><i class="fas fa-envelope text-white"></i></span>
+                    </div>
+                    <input id="loginUserName" type="text" class="form-control" placeholder="Email Address" formControlName="userName">
+
+                </div>
+                <div class="input-group form-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text bg-secondary"><i class="fas fa-key text-white"></i></span>
+                    </div>
+                    <input id="loginPassword" type="password" class="form-control" placeholder="Password" formControlName="password">
+                </div>
+                <div class="form-group text-center">
+                    <input id="loginBtn" type="submit" value="LOGIN" class="btn btn-secondary px-5"
+                    [disabled]="checkFormDisability()"
+                    >
+                </div>
+            </form>
+
+            <form class="forgot-password-form" style="display: none;">
+                <div class="input-group form-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text bg-secondary"><i class="fas fa-envelope text-white"></i></span>
+                    </div>
+                    <input id="loginEmailAddress" type="text" class="form-control" placeholder="Email Address">
+
+                </div>
+                <div class="form-group text-center">
+                    <input id="loginresetLink" type="submit" value="REQUEST RESET LINK" class="btn btn-secondary px-5">
+                </div>
+            </form>
+
+        </div>
+        <div class="card-footer pb-4">
+            <div class="d-flex justify-content-center">
+                <a href="#" id="forgotYourPassword" class="forgot-password-link">Forgot your password?</a>
+                <a href="#" id="backToLogin" class="login-link" style="display: none;">Back to Login</a>
+            </div>
+        </div>
+    </div>
+</div>
+<ng4-loading-spinner [loadingText]="'Please wait...'" [timeout]="400000000"> </ng4-loading-spinner>

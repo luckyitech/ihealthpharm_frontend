@@ -1,0 +1,167 @@
+<form #customerMemForm="ngForm" [formGroup]="customerMembershipInformationForm"
+                (keydown.enter)="$event.preventDefault()" (ngSubmit)="onCustomerMemberShipSubmit()"
+                class="full-height">
+
+  <h6 class="border border-primary p-2 mt-3 mb-4 bg-light text-white">Generic Details</h6>
+
+  <div class="row">
+    <div class="col-lg-4">
+      <div class="form-group row">
+        <label for="" class="col-sm-3 col-form-label pr-0 text-right" id="addCustomerLabelCard">Mem Card <span
+            class="text-danger">*</span></label>
+        <div class="col-sm-9">
+          <ng-select [(ngModel)]="selectedMembership" (change)="onMembershipSelected($event)" (change)="generateMembershipCardNumber()"  placeholder="-- select --" 
+          formControlName="membershipCardName" [items]="memberships" bindLabel="membershipCardName" id="addCustomerInputCard">
+          </ng-select>
+          <div *ngIf="customerMembershipInformationForm.get('membershipCardName')?.touched"
+          class="error-msg-common text-danger">
+          <div *ngIf="customerMembershipInformationForm.get('membershipCardName').errors?.required">
+            * required field
+          </div>
+        </div>
+        </div>
+      </div>
+      <div class="form-group row">
+          <label for="" class="col-sm-3 col-form-label pr-0 text-right" id="addCustomerLabelName">Name <span
+            class="text-danger">*</span></label>
+          <div class="col-sm-9">
+         <ng-select id="addCustomerInputName" (change)="generateMembershipCardNumber()" 
+         (keyup)="onCustomerNameKeyUp($event)" [(ngModel)]="selectedCustomer"   placeholder="-- select --" 
+           formControlName="customerName" [items]="customer" bindLabel="customerName" >
+            </ng-select>
+            <div *ngIf="customerMembershipInformationForm.get('customerName')?.touched"
+            class="error-msg-common text-danger">
+            <div *ngIf="customerMembershipInformationForm.get('customerName').errors?.required">
+              * required field
+            </div>
+          </div>
+          </div>
+        </div>
+      <div class="form-group row">
+        <label id="addMembershipLabelCard"for="" class="col-sm-3 col-form-label pr-0 text-right" id="addCustomerLabelCardNumber">Mem Card No <span
+            class="text-danger">*</span></label>
+        <div class="col-sm-9">
+          <input disabled type="text" class="form-control"  id="addCustomerInputCardNumber" placeholder="Membership Card Number" formControlName="membershipCardNumber">
+          <div *ngIf="customerMembershipInformationForm.get('membershipCardNumber')?.touched"
+          class="error-msg-common text-danger">
+          <div *ngIf="customerMembershipInformationForm.get('membershipCardNumber').errors?.required">
+            * required field
+          </div>
+        </div>
+        </div>
+      </div>
+     
+      <div class="form-group row">
+        <label for="" class="col-sm-3 col-form-label pr-0 text-right" id="addCustomerLabelStartDate">Start Date </label>
+        <div class="col-sm-9">
+          <input formControlName="membershipStartDate" (ngModelChange)="modelChanged($event)" (change)="selectedStartDate($event)" type="date" class="form-control" id="addCustomerInputStartDate" placeholder="">
+        </div>
+      </div>
+      <div class="form-group row">
+        <label for="" class="col-sm-3 col-form-label pr-0 text-right" id="addCustomerLabelEndDate">End Date </label>
+        <div class="col-sm-9">
+          <input formControlName="membershipEndDate" (ngModelChange)="modelChanged($event)" (change)="selectedStartDate($event)" type="date" class="form-control" id="addCustomerInputEndDate" placeholder="">
+          <div class="error-msg-common text-danger"
+          *ngIf="customerMembershipInformationForm.get('membershipEndDate').errors &&
+          customerMembershipInformationForm.get('membershipEndDate').dirty &&
+          customerMembershipInformationForm.get('membershipEndDate').errors.invalidDob">
+                not valid date
+         </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-4">
+      <div class="form-group row">
+        <label for="" class="col-sm-3 col-form-label pr-0 text-right" id="addCustomerLabelDuration">Duration In Months </label>
+        <div class="col-sm-9">
+          <input formControlName="membershipDurationInMonths" type="text" class="form-control" id="addCustomerInputDuration" placeholder="Duration" disabled>
+        </div>
+      </div>
+      <div class="form-group row">
+        <label for="" class="col-sm-3 col-form-label pr-0 text-right" id="addCustomerLabelDisc">Disc %</label>
+        <div class="col-sm-9">
+
+          <input formControlName="membershipDiscountPercentage" type="text" class="form-control" 
+          id="addCustomerInputDisc" placeholder="Discount %" >
+          <div *ngIf="customerMembershipInformationForm.get('membershipDiscountPercentage')?.invalid" class="error-msg-common text-danger">
+            <div
+              *ngIf="!customerMembershipInformationForm.get('membershipDiscountPercentage').errors?.required && customerMembershipInformationForm?.get('membershipDiscountPercentage')?.errors">
+              * not a valid input
+            </div>
+          </div>
+           
+
+        </div>
+      </div>
+      <div class="form-group row">
+        <label for="" class="col-sm-3 col-form-label pr-0 text-right" id="addCustomerLabelBonus">Bonus % </label>
+        <div class="col-sm-9">
+
+          <input formControlName="membershipBonusPercentage" type="text" class="form-control" id="addCustomerInputBonus" 
+          placeholder="Bonus %" >
+          <div *ngIf="customerMembershipInformationForm.get('membershipBonusPercentage')?.invalid" class="error-msg-common text-danger">
+              <div
+                *ngIf="!customerMembershipInformationForm.get('membershipBonusPercentage').errors?.required && customerMembershipInformationForm?.get('membershipBonusPercentage')?.errors">
+                * not a valid input
+              </div>
+            </div>
+
+        </div>
+      </div>
+
+      <div class="form-group row">
+        <div class="col-sm-10 justify-content-end d-flex pt-2">
+          <div class="d-inline mr-3">
+            <label  class="mb-0" id="addCustomerLabelStatus">Status</label>
+          </div>
+          <div class="custom-control d-inline custom-radio mr-3">
+            <input name="activeS" type="radio" value="Y" class="custom-control-input" formControlName="activeS" id="activate">
+            <label  class="custom-control-label" for="activate">Activate</label>
+          </div>
+          <div class="custom-control d-inline custom-radio">
+            <input name="activeS" type="radio" value="N" class="custom-control-input" formControlName="activeS" id="deactivate">
+            <label  class="custom-control-label" for="deactivate">De Activate</label>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-4">
+      <div class="form-group row">
+        <label for="" class="col-sm-3 col-form-label pr-0 text-right" id="addCustomerLabelAmount">Amount </label>
+        <div class="col-sm-9">
+          <input formControlName="membershipCreditAmount" type="text" class="form-control" id="addCustomerInputAmount" placeholder="Credit Amount">
+          <div *ngIf="customerMembershipInformationForm.get('membershipCreditAmount')?.invalid"
+          class="error-msg-common text-danger">
+          <div *ngIf="!customerMembershipInformationForm.get('membershipCreditAmount').errors?.required && customerMembershipInformationForm?.get('membershipCreditAmount')?.errors">
+            * not a valid input
+          </div>
+        </div>
+        </div>
+      </div>
+      <div class="form-group row">
+        <label for="" class="col-sm-3 col-form-label pr-0 text-right" id="addCustomerLabelDays">Days </label>
+        <div class="col-sm-9">
+          <input formControlName="membershipCreditDays" type="text" class="form-control" 
+          id="addCustomerInputDays" placeholder="Credit Days">
+          <div *ngIf="customerMembershipInformationForm.get('membershipCreditDays')?.invalid" class="error-msg-common text-danger">
+              <div
+                *ngIf="!customerMembershipInformationForm.get('membershipCreditDays').errors?.required && customerMembershipInformationForm?.get('membershipCreditDays')?.errors">
+                * not a valid input
+              </div>
+            </div>
+
+        </div>
+      </div>
+    
+    </div>
+  </div>
+
+  <div class="row pt-4">
+    <div class="col mb-3 pt-2 text-center">
+      <button [disabled]=" checkCustomerMemberShipFormDisability()" type="submit" class="btn btn-primary px-4"  id="mu-adduser-save">Save</button>
+      <button  type="reset" class="btn btn-secondary px-4 ml-3" id="mu-adduser-cancel">Cancel</button>
+    </div>
+  </div>
+
+</form>
+<ng4-loading-spinner [loadingText]="'Please wait...'" [timeout]="400000000"> </ng4-loading-spinner>

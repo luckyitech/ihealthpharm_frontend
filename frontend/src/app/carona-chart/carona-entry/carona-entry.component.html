@@ -1,0 +1,19 @@
+    <div>
+      <h1 style="background: peachpuff;
+      font-style: oblique;
+      font-family: auto;
+      margin-top: 30px;
+  ">List Out The CORONA VIRUS Entry Here.</h1>
+    </div>
+
+      <div class="row" style="margin-top:40px;">
+      
+          <ag-grid-angular style="width: 1100px; height: 300px;" class="ag-theme-fresh" [gridOptions]="caronaGridOptions"
+            id="stockTakeGrid" [rowData]="caronaItemArray" [columnDefs]="columnDefs" 
+             (cell-clicked)="onCellClicked($event)">
+          </ag-grid-angular>
+    
+      </div>
+     
+    
+

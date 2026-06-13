@@ -1,0 +1,1091 @@
+<ul class="nav nav-pills mb-3 border-bottom border-secondary" id="pills-tab" role="tablist">
+  <li class="nav-item">
+    <a class="nav-link nav-link-1 active" id="" data-toggle="pill" href="#pills-new" role="tab"
+      aria-controls="pills-home" (click)="tab='sales'" aria-selected="true" (click)="onSalesBillingClick()">Sales Billing</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" id="" data-toggle="pill" href="#pills-history" role="tab" (click)="tab='history'"
+      aria-selected="false">Sales
+      History</a>
+  </li>
+  <li class="ml-auto">
+    <span class="badge badge-info text-white px-5 py-3"
+      style="font-size: 15px;">{{selectedPaymentStatus['name']}}</span>
+  </li>
+</ul>
+
+<div class="tab-content" [hidden]="tab != 'sales'">
+  <div class="tab-pane fade show active" id="pills-new" role="tabpanel" aria-labelledby="pills-home-tab">
+    <form class="" #salesbillingform="ngForm" [formGroup]="salesBillingForm" (keydown.enter)="$event.preventDefault()"
+      (ngSubmit)="onSubmit()">
+      <h6 class="border border-primary p-2 mt-3 mb-4 bg-light text-white">
+        Sale Transaction
+      </h6>
+
+      <div class="form-group row">
+        <div class="col-sm-8 d-flex">
+          <div class="d-inline mr-3">
+            <label class="mb-0" id="paymentType">Payment Type<span class="text-danger">*</span></label>
+          </div>
+          <div class="custom-control d-inline custom-checkbox mr-3">
+            <input name="payment-type" type="checkbox" value="cash" (click)="cashSelected($event)"
+              class="custom-control-input" id="cash" [checked]="cashCheckbox" />
+            <label class="custom-control-label text-success" for="cash"></label>Cash
+          </div>
+          <div class="custom-control d-inline custom-checkbox mr-3">
+            <input name="payment-type" type="checkbox" value="credit" (click)="creditSelected($event)"
+              class="custom-control-input" id="credit" [checked]="creditCheckbox" />
+            <label class="custom-control-label text-danger" for="credit">Credit</label>
+          </div>
+          <div class="custom-control d-inline custom-checkbox mr-3">
+            <input name="payment-type" type="checkbox" value="insurence" (click)="insurenceSelected($event)"
+              class="custom-control-input" id="insurance" />
+            <label class="custom-control-label text-light" for="insurance">Insurance</label>
+          </div>
+          <div class="custom-control d-inline custom-checkbox mr-3">
+            <input name="payment-type" type="checkbox" value="Membership" (click)="membershipSelected($event)"
+              class="custom-control-input" id="membership" />
+            <label class="custom-control-label text-light" for="membership">Membership</label>
+          </div>
+          <div class="custom-control d-inline custom-checkbox mr-3">
+            <input name="payment-type" type="checkbox" value="m-pesa" (click)="mPesaSelected($event)"
+              class="custom-control-input" id="m-pesa" [checked]="mPesaCheckbox" />
+            <label class="custom-control-label text-warning" for="m-pesa">M-Pesa</label>
+          </div>
+          <div class="custom-control d-inline custom-checkbox mr-3">
+            <input name="payment-type" type="checkbox" value="card" (click)="cardSelected($event)"
+              class="custom-control-input" id="card" [checked]="card" />
+            <label class="custom-control-label text-dark" for="card">Card</label>
+          </div>
+
+
+          <div class="custom-control d-inline custom-checkbox mr-3">
+            <input name="payment-type" type="checkbox" value="cheque" (click)="chequeSelected($event)"
+              class="custom-control-input" id="cheque" [checked]="cheque" />
+            <label class="custom-control-label text-info" for="cheque">Cheque</label>
+          </div>
+
+          <div *ngIf="showCreditNotePayType" class="custom-control d-inline custom-checkbox">
+            <input name="payment-type" type="checkbox" value="credit-note" (click)="creditNoteSelected($event)"
+              class="custom-control-input" id="credit-note" [checked]="creditNoteCheckBox" />
+            <label class="custom-control-label text-info" for="credit-note">Credit Note</label>
+          </div>
+        </div>
+        <div class="col-lg-4 mb-0">
+          <!--  <div class="custom-control d-inline custom-checkbox">
+            <input name="payment-type" type="checkbox" value="dummyBill" (click)="dummyBillSelected($event)"
+              class="custom-control-input" id="dummyBill" />
+            <label class="custom-control-label text-light" for="dummyBill">Dummy Bill</label>
+          </div> -->
+          <a class="ml-4" data-toggle="modal" data-target="#myModal-id" style="cursor: pointer;">Customer</a> |
+          <a class="ml-2" data-toggle="modal" data-target="#myModal-id1" style="cursor: pointer;">Provider</a>
+
+          |<div *ngIf="showCorporateCustomer" class="ml-2 custom-control d-inline custom-checkbox">
+            <input type="checkbox" class="custom-control-input" id="corporate" name="corporate-type" value="corporate"
+              (click)="corporateSelected($event)" [checked]="corporate">
+            <label class="custom-control-label text-info" for="corporate">Corporate</label>
+          </div>
+          |<div *ngIf="showStaff" class="ml-2 custom-control d-inline custom-checkbox">
+            <input type="checkbox" class="custom-control-input" id="staff" name="staff-type" value="staff"
+              (click)="staffSelected($event)" [checked]="staff">
+            <label class="custom-control-label text-info" for="staff">Staff</label>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-lg-4">
+          <div class="form-group row">
+            <label for="" class="col-sm-4 col-form-label px-0 text-right">Bill Number</label>
+            <div class="col-sm-8">
+              <input type="text" class="form-control" id="" placeholder="Bill Number" [(ngModel)]="billNumber"
+                [ngModelOptions]="{standalone:true}" disabled />
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-8">
+          <div class="form-group row">
+            <label for="" class="col-sm-2 col-form-label px-0 text-right">Customer <span
+                class="text-danger">*</span></label>
+            <div class="col-sm-10">
+              <ng-select [items]="customersArray" bindLabel="customerName" (change)="customerSelected($event)"
+                formControlName="customerModel" placeholder="-- Select --" [(ngModel)]="selectedCustomer"
+                (search)="searchCustomer($event)" (change)="customerInsurenceCheck()"
+                [disabled]="(editScreen && selectedPaymentStatus['name'] == 'Paid' || selectedPaymentStatus['name'] == 'Cancel')">
+              </ng-select>
+              <div *ngIf="salesBillingForm.get('customerModel')?.touched" class="error-msg-common text-danger">
+                <div *ngIf="salesBillingForm.get('customerModel').errors?.required">
+                  * required field
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-lg-4">
+          <div class="form-group row">
+            <label for="" class="col-sm-4 col-form-label px-0 text-right">Bill Date</label>
+            <div class="col-sm-8">
+              <input type="date" class="form-control" id="" placeholder="" formControlName="billDate" disabled />
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="" class="col-sm-4 col-form-label px-0 text-right">Prev Bill No</label>
+            <div class="col-sm-8">
+              <ng-select [items]="prevBillCodeArray" placeholder="-- Select --"
+                (keyup.enter)="searchPreviousBillCode($event)" (click)="getPreviousBillCodes()"
+                formControlName="previousBillCode" [(ngModel)]="selectedPrevBillNo"
+                [disabled]="(editScreen && selectedPaymentStatus['name'] == 'Paid' || selectedPaymentStatus['name'] == 'Cancel')">
+              </ng-select>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-4">
+
+          <div class="form-group row">
+            <label for="" class="col-sm-4 col-form-label px-0 text-right">Phone</label>
+            <div class="col-sm-8">
+              <input type="text" class="form-control" id="" placeholder="Phone" [(ngModel)]="customerPhoneNumber"
+                [ngModelOptions]="{standalone:true}" (keyup)="searchCustomerByPhno()" />
+            </div>
+          </div>
+
+          <div class="form-group row">
+            <label for="" class="col-sm-4 col-form-label px-0 text-right">Hospital Name</label>
+            <div class="col-sm-8">
+              <ng-select [items]="hospitalsArray" placeholder="-- Select --" bindLabel="hospitalName"
+                (search)="searchHospital($event)" formControlName="hospitalModel" [(ngModel)]="selectedHospital"
+                [disabled]="(editScreen && selectedPaymentStatus['name'] == 'Paid' || selectedPaymentStatus['name'] == 'Cancel')">
+              </ng-select>
+
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-4">
+          <div class="form-group row">
+            <label for="" class="col-sm-4 col-form-label px-0 text-right">Provider</label>
+            <div class="col-sm-8">
+              <ng-select [items]="doctorsArray" placeholder="-- Select --" bindLabel="firstName"
+                (change)="doctorSelected($event)" formControlName="providerModel" [(ngModel)]="selectedDoctor"
+                (search)="searchProviders($event)"
+                [disabled]="(editScreen && selectedPaymentStatus['name'] == 'Paid' || selectedPaymentStatus['name'] == 'Cancel')">
+              </ng-select>
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="" class="col-sm-4 col-form-label px-0 text-right">Speciality</label>
+            <div class="col-sm-8">
+              <input type="text" class="form-control" id="" placeholder="Speciality" value="{{speciality}}" disabled />
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <form class="" #prescriptionform="ngForm" [formGroup]="prescriptionForm"
+        (keydown.enter)="$event.preventDefault()">
+        <div class="form-group row">
+          <div class="col-sm-4">
+            <div class="form-group row">
+              <label for="" class="col-sm-4 col-form-label px-0 text-right">Prescription Date</label>
+              <div class="col-sm-8">
+                <input type="date" class="form-control" id="" placeholder="" formControlName="prescriptionDate"
+                  (change)="getPresciption()" />
+              </div>
+            </div>
+          </div>
+          <div class="col-sm-4">
+            <div class="form-group row">
+              <label for="" class="col-sm-4 col-form-label px-0 text-right">Prescription Image</label>
+              <div class="col-sm-8 pt-1">
+                <input type="file" class="form-control-file" id="prescriptionImage" accept="image/*"
+                  title="select prescription" (change)="selectPrescriptionImage($event)"
+                  [disabled]="(editScreen && selectedPaymentStatus['name'] == 'Paid' || selectedPaymentStatus['name'] == 'Cancel')" />
+              </div>
+            </div>
+          </div>
+          <div class="col-sm-4">
+            <div class="form-group row">
+              <img [src]="'data:image/JPEG;base64,' + url" alt="Place image title" *ngIf="isImageLoading"
+                style="width: 50px;height: 50px;border:1px solid green" data-toggle="modal"
+                data-target="#prescriptionImageModel">
+
+            </div>
+          </div>
+
+        </div>
+      </form>
+      <div class="form-group row" [hidden]="!creditCheckbox">
+        <div class="col-sm-4">
+          <div class="form-group row">
+            <label for="" class="col-sm-4 col-form-label px-0 text-right">Credit Limit Left</label>
+            <div class="col-sm-8">
+              <input type="text" class="form-control" id="creditDaysLeft" placeholder="" disabled
+                value="{{masterAccountDetails?.creditLimitLeft}}" />
+            </div>
+          </div>
+        </div>
+        <div class="col-sm-4">
+          <div class="form-group row">
+            <label for="" class="col-sm-4 col-form-label px-0 text-right">Credit Days Left</label>
+            <div class="col-sm-8 pt-1">
+              <input type="text" class="form-control" id="creditDaysLeft" disabled
+                value="{{masterAccountDetails?.creditDaysLeft}}" />
+            </div>
+          </div>
+        </div>
+      </div>
+      <h6 *ngIf="insurenceCheckbox" class="border border-primary p-2 mt-3 mb-4 bg-light text-white">
+        Insurance
+      </h6>
+
+      <div *ngIf="insurenceCheckbox" class="row">
+        <div class="col-lg-6">
+          <div class="form-group row">
+            <label for="" class="col-sm-4 col-form-label px-0 text-right">Number</label>
+            <div class="col-sm-8">
+              <input type="text" class="form-control" id="" placeholder="Number"
+                (keyup.enter)="getInsurenceByPolicyCode($event)" [(ngModel)]="insuranceModel.policyCode"
+                [ngModelOptions]="{standalone:true}"
+                [disabled]="(editScreen && selectedPaymentStatus['name'] == 'Paid' || selectedPaymentStatus['name'] == 'Cancel')" />
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-6">
+          <div class="form-group row">
+            <label for="" class="col-sm-4 col-form-label px-0 text-right">Customer Contribution %</label>
+            <div class="col-sm-8">
+              <input type="text" class="form-control" id="" placeholder="Customer Contribution %"
+                [(ngModel)]="insuranceModel.contributionPercentage" [ngModelOptions]="{standalone:true}"
+                [disabled]="(editScreen && selectedPaymentStatus['name'] == 'Paid' || selectedPaymentStatus['name'] == 'Cancel')" />
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-6">
+          <div class="form-group row">
+            <label for="" class="col-sm-4 col-form-label px-0 text-right">Customer Amount</label>
+            <div class="col-sm-8">
+              <input type="text" class="form-control" id="" placeholder="Customer Amount"
+                [(ngModel)]="insuranceModel.customerConributionAmount" [ngModelOptions]="{standalone:true}"
+                [disabled]="(editScreen && selectedPaymentStatus['name'] == 'Paid' || selectedPaymentStatus['name'] == 'Cancel')" />
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-6">
+          <div class="form-group row">
+            <label for="" class="col-sm-4 col-form-label px-0 text-right">Insurance Contribution %</label>
+            <div class="col-sm-8">
+              <input type="text" class="form-control" id="" placeholder="Insurance Contribution %"
+                [(ngModel)]="insuranceModel.insurenceContributionPercentage" [ngModelOptions]="{standalone:true}"
+                [disabled]="(editScreen && selectedPaymentStatus['name'] == 'Paid' || selectedPaymentStatus['name'] == 'Cancel')" />
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-6">
+          <div class="form-group row">
+            <label for="" class="col-sm-4 col-form-label px-0 text-right">Insurance Contribution Amount</label>
+            <div class="col-sm-8">
+              <input type="text" class="form-control" id="" placeholder="Insurance Contribution Amount"
+                [(ngModel)]="insuranceModel.insurenceContributionAmount" [ngModelOptions]="{standalone:true}"
+                [disabled]="(editScreen && selectedPaymentStatus['name'] == 'Paid' || selectedPaymentStatus['name'] == 'Cancel')" />
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-6">
+          <div class="form-group row">
+            <label for="" class="col-sm-4 col-form-label px-0 text-right">Insurance Person Phone</label>
+            <div class="col-sm-8">
+              <input type="text" class="form-control" id="" placeholder="Insurance Person Phone"
+                [(ngModel)]="insuranceModel.contactNumber" [ngModelOptions]="{standalone:true}"
+                [disabled]="(editScreen && selectedPaymentStatus['name'] == 'Paid' || selectedPaymentStatus['name'] == 'Cancel')" />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <h6 *ngIf="membershipCheckbox" class="border border-primary p-2 mt-3 mb-4 bg-light text-white">
+        Membership Details
+      </h6>
+
+      <div *ngIf="membershipCheckbox" class="row">
+        <div class="col-lg-4">
+          <div class="form-group row">
+            <label for="" class="col-sm-4 col-form-label px-0 text-right">Card Number</label>
+            <div class="col-sm-8">
+              <input type="text" class="form-control" id="" placeholder="Card Number"
+                (keyup.enter)="getMembershipDataByMembershipCardNumber($event)"
+                [(ngModel)]="membershipModel.membershipCardNumber" [ngModelOptions]="{standalone:true}"
+                [disabled]="(editScreen && selectedPaymentStatus['name'] == 'Paid' || selectedPaymentStatus['name'] == 'Cancel')" />
+            </div>
+          </div>
+
+        </div>
+        <div class="col-lg-4">
+          <div class="form-group row">
+            <label for="" class="col-sm-4 col-form-label px-0 text-right">Discount %</label>
+            <div class="col-sm-8">
+              <input type="text" class="form-control" id="" placeholder="Discount %"
+                [(ngModel)]="membershipModel.membershipDiscountPercentage" [ngModelOptions]="{standalone:true}"
+                [disabled]="(editScreen && selectedPaymentStatus['name'] == 'Paid' || selectedPaymentStatus['name'] == 'Cancel')" />
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-4">
+          <div class="form-group row">
+            <label for="" class="col-sm-4 col-form-label px-0 text-right">Discount Amount</label>
+            <div class="col-sm-8">
+              <input type="text" class="form-control" id="" placeholder="Discount Amount"
+                [disabled]="(editScreen && selectedPaymentStatus['name'] == 'Paid' || selectedPaymentStatus['name'] == 'Cancel')" />
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-4">
+          <div class="form-group row">
+            <label for="" class="col-sm-4 col-form-label px-0 text-right">Validity</label>
+            <div class="col-sm-8">
+              <input type="date" class="form-control" id="" placeholder=""
+                [(ngModel)]="membershipModel.membershipEndDate" [ngModelOptions]="{standalone:true}"
+                [disabled]="(editScreen && selectedPaymentStatus['name'] == 'Paid' || selectedPaymentStatus['name'] == 'Cancel')" />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <h6 class="border border-primary p-2 mt-3 mb-4 bg-light text-white">
+        Item Details
+      </h6>
+
+      <div class="row">
+        <div class="col text-right pb-2">
+
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-12 pb-4">
+          <ag-grid-angular style="width: 100%; height: 310px;" class="ag-theme-balham" [gridOptions]="itemGridOptions"
+            (cellKeyDown)="onCellKeyDown($event)" (gridReady)="onGridReady($event)">
+            <!-- itemGridOptions -->
+          </ag-grid-angular>
+        </div>
+      </div>
+
+      <h6 class="border border-primary p-2 mt-3 mb-4 bg-light text-white">
+        Total Charges
+      </h6>
+
+      <div class="row">
+        <div class="col-lg-4">
+          <div class="form-group row">
+            <label for="" class="col-sm-4 col-form-label px-0 text-right">Total Items</label>
+            <div class="col-sm-8">
+              <input type="text" class="form-control" id="" placeholder="Total Items" [(ngModel)]="totalItemsCount"
+                [ngModelOptions]="{standalone:true}" disabled />
+            </div>
+          </div>
+
+          <div class="form-group row">
+            <label for="" class="col-sm-4 col-form-label px-0 text-right">VAT <span class="text-danger">*</span></label>
+            <div class="col-sm-8">
+              <input type="text" class="form-control" id="" placeholder="Total VAT" [(ngModel)]="totalVATAmount"
+                [ngModelOptions]="{standalone:true}" disabled />
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-4">
+
+          <div class="form-group row">
+            <label for="" class="col-sm-4 col-form-label px-0 text-right">Total Amount</label>
+            <div class="col-sm-8">
+              <input type="text" class="form-control" id="" placeholder="Total Amount" [(ngModel)]="finalAmount"
+                [ngModelOptions]="{standalone:true}" disabled />
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="" class="col-sm-4 col-form-label px-0 text-right">Total Discount <span
+                class="text-danger">*</span></label>
+            <div class="col-sm-8">
+              <input type="text" class="form-control" [(ngModel)]="totalDiscPercentageAmount"
+                [ngModelOptions]="{standalone:true}" disabled />
+            </div>
+          </div>
+
+        </div>
+        <div class="col-lg-4">
+          <div class="form-group row">
+            <label for="" class="col-sm-4 col-form-label px-0 text-right">Adjusted Amount</label>
+            <div class="col-sm-8">
+              <input type="text" (keyup.enter)="adjustItems($event)" class="form-control" id=""
+                [(ngModel)]="adjustAmount" [ngModelOptions]="{standalone:true}" placeholder="Adjustment Amount"
+                [disabled]="(editScreen && selectedPaymentStatus['name'] == 'Paid' || selectedPaymentStatus['name'] == 'Cancel')" />
+            </div>
+          </div>
+
+          <div class="form-group row">
+            <label for="" class="col-sm-4 col-form-label px-0 text-right">Round off</label>
+            <div class="col-sm-8">
+              <input type="text" class="form-control" id="" placeholder="Round off" (keyup.enter)="roundOffCalc($event)"
+                [(ngModel)]="roundOff" [ngModelOptions]="{standalone:true}"
+                [disabled]="(editScreen && selectedPaymentStatus['name'] == 'Paid' || selectedPaymentStatus['name'] == 'Cancel')" />
+
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-4">
+          <div class="form-group row">
+            <label for="" class="col-sm-4 col-form-label px-0 text-right">Total Qty</label>
+            <div class="col-sm-8">
+              <input type="text" class="form-control" id="" placeholder="Total Quantity" [(ngModel)]="totalQty"
+                [ngModelOptions]="{standalone:true}" disabled />
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-4">
+          <div class="form-group row">
+            <label for="" class="col-sm-4 col-form-label px-0 text-right">Balance</label>
+            <div class="col-sm-8">
+              <input type="text" class="form-control" id="" placeholder="Balance" [(ngModel)]="balance"
+                [ngModelOptions]="{standalone:true}" disabled />
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-4">
+          <div class="form-group row">
+            <label for="" class="col-sm-4 col-form-label px-0 text-right">Amount Paid</label>
+            <div class="col-sm-8">
+              <input type="text" class="form-control" id="" placeholder="Amount Paid" [(ngModel)]="paidAmount"
+                (keyup.enter)="paidCalc()" [ngModelOptions]="{standalone:true}" (keyup)="paidCalc()"
+                [disabled]="(editScreen && (selectedPaymentStatus['name'] == 'Paid' || selectedPaymentStatus['name'] == 'Cancel')) || (creditCheckbox || mPesaCheckbox || card || cheque || creditNoteCheckBox)" />
+
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="row py-4">
+        <div class="col-sm-5 mx-auto text-center pb-4">
+          <h5>Payment Status </h5>
+          <ng-select [items]="paymentStatusArray" bindLabel="name" placeholder="-- Select --"
+            [(ngModel)]="selectedPaymentStatus" [ngModelOptions]="{standalone:true}"
+            [disabled]="((editScreen && selectedPaymentStatus['name'] == 'Cancel'))">
+          </ng-select>
+
+        </div>
+        <div class="col-sm-12 text-center">
+          <h5>Net Amount: {{netAmount}}</h5>
+          <input type="button"
+            [disabled]="selectedPaymentStatus['name'] != 'Paid' && selectedPaymentStatus['name'] != 'Dummy Bill' && selectedPaymentStatus['name'] != 'Partially Paid' &&
+            selectedPaymentStatus['name'] != 'Cancel' && selectedPaymentStatus['name'] != 'Over Paid' && selectedPaymentStatus['name'] != 'Pending'"
+            (click)="saveGenerateBill()" class="btn btn-primary btn-lg px-4" value="Generate Bill">
+        </div>
+
+
+        <!--  add label instructions -->
+        <div class="col mb-3 pt-2 text-center">
+          <input type="button" class="btn btn-primary px-4" value="Label Instruction" (click)="labelInstrGrid()">
+        </div>
+
+
+
+      </div>
+      <div class="row">
+        <div class="col-3"></div>
+        <div class="col-6">
+          <label for="" class="col-form-label px-0 text-center w-100" id="debitCreditNoteLabelRMarks">Remarks</label>
+          <textarea name="" class="form-control" id="debitCreditNoteRMarks" cols="30" rows="6"
+            formControlName="remarks"></textarea>
+        </div>
+        <div class="col-3"></div>
+      </div>
+
+
+      <div class="row" *ngIf="creditCheckbox  || card || cheque ||mPesaCheckbox || creditNoteCheckBox">
+        <div class="col-sm-2"></div>
+        <div class="col-sm-8">
+          <table class="table table-bordered border-primary">
+            <thead>
+              <tr>
+                <th>Payment Type</th>
+                <th>Amount</th>
+                <th>Cheque/Card/Phone No/Credit Days</th>
+                <th>Card Bank/Tranx No/Auth No</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngIf="cashCheckbox && (creditCheckbox || mPesaCheckbox || card || cheque || creditNoteCheckBox)">
+                <td>Cash <span class="text-danger">*</span></td>
+                <td><input type="text" class="form-control form-height" formControlName="cashAmount"
+                    (keyup)="paymentTypeCalc()" />
+                  <div *ngIf="salesBillingForm.get('cashAmount')?.touched" class="error-msg-common text-danger">
+                    <div *ngIf="salesBillingForm.get('cashAmount')?.errors?.required">
+                      * required field
+                    </div>
+                  </div>
+                </td>
+                <td colspan="2"></td>
+              </tr>
+
+              <tr *ngIf="creditCheckbox">
+                <td>Credit <span class="text-danger">*</span></td>
+
+                <td> <input type="text" class="form-control" id="" placeholder="0" formControlName="creditAmount"
+                    (keyup)="paymentTypeCalc()"
+                    [disabled]="(editScreen && selectedPaymentStatus['name'] == 'Paid' || selectedPaymentStatus['name'] == 'Cancel')" />
+                  <div *ngIf="salesBillingForm.get('creditAmount')?.touched" class="error-msg-common text-danger">
+                    <div *ngIf="salesBillingForm.get('creditAmount')?.errors?.required">
+                      * required field
+                    </div>
+                  </div>
+                </td>
+                <td> <input type="text" class="form-control" id="" placeholder="0" formControlName="creditDays"
+                    [disabled]="(editScreen && selectedPaymentStatus['name'] == 'Paid' || selectedPaymentStatus['name'] == 'Cancel')" />
+                  <div *ngIf="salesBillingForm.get('creditDays')?.touched" class="error-msg-common text-danger">
+                    <div *ngIf="salesBillingForm.get('creditDays')?.errors?.required">
+                      * required field
+                    </div>
+                  </div>
+                </td>
+                <td colspan="2">
+                  <input type="text" class="form-control" id="" placeholder="0" formControlName="creditAccountNo"
+                    (keyup)="creditAccountNumberCheck($event)"
+                    [disabled]="(editScreen && selectedPaymentStatus['name'] == 'Paid' || selectedPaymentStatus['name'] == 'Cancel')" />
+                  <div *ngIf="salesBillingForm.get('creditAccountNo')?.touched" class="error-msg-common text-danger">
+                    <div *ngIf="salesBillingForm.get('creditAccountNo')?.errors?.required">
+                      * required field
+                    </div>
+                    <div
+                      *ngIf="salesBillingForm.get('creditAccountNo')?.errors?.minlength || salesBillingForm.get('creditAccountNo')?.errors?.maxlength">
+                      length should be 14
+                    </div>
+                  </div>
+                </td>
+              </tr>
+              <tr *ngIf="card">
+                <td>Card <span class="text-danger">*</span></td>
+                <td><input type="text" class="form-control form-height" formControlName="creditCardAmount"
+                    (keyup)="paymentTypeCalc()"
+                    [disabled]="(editScreen && selectedPaymentStatus['name'] == 'Paid' || selectedPaymentStatus['name'] == 'Cancel')" />
+                  <div *ngIf="salesBillingForm.get('creditCardAmount')?.touched" class="error-msg-common text-danger">
+                    <div *ngIf="salesBillingForm.get('creditCardAmount')?.errors?.required">
+                      * required field
+                    </div>
+                  </div>
+                </td>
+                <td><input type="text" class="form-control form-height" formControlName="creditCardNo"
+                    [disabled]="(editScreen && selectedPaymentStatus['name'] == 'Paid' || selectedPaymentStatus['name'] == 'Cancel')" />
+                  <div *ngIf="salesBillingForm.get('creditCardNo')?.touched" class="error-msg-common text-danger">
+                    <div *ngIf="salesBillingForm.get('creditCardNo')?.errors?.required">
+                      * required field
+                    </div>
+                  </div>
+                </td>
+                <td>
+                  <input type="text" class="form-control form-height" formControlName="creditCardAuthNo"
+                    [disabled]="(editScreen && selectedPaymentStatus['name'] == 'Paid' || selectedPaymentStatus['name'] == 'Cancel')" />
+
+                </td>
+              </tr>
+
+              <tr *ngIf="mPesaCheckbox">
+                <td>M-Pesa <span class="text-danger">*</span></td>
+                <td><input type="text" class="form-control form-height" formControlName="upiAmount"
+                    (keyup)="paymentTypeCalc()"
+                    [disabled]="(editScreen && selectedPaymentStatus['name'] == 'Paid' || selectedPaymentStatus['name'] == 'Cancel')" />
+                  <div *ngIf="salesBillingForm.get('upiAmount')?.touched" class="error-msg-common text-danger">
+                    <div *ngIf="salesBillingForm.get('upiAmount')?.errors?.required">
+                      * required field
+                    </div>
+                  </div>
+                </td>
+                <td><input type="text" class="form-control form-height" formControlName="upiPhoneNo"
+                    [disabled]="(editScreen && selectedPaymentStatus['name'] == 'Paid' || selectedPaymentStatus['name'] == 'Cancel')" />
+                  <div *ngIf="salesBillingForm.get('upiPhoneNo')?.touched" class="error-msg-common text-danger">
+                    <div *ngIf="salesBillingForm.get('upiPhoneNo')?.errors?.required">
+                      * required field
+                    </div>
+                  </div>
+                </td>
+
+                <td><input type="text" class="form-control form-height" formControlName="upiTransactionId"
+                    [disabled]="(editScreen && selectedPaymentStatus['name'] == 'Paid' || selectedPaymentStatus['name'] == 'Cancel')" />
+                  <div *ngIf="salesBillingForm.get('upiTransactionId')?.touched" class="error-msg-common text-danger">
+                    <div *ngIf="salesBillingForm.get('upiTransactionId')?.errors?.required">
+                      * required field
+                    </div>
+                  </div>
+                </td>
+              </tr>
+              <tr *ngIf="cheque">
+                <td>Cheque <span class="text-danger">*</span></td>
+                <td><input type="text" class="form-control form-height" formControlName="chequeAmount"
+                    (keyup)="paymentTypeCalc()"
+                    [disabled]="(editScreen && selectedPaymentStatus['name'] == 'Paid' || selectedPaymentStatus['name'] == 'Cancel')" />
+                  <div *ngIf="salesBillingForm.get('chequeAmount')?.touched" class="error-msg-common text-danger">
+                    <div *ngIf="salesBillingForm.get('chequeAmount')?.errors?.required">
+                      * required field
+                    </div>
+                  </div>
+                </td>
+                <td><input type="text" class="form-control form-height" formControlName="chequeNumber"
+                    [disabled]="(editScreen && selectedPaymentStatus['name'] == 'Paid' || selectedPaymentStatus['name'] == 'Cancel')" />
+                  <div *ngIf="salesBillingForm.get('chequeNumber')?.touched" class="error-msg-common text-danger">
+                    <div *ngIf="salesBillingForm.get('chequeNumber')?.errors?.required">
+                      * required field
+                    </div>
+                  </div>
+                </td>
+
+
+                <td><input type="date" class="form-control form-height" formControlName="chequeDate"
+                    [disabled]="(editScreen && selectedPaymentStatus['name'] == 'Paid' || selectedPaymentStatus['name'] == 'Cancel')" />
+                  <div *ngIf="salesBillingForm.get('chequeDate')?.touched" class="error-msg-common text-danger">
+                    <div *ngIf="salesBillingForm.get('chequeDate')?.errors?.required">
+                      * required field
+                    </div>
+                  </div>
+                </td>
+              </tr>
+
+              <tr *ngIf="creditNote || creditNoteCheckBox">
+                <td>Credit Note <span class="text-danger">*</span></td>
+                <td><input type="text" class="form-control form-height" formControlName="creditNoteAmount" (keyup)="paymentTypeCalc()" 
+                    [disabled]="(editScreen && selectedPaymentStatus['name'] == 'Paid' || selectedPaymentStatus['name'] == 'Cancel' || creditNoteCheckBox)"/>
+                  <!-- <div *ngIf="salesBillingForm.get('creditCardAmount')?.touched" class="error-msg-common text-danger">
+                    <div *ngIf="salesBillingForm.get('creditCardAmount')?.errors?.required">
+                      * required field
+                    </div>
+                  </div> -->
+                </td>
+                <td>
+                  <input *ngIf="creditNoteCheckBox && editScreen" type="text" class="form-control form-height" formControlName="salesCreditRefNo"
+                    [disabled]="(editScreen && selectedPaymentStatus['name'] == 'Paid' || selectedPaymentStatus['name'] == 'Cancel')" />
+                  <!-- <input type="text" class="form-control form-height" formControlName="creditCardNo"
+                    [disabled]="(editScreen && selectedPaymentStatus['name'] == 'Paid' || selectedPaymentStatus['name'] == 'Cancel')" />
+                  <div *ngIf="salesBillingForm.get('creditCardNo')?.touched" class="error-msg-common text-danger">
+                    <div *ngIf="salesBillingForm.get('creditCardNo')?.errors?.required">
+                      * required field
+                    </div>
+                  </div> -->
+                  <ng-select *ngIf="creditNoteCheckBox && !editScreen" [items]="customerCreditNoteArr" bindLabel="creditNoteNo" placeholder="-- Select --" id="creditNoteNo"
+                    [(ngModel)]="creditNoteRefNo" [ngModelOptions]="{standalone:true}" 
+                    (change)="onCreditNoteRefNoSelected($event)" (clear)="onRemoveCreditNoteRef()">
+                  </ng-select>
+
+                </td>
+                <td>
+                  <!-- <input type="text" class="form-control form-height" formControlName="creditCardAuthNo"
+                    [disabled]="(editScreen && selectedPaymentStatus['name'] == 'Paid' || selectedPaymentStatus['name'] == 'Cancel')" /> -->
+
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="col-sm-2"></div>
+      </div>
+
+      <div class="row">
+        <div class="col mb-3 pt-2 text-center">
+          <button class="btn btn-primary px-4" *ngIf="!editScreen">Save</button>
+          <button class="btn btn-primary px-4" *ngIf="editScreen && selectedPaymentStatus['name'] != 'Cancel'"
+            [disabled]="(editScreen && selectedPaymentStatus['name'] == 'Paid') || checkBillDateLessThanToday()">Update</button>
+          <button class="btn btn-primary px-4" *ngIf="editScreen && selectedPaymentStatus['name'] == 'Cancel'"
+            [disabled]="(editScreen && selectedPaymentStatus['name'] == 'Paid') ||checkBillDateLessThanToday()">Cancel</button>
+          <input type="button" class="btn btn-secondary px-4 ml-3" (click)="resetSave()" value="Reset"
+            *ngIf="!editScreen" />
+          <input type="button" class="btn btn-secondary px-4 ml-3" (click)="resetEdit()" value="Reset"
+            *ngIf="editScreen" />
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+<div class="tab-content" [hidden]="tab != 'history'">
+  <div class="tab-pane fade" id="pills-history" role="tabpanel">
+    <!-- <app-sales-history></app-sales-history> -->
+    <h6 class="border border-primary p-2 mt-3 mb-4 bg-light text-white">Sales History Details</h6>
+
+    <div class="row">
+      <div class="col-lg-6">
+        <div class="form-group row">
+          <label for="" class="col-sm-2 col-form-label px-0 text-right" id="newStockLabelItemCd">Date</label>
+          <div class="col-sm-5">
+            <input type="date" class="form-control" id="" [(ngModel)]="startDate">
+          </div>
+          <div class="col-sm-5">
+            <input type="date" class="form-control" id="" [(ngModel)]="endDate">
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-6">
+        <div class="form-group row">
+          <label for="" class="col-sm-2 col-form-label px-0 text-right" id="newStockLabelItemCd">Status</label>
+          <div class="col-sm-10">
+            <ng-select [items]="paymentStatusArr" bindLabel="name" placeholder="-- Select --" id="newStockBatch#"
+              [(ngModel)]="paymentStatus">
+            </ng-select>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-lg-5">
+        <div class="form-group row">
+          <label for="" class="col-sm-2 col-form-label px-0 text-right" id="newStockLabelItemCd">Search By</label>
+          <div class="col-sm-10">
+            <ng-select [items]="searchCodeArr" placeholder="-- Select --" id="newStockBatch#" [(ngModel)]="searchCode"
+              [searchable]="false" (change)="clearSearchCode()">
+            </ng-select>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-6">
+        <div class="form-group row">
+          <div class="col-sm-12">
+            <input type="text" class="form-control" id=""
+              placeholder="Bill # / Customer Name / Customer Phno /Sales Person Name" [(ngModel)]="searchCodeValue">
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-1">
+        <div class="form-group row">
+          <div class="col-sm-12 text-right">
+            <button class="btn btn-primary" (click)="getSalesBySearch()" [disabled]="checkSearch()">Search</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col text-right pb-2">
+        <input type="button" class="btn btn-primary" id="Editclickbtn" (click)="getSelectedSalesRecord()" value="Edit"
+          [disabled]="saleEditGridOptions?.api?.getSelectedRows()?.length === 0">
+      </div>
+    </div>
+
+
+    <div class="row">
+      <div class="col-12 py-3">
+        <ag-grid-angular style="width: 100%; height: 500px;" class="ag-theme-balham" [gridOptions]='saleEditGridOptions'
+          [pagination]="true" [cacheOverflowSize]="salesEditCacheOverflowSize"
+          [maxConcurrentDatasourceRequests]="salesEditMaxConcurrentDatasourceRequests"
+          [paginationPageSize]="salesEditPaginationSize">
+        </ag-grid-angular>
+      </div>
+    </div>
+
+  </div>
+</div>
+<!-- Modal -->
+<div class="modal fade" id="itemSearchModal" tabindex="-1" role="dialog" aria-labelledby="itemSearchModalLabel">
+  <div class="modal-dialog model-dialog-newwidth" role="document">
+    <div class="modal-content">
+      <div class="modal-body p-4" style="border: 1px solid #10847e;">
+
+        <div class="row">
+          <div class="col-lg-12">
+            <div class="form-group row">
+              <div class="col-sm-4">
+                <input type="text" class="form-control form-height" [(ngModel)]="itemSearchKey"
+                  [ngModelOptions]="{standalone:true}" (mouseup)="onMouseEnter()">
+              </div>
+              <div class="col-sm-4">
+                <ng-select [items]="searchTermsArray" placeholder="-- Select --" [(ngModel)]="selectedSearchTerms"
+                  [ngModelOptions]="{standalone:true}">
+                </ng-select>
+              </div>
+              <div class="col-sm-4">
+                <input type="button" class="btn btn-secondary px-4" value="Search" (click)="searchStock()"
+                  [disabled]="checkSearchTermDisability()" [disabled]="stockSearchDisable">
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="form-group row">
+          <div class="col-sm-12">
+            <ag-grid-angular style="width: 100%; height: 350px;" class="ag-theme-balham" id="grid-wrapper"
+              [gridOptions]="stockGridOptions" [pagination]="true" [cacheOverflowSize]="cacheOverflowSize"
+              [maxConcurrentDatasourceRequests]="maxConcurrentDatasourceRequests" [paginationPageSize]="paginationSize">
+            </ag-grid-angular>
+            <!-- (gridSizeChanged)="onGridSizeChanged($event)" -->
+          </div>
+          <ul class="tabs" id="menu">
+            <li style="list-style-type: square;color: red;">Expired</li>
+            <li style="list-style-type: square;color: blue;">Out of stock</li>
+            <li style="list-style-type: square;color: rgb(150, 255, 140);">Low items Stock</li>
+            <li style="list-style-type: square;color: orange;">Expired soon </li>
+            <li style="list-style-type: square;color: green;">Alternative Medicine</li>
+          </ul>
+          <div class="col-sm-12 text-center pt-3">
+            <button type="button" data-dismiss="modal"
+              [disabled]="stockGridOptions?.api?.getSelectedRows()?.length === 0" class="btn btn-primary px-4 mr-2"
+              (click)="getSelectedStockItems()">OK</button>
+            <button type="button" class="btn btn-secondary px-4" data-dismiss="modal" (click)="close()">Close</button>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+</div>
+<!-- Modal -->
+<div class="modal fade" id="prescriptionImageModel" tabindex="-1" role="dialog"
+  aria-labelledby="prescriptionImageModel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-body">
+        <div class="form-group row">
+          <div class="col-sm-12">
+            <img [src]="'data:image/JPEG;base64,' + url" alt="Place image title" *ngIf="isImageLoading"
+              style="width: 500px;height: 400px;border:1px solid green">
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- The Modal -->
+<div class="modal" id="myModal-id">
+  <div class="modal-dialog">
+    <div class="modal-content">
+
+      <!-- Modal Header -->
+      <div class="modal-header">
+        <h4 class="modal-title">Add Customer</h4>
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+      </div>
+
+      <!-- Modal body -->
+      <div class="modal-body">
+        <form #customerForm="ngForm" [formGroup]="customerInformationForm" (keydown.enter)="$event.preventDefault()"
+          (ngSubmit)="onCustomerSubmit()" class="full-height ">
+          <div class="row">
+            <div class="col-lg-12">
+              <div class="form-group row">
+                <label for="" class="col-sm-3 col-form-label pr-0 text-left" id="addCustomerLabelFirstName"
+                  style="float: left;">First Name
+                  <span class="text-danger">*</span></label>
+                <div class="col-sm-8">
+                  <input formControlName="customerName" type="text" class="form-control" id="addCustomerInputFirstName"
+                    placeholder="First Name">
+                  <div *ngIf="customerInformationForm.get('customerName')?.touched"
+                    class="error-msg-common text-danger">
+                    <div *ngIf="customerInformationForm.get('customerName').errors?.required">
+                      * required field
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-lg-12">
+              <div class="form-group row">
+                <label for="" class="col-sm-3 col-form-label pr-0 text-left" id="addCustomerLabelLastName"
+                  style="float: left;">Last Name
+                </label>
+                <div class="col-sm-8">
+                  <input formControlName="lastName" type="text" class="form-control" id="addCustomerInputLastName"
+                    placeholder="Last Name">
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-lg-12">
+              <div class="form-group row">
+                <label for="" class="col-sm-3 col-form-label pr-0 text-left" id="addCustomerLabelPhoneNumber"
+                  style="float: left;">Phone
+                  <span class="text-danger">*</span></label>
+                <div class="col-sm-8">
+                  <input formControlName="phoneNumber" type="text" class="form-control" id="addCustomerInputPhoneNumber"
+                    placeholder="Phone">
+                  <div *ngIf="customerInformationForm.get('phoneNumber')?.touched" class="error-msg-common text-danger">
+                    <div *ngIf="customerInformationForm.get('phoneNumber').errors?.required">
+                      * required field
+                    </div>
+                  </div>
+                  <div *ngIf="customerInformationForm.get('phoneNumber')?.invalid" class="error-msg-common text-danger">
+                    <div
+                      *ngIf="!customerInformationForm.get('phoneNumber').errors?.required && customerInformationForm?.get('phoneNumber')?.errors">
+                      * not a valid input
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </form>
+
+      </div>
+
+      <!-- Modal footer -->
+      <div class="modal-footer">
+        <button type="button" (click)="onCustomerSubmit()" class="btn btn-success" data-dismiss="modal"
+          [disabled]="customerInformationForm.get('customerName').errors || customerInformationForm.get('phoneNumber').errors">Save</button>
+        <input type="button" class="btn btn-danger" data-dismiss="modal" (click)="customerInformationForm.reset()"
+          value="Close">
+      </div>
+
+    </div>
+  </div>
+</div>
+
+
+<div class="modal" id="myModal-id1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+
+      <!-- Modal Header -->
+      <div class="modal-header">
+        <h4 class="modal-title">Add Provider</h4>
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+      </div>
+
+      <!-- Modal body -->
+      <div class="modal-body">
+        <form #providerForm="ngForm" [formGroup]="providerInformationForm" (keydown.enter)="$event.preventDefault()"
+          (ngSubmit)="onProviderSubmit()" class="full-height">
+          <div class="row">
+            <div class="col-lg-12">
+              <div class="form-group row">
+                <label for="" class="col-sm-3 col-form-label pr-0 text-left" id="addProviderLabelFirstName">First Name
+                  <span class="text-danger">*</span></label>
+                <div class="col-sm-8">
+                  <input type="text" formControlName="firstName" class="form-control" id="addProviderFirstName"
+                    placeholder="First Name">
+                  <div *ngIf="providerInformationForm.get('firstName')?.touched" class="error-msg-common text-danger">
+                    <div *ngIf="providerInformationForm.get('firstName').errors?.required">
+                      * required field
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-lg-12">
+              <div class="form-group row">
+                <label for="" class="col-sm-3 col-form-label pr-0 text-left" id="addProviderLabelLastName">Last Name
+                  <span class="text-danger">*</span></label>
+                <div class="col-sm-8">
+                  <input type="text" formControlName="lastName" class="form-control" id="addProviderLastName"
+                    placeholder="Last Name">
+                  <div *ngIf="providerInformationForm.get('lastName')?.touched" class="error-msg-common text-danger">
+                    <div *ngIf="providerInformationForm.get('lastName').errors?.required">
+                      * required field
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-lg-12">
+              <div class="form-group row">
+                <label for="" class="col-sm-3 col-form-label pr-0 text-left" id="addProviderLabelPhone">Phone <span
+                    class="text-danger">*</span></label>
+                <div class="col-sm-8">
+                  <input formControlName="phoneNumber" type="text" class="form-control" id="addProviderPhone"
+                    placeholder="Phone Number">
+                  <div *ngIf="providerInformationForm.get('phoneNumber')?.touched" class="error-msg-common text-danger">
+                    <div *ngIf="providerInformationForm.get('phoneNumber').errors?.required">
+                      * required field
+                    </div>
+                  </div>
+                  <div *ngIf="providerInformationForm.get('phoneNumber')?.invalid" class="error-msg-common text-danger">
+                    <div
+                      *ngIf="!providerInformationForm.get('phoneNumber').errors?.required && providerInformationForm?.get('phoneNumber')?.errors ">
+                      * not a valid input
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+
+      <!-- Modal footer -->
+      <div class="modal-footer">
+        <button type="button" (click)="onProviderSubmit()" class="btn btn-success" data-dismiss="modal"
+          [disabled]="providerInformationForm.get('lastName').errors || providerInformationForm.get('phoneNumber').errors || providerInformationForm.get('firstName').errors">Save</button>
+        <input type="button" class="btn btn-danger" data-dismiss="modal" (click)="providerInformationForm.reset()"
+          value="Close">
+      </div>
+
+    </div>
+  </div>
+</div>
+<ng4-loading-spinner [loadingText]="'Please wait...'" [timeout]="400000000"> </ng4-loading-spinner>
+
+<div *ngIf="labelInstructionsPopUp" class="itemSearchModal" id="itemSearchModal" tabindex="-1" role="dialog"
+  aria-labelledby="itemSearchModalLabel">
+  <div class="modal-dialog" style="margin-top: 220px" role="document">
+    <div class="modal-content" style="height: 350px;margin-top: -100px;">
+      <div class="modal-body">
+        <div class="row">
+          <div class="col-lg-6">
+            <div class="form-group row" id="tableWidth">
+              <div class="col-12 py-3">
+                <!--   <ag-grid-angular style="width: 205%; height: 160px;" class="ag-theme-balham"
+                  (gridReady)="onGridReady($event)" [columnDefs]="labelInstrColumnDefs" [rowData]="labelsGridArray"
+                  [gridOptions]="itemLabelGridOptions">
+                </ag-grid-angular> -->
+                <table class="table table-bordered">
+                  <!-- style="background-color: #1d3652;" -->
+                  <thead>
+                    <td style="text-align:center;">Item Name</td>
+                    <td style="text-align:center;">Label Code</td>
+                    <td style="text-align:center;">Description</td>
+                  </thead>
+                  <tbody>
+
+                    <tr *ngFor="let obj of labelsGridArray">
+                      <td style="text-align:center;">{{obj.itemName}}</td>
+                      <td id="tdWidth">
+                        <ng-select [items]="codeNames" bindLabel="formulationName" placeholder="--Select--"
+                          [(ngModel)]="selectedLabelCodes" [ngModelOptions]="{standalone: true}" [multiple]="true"
+                          (change)="onLableCodeChanged($event)">
+                        </ng-select>
+                      </td>
+                      <td id="tdWidth">
+                        <ng-select [items]="formNames" bindLabel="instructions" placeholder="--Select--"
+                          [(ngModel)]="selectedInstructions" [ngModelOptions]="{standalone: true}" [multiple]="true"
+                          (change)="onInstructionsChanged($event)">
+                        </ng-select>
+                      </td>
+
+
+                    </tr>
+                  </tbody>
+
+
+                </table>
+              </div>
+
+            </div>
+
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <input type="button" data-dismiss="modal" class="btn btn-primary px-4 mr-2" (click)="onLabelSubmit()"
+          value="OK">
+        <input type="button" class="btn btn-secondary px-4" data-dismiss="modal" (click)="closeLabel()" value="Close">
+      </div>
+    </div>
+  </div>
+</div>

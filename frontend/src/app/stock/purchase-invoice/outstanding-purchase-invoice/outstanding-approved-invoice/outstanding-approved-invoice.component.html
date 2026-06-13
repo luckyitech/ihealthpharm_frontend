@@ -1,0 +1,47 @@
+
+<h6 class="border border-primary p-2 mt-3 mb-4 bg-light text-white">Approval Details</h6>
+<div class="row">
+  <div class="col">
+    <form class="form-inline">
+      <input (keyup)="onQuickFilterChanged($event)" class="form-control no-right-border-radius" type="text"
+        placeholder="Invoice No" aria-label="Search" [(ngModel)]="invoiceNo" [ngModelOptions]="{standalone: true}">
+      <button class="btn btn-primary no-left-border-radius" (click)="getApprovedDataCount()">Search</button>
+    </form>
+  </div>
+</div>
+
+<div class="row grid-area">
+  <div class="col py-3">
+    <ag-grid-angular id="pendingOrderApproval" style="width: 100%; height: 620px;" class="ag-theme-balham" [gridOptions]="approvedGridOptions"
+      (gridReady)="onGridReady($event)" (cellClicked)='onCellClicked($event)'
+      [pagination]="true" [cacheOverflowSize]="gridCacheOverFlowSize"
+      [paginationPageSize]="paginationSize" [maxConcurrentDatasourceRequests]="invoiceMaxConcurrentDatasourceRequests">
+    </ag-grid-angular>
+  </div>
+</div>
+
+<!-- <div class="row grid-area">
+  <div class="col mb-3 pt-2 text-center">
+    <button [disabled]="approvedGridOptions?.api?.getSelectedRows()?.length === 0 || approvePermissionCheck()"
+      (click)="submit(2)" class="btn btn-primary px-4 return-btn">Approve</button>
+    <button [disabled]="approvedGridOptions?.api?.getSelectedRows()?.length === 0 || reason.length == 0"
+      (click)="submit(3)" class="btn btn-secondary px-4 ml-3 return-btn">Reject</button>
+  </div>
+</div>
+
+<div class="row grid-area">
+  <div class="col-4"></div>
+  <div class="col-4 margin-auto">
+    <div class="form-group row">
+      <label for="" class="col-12 col-form-label pr-0 text-center">Reason for Rejection <span
+          class="text-danger">*</span></label>
+      <div class="col-12">
+        <textarea [(ngModel)]="reason" class="form-control min-height-83" id=""
+          placeholder="Reason for rejection.."></textarea>
+      </div>
+    </div>
+  </div>
+  <div class="col-4"></div>
+</div> -->
+
+<ng4-loading-spinner [loadingText]="'Please wait...'" [timeout]="400000000"> </ng4-loading-spinner>

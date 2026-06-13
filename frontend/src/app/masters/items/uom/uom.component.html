@@ -1,0 +1,62 @@
+<form class="" [formGroup]="itemUOMForm" (keydown.enter)="$event.preventDefault()" (ngSubmit)="onSubmit()">
+        <h6 class="border border-primary p-2 mt-3 mb-4 bg-light text-white">UOM Details</h6>
+      
+        <div class="row">
+          <div class="col-lg-4">
+            <div class="form-group row">
+              <label for="" id="addUomLabelCode"class="col-sm-3 col-form-label pr-0 text-right">Code <span class="text-danger">*</span></label>
+              <div class="col-sm-9">
+                <input type="text" class="form-control" id="addUomCode" formControlName="measurementCode" placeholder="UOM Code">
+                <div *ngIf="f.measurementCode?.touched" class="error-msg-common text-danger">
+                    <div *ngIf="f.measurementCode.errors?.required">
+                      Required Field
+                    </div>
+                  </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-4">
+            <div class="form-group row">
+              <label for="" id="addUomLabelDesc" class="col-sm-3 col-form-label pr-0 text-right">Description <span class="text-danger">*</span></label>
+              <div class="col-sm-9">
+                <input type="text" class="form-control" id="addUomDesc" formControlName="measurementDesc" placeholder="UOM Description">
+                <div *ngIf="f.measurementDesc?.touched" class="error-msg-common text-danger">
+                    <div *ngIf="f.measurementDesc.errors?.required">
+                      Required Field
+                    </div>
+                  </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-4 d-flex align-items-center justify-content-end">
+            <div class="form-group row">
+              <div class="col-sm-12 d-flex">
+                <div class="d-inline mr-3">
+                  <label id="addUomLabelStatus" class="mb-0">Status <span class="text-danger">*</span></label>
+                </div>
+                <div class="custom-control d-inline custom-radio mr-3">
+                  <input name="activeS" value="Y" formControlName="activeS" type="radio" class="custom-control-input" id="activates">
+                  <label id="addUomLabelActivate" class="custom-control-label" for="activates">Activate</label>
+                </div>
+                <div class="custom-control d-inline custom-radio">
+                  <input name="activeS" value="N" formControlName="activeS" type="radio" class="custom-control-input" id="de-activates">
+                  <label id="addUomLabelDeActivate" class="custom-control-label" for="de-activates">De Activate</label>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      
+        <div class="row">
+          <div class="col mb-3 pt-2 text-center">
+              
+                <button (click)="onSubmit()" type="submit" [disabled]="checkFormDisability()" class="btn btn-primary px-4" id="mu-adduser-save">
+                  Save
+                </button>
+                <input type="button" class="btn btn-secondary px-4 ml-3" id="mu-adduser-cancel"
+                  (click)="itemUOMForm.reset();itemUOMForm.controls.activeS.setValue('Y')" value="Cancel" />
+          </div>
+        </div>
+      
+      </form>
+      <ng4-loading-spinner [loadingText]="'Please wait...'" [timeout]="400000000"> </ng4-loading-spinner>

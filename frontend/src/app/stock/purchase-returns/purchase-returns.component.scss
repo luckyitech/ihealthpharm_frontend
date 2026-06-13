@@ -1,0 +1,23 @@
+@media (min-width: 576px) {
+    .modal-dialog {
+        max-width: 925px;
+    }
+}
+
+label[disabled="disabled"]{
+    background-color:#e9ecef
+}
+
+body .modal-dialog { /* Width */
+    max-width: 100%;
+    width: auto !important;
+    display: table;
+}
+
+.my-modal {
+    max-width: 100%;
+}
+
+.modal-content {
+    width: 109%;
+}

@@ -1,0 +1,304 @@
+<h6 class="border border-primary p-2 mt-3 mb-4 bg-light text-white">Credit Note History</h6>
+<div class="row">
+    <div class="col-sm-10">
+        <form class="form-inline">
+            <ng-select [items]="searchType" bindLabel="name" placeholder="-- select --"
+                (change)="onTypeSelection($event)">
+            </ng-select>
+            <input class="form-control no-right-border-radius" type="text" placeholder="CreditNote No/Bill No"
+                aria-label="Search" (keyup)="onSearch($event)">
+
+        </form>
+    </div>
+    <div class="col-sm-2 pb-2" style="padding-left: 100px;">
+        <button class="btn btn-primary" (click)="onPrint()">Print</button>
+    </div>
+</div>
+
+
+
+<div class="tab-content" id="pills-tabContent">
+
+    <div class="tab-pane fade show active" id="pills-new" role="tabpanel" aria-labelledby="pills-home-tab">
+     
+        <div class="row">
+            <div class="col-12 pb-4">
+                <ag-grid-angular [rowData]="rowData" [gridOptions]="creditNoteHistoryGridOptions"
+                    style="width: 100%; height: 400px;" class="ag-theme-balham" [columnDefs]="creditGridDefs"
+                    [paginationPageSize]="paginationSize" [pagination]="true" 
+                    (cellClicked)='onCellClicked($event)' (selectionChanged)="onCheckBoxChanged($event)">
+                </ag-grid-angular>
+            </div>
+        </div>
+    </div>
+</div>
+
+<ng4-loading-spinner [loadingText]="'Please wait...'" [timeout]="400000000"> </ng4-loading-spinner>
+
+<div class="modal fade" id="approvedModal" tabindex="-1" role="dialog" aria-labelledby="pendingLabel">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Credit Note Details</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body">
+
+                <div class="tab-content" id="pills-tabContent">
+                    <div class="tab-pane fade show active" id="pills-home" role="tabpanel"
+                        aria-labelledby="pills-home-tab">
+                        <form #creditNoteForm="ngForm" [formGroup]="creditNoteInformationForm"
+                            (keydown.enter)="$event.preventDefault()" (ngSubmit)="onSubmit()" class="full-height">
+
+                            <h6 class="border border-primary p-2 mt-3 mb-4 bg-light text-white">Credit Note Details</h6>
+
+                            <div class="row" id="purchaseReturns">
+                                <div class="col-lg-3">
+                                    <div class="form-group row">
+                                        <label for="" class="col-sm-4 col-form-label px-0 text-right"
+                                            id="debitCreditNoteLabelCn#">CN #
+                                            <span class="text-danger">*</span>
+                                        </label>
+                                        <div class="col-sm-8">
+                                            <input type="text" class="form-control" id="debitCreditNoteCn#"
+                                                placeholder="CN Number" formControlName="creditNoteNo" disabled>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label for="" class="col-sm-4 col-form-label px-0 text-right"
+                                            id="debitCreditNoteLabelCnDates">Date
+                                            <span class="text-danger">*</span>
+                                        </label>
+                                        <div class="col-sm-8">
+                                            <input type="date" class="form-control" id="debitCreditNoteCnDates"
+                                                placeholder="" formControlName="creditDate" disabled>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group row">
+                                        <label for="" class="col-sm-4 col-form-label px-0 text-right"
+                                            id="paymentsLabelRoundOff">Status</label>
+                                        <div class="col-sm-8">
+                                            <ng-select placeholder="-- select --" [items]="status" bindLabel="name"
+                                                formControlName="selectedStatus">
+                                            </ng-select>
+
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group row">
+                                        <label for="" class="col-sm-8 col-form-label px-0 text-center h3"
+                                            id="paymentsLabelAmtPaid">Net Amount
+                                            :</label>
+                                        <div class="col-sm-0 text-center pt-0">
+                                            <h5 class="mb-0 pt-2"> {{netAmount}}</h5>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-lg-6">
+                                    <div class="row">
+                                        <div class="col-sm-6">
+                                            <div class="form-group">
+                                                <div class="col-sm-12 justify-content-end d-flex pt-2 px-0">
+                                                    <div class="d-inline mr-3">
+                                                        <label id="" class="mb-0">Return Type</label>
+                                                    </div>
+                                                    <div class="custom-control d-inline custom-radio mr-3">
+                                                        <input name="ret-type" type="radio" value="Y"
+                                                            class="custom-control-input" id="purchase"
+                                                            [ngModelOptions]="{standalone: true}" [(ngModel)]="type1"
+                                                            name="type1">
+                                                        <label id="" class="custom-control-label"
+                                                            for="purchase">Purchase</label>
+                                                    </div>
+                                                    <div class="custom-control d-inline custom-radio">
+                                                        <input name="ret-type" type="radio" value="N"
+                                                            class="custom-control-input" id="sales"
+                                                            [ngModelOptions]="{standalone: true}" [(ngModel)]="type2"
+                                                            name="type1">
+                                                        <label id="" class="custom-control-label"
+                                                            for="sales">Sales</label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="form-group row pt-2" id="creditInvoice" *ngIf="supplierDiv">
+                                                <label for="" class="col-sm-4 col-form-label px-0 text-right"
+                                                    id="debitCreditNoteLabelInvoice">Invoice
+                                                    No<span class="text-danger">*</span></label>
+                                                <div class="col-sm-8">
+                                                    <input type="text" class="form-control" id="debitcreditNoteInvoice"
+                                                        placeholder="Invoice Number" formControlName="invoiceId"
+                                                        disabled>
+
+                                                </div>
+                                            </div>
+                                            <div class="form-group row pt-2" id="creditInvoice" *ngIf="customerDiv">
+                                                <label for="" class="col-sm-4 col-form-label px-0 text-right"
+                                                    id="debitCreditNoteLabelInvoice">Bill
+                                                    No<span class="text-danger">*</span></label>
+                                                <div class="col-sm-8">
+                                                    <input type="text" class="form-control" id="debitcreditNoteInvoice"
+                                                        placeholder="Invoice Number" formControlName="billId" disabled>
+
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group row pt-2">
+                                                <label for="" class="col-sm-4 col-form-label px-0 text-right"
+                                                    id="debitCreditNoteLabelInvoice">Tax</label>
+                                                <div class="col-sm-8" id="invField">
+                                                    <input type="text" class="form-control" id="debitcreditNoteInvoice"
+                                                        placeholder="Enter Value" formControlName="tax" disabled>
+
+                                                </div>
+                                            </div>
+
+
+                                            <!--  <div *ngIf="showApproveByDate" class="form-group row">
+                                                <label for="" class="col-sm-4 col-form-label px-0 text-right"
+                                                    id="debitCreditNoteLabelDnDate">Approved
+                                                    By </label>
+                                                <div class="col-sm-8">
+                                                    <input type="text" class="form-control" id="debitCreditNoteDnDate"
+                                                        placeholder="Approved By" formControlName="approvedByEmp"
+                                                        value={{this.approvedEmpName}} disabled>
+
+                                                </div>
+                                            </div> -->
+                                        </div>
+                                        <div class="col-sm-6">
+                                            <div class="form-group row">
+                                                <div class="col-sm-12">
+                                                    <ng-select [items]="purchaseReturns" bindLabel="purchase" id=""
+                                                        placeholder="purchase / sales return types"
+                                                        formControlName="returnTypeReason">
+                                                    </ng-select>
+
+                                                </div>
+                                            </div>
+                                            <div class="form-group row" *ngIf="supplierDiv">
+                                                <label for="" class="col-sm-4 col-form-label px-0 text-right"
+                                                    id="debitCreditNoteLabelName">Supplier</label>
+                                                <div class="col-sm-8">
+                                                    <ng-select formControlName="selectedSupplier"
+                                                        placeholder="-- select --" [items]="suppliers" bindLabel="name"
+                                                        id="creditInputSupplier">
+                                                    </ng-select>
+
+                                                </div>
+                                            </div>
+                                            <div class="form-group row" *ngIf="customerDiv">
+                                                <label for="" class="col-sm-4 col-form-label px-0 text-right"
+                                                    id="debitCreditNoteLabelName">Customer <span
+                                                        class="text-danger">*</span></label>
+                                                <div class="col-sm-8">
+                                                    <ng-select formControlName="selectedCustomer"
+                                                        placeholder="-- select --" [items]="suppliers" bindLabel="name"
+                                                        id="creditInputSupplier">
+                                                    </ng-select>
+
+                                                </div>
+                                            </div>
+
+                                            <div class="form-group row pt-2">
+                                                <label for="" class="col-sm-4 col-form-label px-0 text-right"
+                                                    id="debitCreditNoteLabelInvoice">Discount</label>
+                                                <div class="col-sm-8">
+                                                    <input type="text" class="form-control" id="debitcreditNoteInvoice"
+                                                        placeholder="Enter Disc %" formControlName="discount" disabled>
+                                                </div>
+                                            </div>
+
+                                            <div *ngIf="showApproveByDate" class="form-group row">
+                                                <label for="" class="col-sm-4 col-form-label px-0 text-right"
+                                                    id="debitCreditNoteLabelDnDate">Approved
+                                                    Date</label>
+                                                <div class="col-sm-8">
+                                                    <input type="date" class="form-control" id="debitCreditNoteDnDate"
+                                                        placeholder="" formControlName="approvedDate" disabled>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-lg-3">
+                                    <div class="form-group row">
+                                        <label for="" class="col-sm-4 col-form-label px-0 text-right"
+                                            id="debitCreditNoteLabelCreAmt">Amount
+                                            <span class="text-danger">*</span>
+                                        </label>
+                                        <div class="col-sm-8">
+                                            <input type="text" class="form-control" id="debitCreditNoteCreAmt"
+                                                placeholder="Amount" formControlName="amount" disabled>
+
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label for="" class="col-sm-4 col-form-label px-0 text-right"
+                                            id="debitCreditNoteLabelPaymentStatus">Pay
+                                            Type
+                                            <span class="text-danger">*</span>
+                                        </label>
+                                        <div class="col-sm-8">
+                                            <ng-select placeholder="-- select --" [items]="paymentTypes"
+                                                bindLabel="type" formControlName="paymentType">
+                                            </ng-select>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label for="" class="col-sm-4 col-form-label px-0 text-right"
+                                            id="debitCreditNoteLabelCreAmt">Pay Status
+
+                                        </label>
+                                        <div class="col-sm-8">
+                                            <input type="text" class="form-control" id="debitCreditNoteCreAmt"
+                                                placeholder="Amount" formControlName="paymentStatus" disabled>
+
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group row">
+                                        <label for="" class="col-sm-4 col-form-label px-0 text-right"
+                                            id="debitCreditNoteLabelCreAmt">Bill Type
+
+                                        </label>
+                                        <div class="col-sm-8">
+                                            <ng-select placeholder="-- select --" bindLabel="type"
+                                                formControlName="billType">
+                                            </ng-select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-3"></div>
+                                <div class="col-6">
+                                    <label for="" class="col-form-label px-0 text-center w-100"
+                                        id="debitCreditNoteLabelRMarks">Remarks</label>
+                                    <textarea name="" class="form-control" id="debitCreditNoteRMarks" cols="30" rows="6"
+                                        formControlName="remarks" disabled></textarea>
+                                </div>
+                                <div class="col-3"></div>
+                            </div>
+                            <div class="row">
+                                <div class="col mb-3 pt-2 text-center">
+
+                                    <input type="button" class="btn btn-secondary px-4 ml-3"
+                                        (click)="onResetCreditNote()" value="Cancel">
+                                </div>
+                            </div>
+
+
+                        </form>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+</div>

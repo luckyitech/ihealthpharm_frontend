@@ -1,0 +1,747 @@
+<h6 class="border border-primary p-2 mt-3 mb-4 bg-light text-white">Pending Approval Details</h6>
+<div class="row">
+  <div class="col">
+    <form class="form-inline">
+      <input (keyup)="onQuickFilterChanged($event)" class="form-control no-right-border-radius" type="text"
+        placeholder="Invoice No" aria-label="Search" [(ngModel)]="invoiceNo" [ngModelOptions]="{standalone: true}">
+      <button class="btn btn-primary no-left-border-radius" (click)="getApprovedDataCount()">Search</button>
+    </form>
+  </div>
+  <div class="col">
+    <button class="btn btn-primary no-left-border-radius" (click)="onSelectionChanged()" style="    margin-left: 435px;">View</button>  </div>
+</div>
+
+<div class="row grid-area">
+  <div class="col py-3">
+    <ag-grid-angular id="pendingOrderApproval" style="width: 100%; height: 620px;" class="ag-theme-balham" [gridOptions]="approvedGridOptions"
+    (gridReady)="onGridReady($event)"
+      [pagination]="true" [cacheOverflowSize]="gridCacheOverFlowSize" 
+      [paginationPageSize]="paginationSize" [maxConcurrentDatasourceRequests]="invoiceMaxConcurrentDatasourceRequests">
+    </ag-grid-angular>
+  </div>
+</div>
+
+<div class="row grid-area">
+  <div class="col mb-3 pt-2 text-center">
+    <button [disabled]="approveDesabled"
+      (click)="submit(2)" class="btn btn-primary px-4 return-btn">Approve</button>
+    <button [disabled]="approvedGridOptions?.api?.getSelectedRows()?.length === 0 || reason.length == 0"
+      (click)="submit(3)" class="btn btn-secondary px-4 ml-3 return-btn">Reject</button>
+  </div>
+</div>
+
+<div class="row grid-area">
+  <div class="col-4"></div>
+  <div class="col-4 margin-auto">
+    <div class="form-group row">
+      <label for="" class="col-12 col-form-label pr-0 text-center">Reason for Rejection <span
+          class="text-danger">*</span></label>
+      <div class="col-12">
+        <textarea [(ngModel)]="reason" class="form-control min-height-83" id=""
+          placeholder="Reason for rejection.." ></textarea>
+      </div>
+    </div>
+  </div>
+  <div class="col-4"></div>
+</div>
+<div class="modal fade pendingModal" id="pendingModal" tabindex="-1" role="dialog" aria-labelledby="pendingLabel">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content content-width" >
+      <div class="modal-header">
+        <h4 class="modal-title">Pending Purchase Invoice Details</h4>
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+      </div>
+      <div class="modal-body">
+
+        <!-- <ul class="nav nav-pills mb-3 border-bottom border-secondary" id="pills-tab" role="tablist">
+          <li class="nav-item">
+            <a class="nav-link active" id="pills-home-tab" data-toggle="pill" href="#pills-home" role="tab"
+              aria-controls="pills-home" aria-selected="true">New Quotation</a>
+          </li>
+        </ul> -->
+        <div class="tab-content" id="pills-tabContent">
+          <div class="tab-pane fade show active" id="pills-home" role="tabpanel" aria-labelledby="pills-home-tab">
+
+            <div class="tab-content" id="pills-tabContent">
+              <div class="tab-pane fade show active" id="pills-new" role="tabpanel" aria-labelledby="pills-home-tab">
+
+                <form #purchaseInvoiceForm="ngForm" [formGroup]="purchaseInvoiceInformationForm"
+                  (keydown.enter)="$event.preventDefault()" (ngSubmit)="onSubmit()" class="full-height" class="">
+
+                  <div class="form-group row">
+                    <div class="col-sm-8 d-flex align-items-center">
+                      <div class="d-inline mr-3">
+                        <label class="mb-0">Payment Type</label>
+                      </div>
+                      <div *ngFor="let paymentType of paymentTypes">
+                        <div *ngIf="paymentType.type !== 'INSURANCE'" class="custom-control d-inline custom-radio mr-3">
+                          <input (change)="onPaymentTypeChange($event)" [value]='paymentType.paymentTypeId'
+                            [checked]="paymentType?.paymentTypeId === selectedPaymentType?.paymentTypeId" name="payment-type"
+                            type="radio" class="custom-control-input" id=" {{paymentType.type}}">
+                          <label class="custom-control-label" for=" {{paymentType.type}}"
+                            id="purchaseInvoiceLabelPayType">{{paymentType.type}}</label>
+                          </div>
+                      </div>
+                    </div>
+                    <label *ngIf="selectedPaymentType?.type === 'CREDIT'" for="" class="col-sm-2 col-form-label pr-0 text-right" id="purchaseInvoiceLabelCurrPeriod">Credit
+                      Days</label>
+                    <div class="col-sm-2">
+                      <input *ngIf="selectedPaymentType?.type === 'CREDIT'" type="number" min="0" formControlName="creditPeriod" id="purchaseInvoiceCurrPeriod"
+                        class="form-control">
+                    </div>
+                  </div>
+
+                  <div class="row">
+                    <div class="col-lg-3">
+                      <div class="form-group row">
+                        <label for="" class="col-sm-3 col-form-label pr-0 text-right" id="purchaseInvoiceLabelGRN">GRN #</label>
+                        <div class="col-sm-9">
+                          <input disabled type="text" formControlName="grnNo" class="form-control" id="purchaseInvoiceGRN"
+                            placeholder="GRN Number">
+                        </div>
+                      </div>
+                      <div class="form-group row">
+                        <label for="" class="col-sm-3 col-form-label pr-0 text-right" id="purchaseInvoiceLabelGRNDate">GRN Date</label>
+                        <div class="col-sm-9">
+                          <input readonly type="date" formControlName="grnDate" class="form-control" id="purchaseInvoiceGRNDate" placeholder="GRN Date">
+                        </div>
+                      </div>
+                    
+                    </div>
+                    <div class="col-lg-3">
+                      <div class="form-group row">
+                        <label style="white-space: nowrap;" for="" class="col-sm-3 col-form-label pr-0 text-right" id="purchaseInvoiceLabelDate">Inv Date
+                          <span class="text-danger">*</span>
+                        </label>
+                        <div class="col-sm-9">
+                          <input type="date" formControlName="invoiceDt" class="form-control" id="purchaseInvoiceDate"
+                            placeholder="Invoice Date" disabled>
+                            <div *ngIf="purchaseInvoiceInformationForm.get('invoiceDt')?.touched" class="error-msg-common text-danger" >
+                            <div *ngIf="purchaseInvoiceInformationForm.get('invoiceDt')?.errors?.required" >* required field</div>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="form-group row">
+                        <label for="" class="col-sm-3 col-form-label pr-0 text-right" id="purchaseInvoiceLabelPONo">PO #</label>
+                        <div class="col-sm-9">
+                          <ng-select [items]="purchaseorders" bindLabel="purchaseOrderNo" placeholder="Select Purchase Order"
+                            [(ngModel)]="selectedPurchaseOrder" [ngModelOptions]="{standalone: true}" 
+                           id="purchaseInvoicePONo" disabled>
+                          </ng-select>
+                        </div>
+                      </div>
+                      <!-- <div class="form-group row">
+                        <label for="" class="col-sm-3 col-form-label pr-0 text-right" id="purchaseInvoiceLabelPOItm">Items</label>
+                        <div class="col-sm-9">
+                          <ng-select [items]="poItems" bindLabel="itemName" [multiple]="true"  placeholder="Select Purchase Order Item"
+                            [(ngModel)]="selectedPoItem" [ngModelOptions]="{standalone: true}" id="purchaseInvoicePOItm">
+                          </ng-select>
+                        </div>
+                      </div> -->
+                    </div>
+                    <div class="col-lg-3">
+                      <div class="form-group row">
+                        <label for="" class="col-sm-3 col-form-label pr-0 text-right" id="purchaseInvoiceLabelPOItm">Status <span class="text-danger">*</span></label>
+                        <div class="col-sm-9">
+                          <ng-select placeholder="--Select--" (change)="onStatusChange($event)"  [items]="sss" bindLabel="sss" [(ngModel)]="ddd"
+                          [ngModelOptions]="{standalone: true}" id="sss" disabled>
+                          </ng-select>
+                        </div>
+                      </div>
+                      <div class="form-group row">
+                        <label for="" class="col-sm-3 col-form-label pr-0 text-right" id="purchaseInvoiceLabelParcelNo">Parcel
+                          #</label>
+                        <div class="col-sm-9">
+                          <input type="text" formControlName="parcelNo" class="form-control" id="purchaseInvoiceParcel"
+                            placeholder="Parcel Number" disabled>
+                        </div>
+                      </div>
+                    
+                    </div>
+                    <div class="col-lg-3">
+                      <div class="form-group row">
+                          <label for="" class="col-sm-3 col-form-label pr-0 text-right">Delivery</label>
+                          <div class="col-sm-9">
+                            <ng-select id="delType" placeholder="Select Delivery Type" bindLabel="type" [items]="deliveries"
+                              [(ngModel)]="selectedDeliveryId" [ngModelOptions]="{standalone: true}" disabled>
+                            </ng-select>
+                          </div>
+                        </div>
+                        <div class="form-group row">
+                          <label for="" class="col-sm-3 col-form-label pr-0 text-right" id="purchaseInvoiceLabelBRBy">Br By</label>
+                          <div class="col-sm-9">
+                            <input type="text" formControlName="broughtBy" class="form-control" id="purchaseInvoiceBRBy"
+                              placeholder="Brought By" disabled>
+                          </div>
+                        </div>
+                    </div>
+                  </div>
+
+                  <div class="row">
+                    <div class="col-lg-3">
+                      <div class="form-group row">
+                        <label for="" class="col-sm-3 col-form-label pr-0 text-right" id="purchaseInvoiceLabelInvNo">Inv # <span class="text-danger">*</span></label>
+                        <div class="col-sm-9">
+                          <input type="text" formControlName="invoiceNo" class="form-control" id="purchaseInvoiceInvNo"
+                            placeholder="Invoice Number">
+                            <div *ngIf="purchaseInvoiceInformationForm.get('invoiceNo')?.touched"
+                            class="error-msg-common text-danger">
+                            <div *ngIf="purchaseInvoiceInformationForm.get('invoiceNo').errors?.required">
+                              * required field
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-lg-9">
+                      <div class="form-group row">
+                        <label id="requestQuotLabelDesc" for="" class="col-form-label pr-0 text-right">Invoice Desc</label>
+                        <div class="col-sm-9">
+                          <textarea style="width: 645px;" formControlName="reason" class="form-control min-height-83" id="" placeholder="Invoice Desc"></textarea>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <h6 class="border border-primary p-2 mt-3 mb-4 bg-light text-white">Supplier Details</h6>
+
+                  <div class="row">
+                    <div class="col-lg-4">
+                      <div class="form-group row">
+                        <label for="" class="col-sm-3 col-form-label pr-0 text-right"
+                          id="purchaseInvoiceLabelSupplier">Supplier</label>
+                        <div class="col-sm-9">
+                          <ng-select [items]="suppliers" bindLabel="name" placeholder="Select Supplier"
+                            [disabled]="checkIfSelectedPoExists()" [(ngModel)]="selectedSupplier"
+                            [ngModelOptions]="{standalone: true}" (change)="onSupplierChange($event)" id="purchaseInvoiceSupplier" disabled>
+                          </ng-select>
+                        </div>
+                      </div>
+                      <div class="form-group row">
+                        <label for="" class="col-sm-3 col-form-label pr-0 text-right" id="purchaseInvoiceLabelDlNo">SL No</label>
+                        <div class="col-sm-9">
+                          <input readonly type="text" class="form-control" id="purchaseInvoiceDlNo"
+                            placeholder="SL Number" value="{{selectedSupplier?.dlNo}}" disabled>
+                        </div>
+                      </div>
+                      <div class="form-group row">
+                        <label for="" class="col-sm-3 col-form-label pr-0 text-right">Pay Type</label>
+                        <div class="col-sm-9">
+                          <ng-select (change)="onPaymentTypeChange($event)" placeholder="Select Payment Type" [items]="paymentTypes"
+                            bindLabel="type" [(ngModel)]="selectedPaymentType" [ngModelOptions]="{standalone: true}" disabled>
+                          </ng-select>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-lg-8">
+                      <div class="form-group row">
+                        <div class="col-12">
+                          <input readonly type="text" class="form-control" id="purchaseInvoiceLabelName"
+                            placeholder="" value="{{selectedSupplier?.name}}" disabled>
+                        </div>
+                      </div>
+                      <div class="form-group row">
+                        <label for="" class="col-sm-3 col-form-label pr-0 text-right"
+                          id="purchaseInvoiceLabelAddress">Address</label>
+                        <div class="col-sm-9">
+                          <input readonly type="text" class="form-control" id="purchaseInvoiceLabelAddOne"
+                            placeholder="Address" value="{{selectedSupplier?.addressLine1}}" disabled>
+                        </div>
+                      </div>
+                      <div class="form-group row">
+                        <label for="" class="col-sm-3 col-form-label pr-0 text-right">Payment</label>
+                        <div class="col-sm-9">
+                          <div class="input-group">
+                            <input type="number" min="0"  class="form-control"
+                              placeholder="Net Payment" value="{{selectedSupplier?.paymentCreditNetDays}}" disabled>
+                            <div class="input-group-append">
+                              <span class="input-group-text bg-extra-light border-0">Days</span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <h6 class="border border-primary p-2 mt-3 mb-4 bg-light text-white">Item Details</h6>
+
+                  <div class="row">
+                    <div class="col-lg-4">
+                      <div class="form-group row">
+                        <label for="" class="col-sm-3 col-form-label pr-0 text-right" id="purchaseInvoiceLabelCode">Code</label>
+                        <div class="col-sm-9">
+                          <input type="text"class="form-control"
+                            data-toggle="modal" data-target="#itemSearchModal" placeholder="Item Code"
+                            id="purchaseInvoiceCode" value="{{selectedItem?.itemsModel.itemCode}}" disabled>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-lg-4">
+                      <div class="form-group row">
+                        <label for="" class="col-sm-3 col-form-label pr-0 text-right" id="purchaseInvoiceLabelDesc">Name</label>
+                        <div class="col-sm-9">
+                          <input readonly [attr.disabled]="selectedSupplierName?.length === 0 ? '' : null" type="text" class="form-control"
+                            data-toggle="modal" data-target="#itemSearchModal" placeholder="Item Name"
+                            id="purchaseInvoiceDesc" value="{{selectedItem?.itemsModel.itemName}}" disabled>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-lg-4">
+                      <div class="form-group row">
+                        <label for="" class="col-sm-3 col-form-label pr-0 text-right" id="purchaseInvoiceLabelQuant">Quantity</label>
+                        <div class="col-sm-9 ">
+                          <input [attr.disabled]="selectedSupplierName?.length === 0 ? '' : null" type="number" min="0"
+                            class="form-control" id="" placeholder="Quantity" formControlName="quantity" id="purchaseInvoiceQuant" disabled>
+                        </div>
+                        <div *ngIf="purchaseInvoiceInformationForm.get('quantity')?.touched" class="error-msg-common text-danger">
+                          <div *ngIf="purchaseInvoiceInformationForm.get('quantity').errors?.required">
+                            * required field
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="row">
+                    <div class="col text-center pb-3">
+                      <button [disabled]="!(checkItemDisability() && checkQuantity())" (click)="addRowsToPurchaseOrderGrid()"
+                        class="btn btn-primary" id="" disabled>
+                        Add to the grid
+                      </button>
+                    </div>
+                  </div>
+                  <div class="row">
+                 <div class="col-sm-12">
+                  <input type="button" (click)="onRemoveSelected()" style="margin-bottom: 10px;"
+                  value="Delete" class="btn btn-primary pull-right" disabled>
+
+                  </div>
+                </div>
+                  <div class="row">
+                    <div class="col-12 pb-4">
+                      <ag-grid-angular  [gridOptions]="purchaseInvoiceGridOptions"
+                        style="width: 100%; height: 400px;" class="ag-theme-balham" [getRowNodeId]="getRowNodeId"
+                       (cellValueChanged)="showReturns($event)">
+                      </ag-grid-angular>
+                    </div>
+                  </div>
+
+                  <!-- <h6 class="border border-primary p-2 mt-3 mb-4 bg-light text-white">Return Details</h6>
+
+                  <div class="row">
+                    <div class="col-lg-4">
+                      <div class="form-group row">
+                        <label for="" class="col-sm-3 col-form-label pr-0 text-right">Code <span
+                            class="text-danger">*</span></label>
+                        <div class="col-sm-9">
+                          <label type="text" [attr.disabled]="selectedSupplier?.name?.length === 0 ? '' : null" class="form-control"
+                            data-toggle="modal" data-target="#itemSearchModal">{{selectedItem?.itemsModel.itemCode}}</label>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-lg-4">
+                      <div class="form-group row">
+                        <label for="" class="col-sm-3 col-form-label pr-0 text-right">Desc. <span
+                            class="text-danger">*</span></label>
+                        <div class="col-sm-9">
+                          <label [attr.disabled]="selectedSupplierName?.length === 0 ? '' : null" type="text" class="form-control"
+                            data-toggle="modal" data-target="#itemSearchModal">{{selectedItem?.itemsModel.itemDescription}}</label>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-lg-4">
+                      <div class="form-group row">
+                        <label for="" class="col-sm-3 col-form-label pr-0 text-right">Quantity <span
+                            class="text-danger">*</span></label>
+                        <div class="col-sm-9 ">
+                          <input [attr.disabled]="selectedSupplierName?.length === 0 ? '' : null" type="number" min="0"
+                            class="form-control" id="" placeholder="Quantity" formControlName="quantity">
+                        </div>
+                        <div *ngIf="purchaseInvoiceInformationForm.get('quantity')?.touched" class="error-msg-common text-danger">
+                          <div *ngIf="purchaseInvoiceInformationForm.get('quantity').errors?.required">
+                            * required field
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="row">
+                    <div class="col text-center pb-3">
+                      <button [disabled]="!(!checkItemDisability() && checkQuantity())" (click)="addRowsToPurchaseOrderGrid()"
+                        class="btn btn-primary" id="">
+                        Add to the grid
+                      </button>
+                    </div>
+                  </div>
+
+                  <div class="row">
+                    <div class="col-12 pb-4">
+                      <ag-grid-angular *ngIf="showGrid" [gridOptions]="purchaseInvoiceGridOptions"
+                        style="width: 100%; height: 200px;" class="ag-theme-balham">
+                      </ag-grid-angular>
+                    </div>
+                  </div> -->
+
+                  <div class="row">
+                    <div class="col-lg-4">
+                      <div class="form-group row">
+                        <label for="" class="col-sm-3 col-form-label pr-0 text-right" id="purchaseInvoiceLabelItems">Items</label>
+                        <div class="col-sm-9">
+                          <input disabled type="text" class="form-control" id="purchaseInvoiceLabelTItems"
+                            placeholder="Total Items" value="{{totalItems}}" disabled>
+                        </div>
+                      </div>
+                      <div class="form-group row">
+                        <label for="" class="col-sm-3 col-form-label pr-0 text-right"
+                          id="purchaseInvoiceLabelQuantity">Quantity</label>
+                        <div class="col-sm-9">
+                          <input readonly type="text" class="form-control" placeholder="Total Quantity" id="purchaseInvoiceQuantity"
+                          formControlName="quantity" disabled>
+                        </div>
+                      </div>
+                      <div class="form-group row">
+                        <label for="" class="col-sm-3 col-form-label pr-0 text-right" id="purchaseInvoiceLabelBonus">Bonus</label>
+                        <div class="col-sm-9">
+                          <label type="text" class="form-control" placeholder="Bonus" id="purchaseInvoiceBonus" style="background-color: #e9ecef;"> 
+                            {{getTotalBonus() || 0}}
+                          </label>
+                        </div>
+                      </div>
+                      <div class="form-group row">
+                        <label for="" class="col-sm-3 col-form-label pr-0 text-right"
+                          id="purchaseInvoiceLabelAdvance">Advance</label>
+                        <div class="col-sm-9">
+                          <input type="number" min="0" formControlName="advance" class="form-control" id="purchaseInvoiceAdvance"
+                            placeholder="Advance" (keyup)="invAmountCalc()" disabled>
+                        </div>
+                      </div>
+
+                    </div>
+                    <div class="col-lg-4">
+                      <div class="form-group row">
+                        <label for="" class="col-sm-3 col-form-label pr-0 text-right"
+                          id="purchaseInvoiceLabelRejects">Rejects</label>
+                        <div class="col-sm-9">
+                          <input readonly input type="number" min="0" formControlName="totalRejects" class="form-control"
+                            id="purchaseInvoiceRejects" placeholder="Total Rejects" name="purchaseReturns" disabled>
+                        </div>
+                      </div>
+                      <div class="form-group row">
+                        <label for="" class="col-sm-3 col-form-label pr-0 text-right"
+                          id="purchaseInvoiceLabelCharges">Charges</label>
+                        <div class="col-sm-9">
+                          <input type="number" min="0" formControlName="handlingCharges" class="form-control"
+                            id="purchaseInvoiceCharge" placeholder="Service Charges" (keyup)="invAmountCalc()" disabled>
+                        </div>
+                      </div>
+                      <div class="form-group row">
+                        <label for="" class="col-sm-3 col-form-label pr-0 text-right" id="purchaseInvoiceLabelRoundOff">Round
+                          off</label>
+                        <div class="col-sm-9">
+                          <input type="number" min="0" formControlName="roundOff" class="form-control" id="purchaseInvoiceRoundOff"
+                            placeholder="Round off" (keyup)="invAmountCalc()" disabled>
+                        </div>
+                      </div>
+                      <div class="form-group row">
+                        <label for="" class="col-sm-3 col-form-label pr-0 text-right"
+                          id="purchaseInvoiceLabelBalance">Balance</label>
+                        <div class="col-sm-9">
+                          <input type="number" min="0" formControlName="balance" class="form-control" id="purchaseInvoiceBalance"
+                            placeholder="Balance" (keyup)="invAmountCalc()" disabled>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-lg-4">
+                      <!-- <div class="form-group row">
+                        <label for="" class="col-sm-3 col-form-label pr-0 text-right" id="purchseInvoiceLabelDisc%">Disc %</label>
+                        <div class="col-sm-9">
+                          <input type="number" min="0" formControlName="discountPercentage" class="form-control"
+                            id="purchaseInvoiceDisc%" placeholder="Discount %">
+                        </div>
+                      </div> -->
+                      <div class="form-group row">
+                        <label for="" class="col-sm-3 col-form-label pr-0 text-right" id="purchaseInvoiceLabelDiscAmt">Disc
+                          Amt</label>
+                        <div class="col-sm-9">
+                          <input type="number" min="0" formControlName="discount" class="form-control" id="purchaseInvoiceDiscAmt"
+                            placeholder="Discount Amount" disabled>
+                        </div>
+                      </div>
+                      <div class="form-group row">
+                        <label for="" class="col-sm-3 col-form-label pr-0 text-right" id="purchaseInvoiceLabelInvVal">Inv
+                          Amt</label>
+                        <div class="col-sm-9">
+                          <input type="number" min="0" formControlName="invoiceAmount" class="form-control"
+                            id="purchaseInvoiceInvVal" placeholder="Invoice Value" disabled>
+                        </div>
+                      </div>
+
+                      <div class="form-group row">
+                        <label for="" class="col-sm-3 col-form-label pr-0 text-right"
+                          id="purchaseInvoiceLabelAdvance">Net Amount</label>
+                        <div class="col-sm-9">
+                          <input type="number" min="0" formControlName="invoiceActualAmount" class="form-control" id="purchaseInvoiceAdvance"
+                            placeholder="Net Amount" readonly>
+                        </div>
+                      </div>
+                      <!-- <div class="form-group row">
+                        <label for="" class="col-sm-3 col-form-label pr-0 text-right" id="purchaseInvoiceLabelInvVal">Status</label>
+                        <div class="col-sm-9"> -->
+                          <!-- <div class="form-group row">
+                            <label for="" class="col-sm-3 col-form-label pr-0 text-right" id="purchaseInvoiceLabelPOItm">Status</label>
+                            <div class="col-sm-9">
+                              <ng-select (change)="onStatusChange($event)" placeholder="--Select--" id="status" [items]="sss" bindLabel="sss"
+                                [(ngModel)]="ddd" [ngModelOptions]="{standalone: true}">
+                              </ng-select>
+                            </div>
+                          </div> -->
+                          <!-- <input type="number" min="0" formControlName="status" class="form-control" id="status"
+                            placeholder="Approved / Not Approved"> -->
+                        <!-- </div> -->
+                      <!-- </div> -->
+                    </div>
+                  </div>
+
+                  <div class="row">
+                    <div class="col-4"></div>
+                    <div class="col-4">
+                      <div class="form-group row">
+                        <label for="" class="col-12 col-form-label pr-0 text-center" id="purchaseInvoiceLabelRemark">Terms</label>
+                        <div class="col-12">
+                          <textarea type="text" formControlName="remarks" class="form-control min-height-83"
+                            id="purchaseInvoiceRemark" placeholder="Terms" disabled></textarea>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-4"></div>
+                  </div>
+
+                </form>
+
+                <div class="row">
+                  <div class="col mb-3 pt-2 text-center">
+
+
+                    <button
+                     class="btn btn-primary px-4 submit-later" data-dismiss="modal">Cancel</button>
+
+                  </div>
+                </div>
+
+            <div *ngIf="showPurchaseReturns">
+                <form class="">
+                  <h6 class="border border-primary p-2 mt-3 mb-4 bg-light text-white">Purchase Returns Details</h6>
+
+                  <div class="row">
+                    <div class="col-lg-4">
+                      <div class="form-group row">
+                        <label for="" id="purchaseReturnsLabelPR" class="col-sm-3 col-form-label pr-0 text-right">PR #</label>
+                        <div class="col-sm-9">
+                          <!-- <input type="text" class="form-control" id="purchaseReturnsPR" placeholder="PR Number"> -->
+                          <input type="text" [(ngModel)]="_prNumber" name="prNumber" class="form-control" id="purchaseReturnsPR" [disabled]="true" placeholder="PR Number">
+                        </div>
+                      </div>
+                      <div class="form-group row">
+                        <label for="" id="purchaseReturnsLabelDate" class="col-sm-3 col-form-label pr-0 text-right">Date <span
+                            class="text-danger">*</span></label>
+                        <div class="col-sm-9">
+                            <input type="date" [ngModel]="today | date:'yyyy-MM-dd'" name="dt" class="form-control" id="purchaseReturnsDate" [disabled]="true">
+                        </div>
+                      </div>
+                      <div class="form-group">
+                        <div class="col-sm-12 justify-content-end d-flex pt-2 px-0">
+                          <div class="d-inline mr-3">
+                            <label id="" class="mb-0">Debit Note</label>
+                          </div>
+                          <div class="custom-control d-inline custom-radio mr-3">
+                            <input name="debit-note" type="radio" value="Y" class="custom-control-input" id="auto">
+                            <label id="" class="custom-control-label" for="auto">Auto</label>
+                          </div>
+                          <div class="custom-control d-inline custom-radio">
+                            <input name="debit-note" type="radio" value="N" class="custom-control-input" id="manual">
+                            <label id="" class="custom-control-label" for="manual">Manual</label>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-lg-4">
+                      <div class="form-group row">
+                        <label for="" id="purchaseReturnsLabelGRN" class="col-sm-3 col-form-label pr-0 text-right">Inv #</label>
+                        <div class="col-sm-9">
+                          <input type="text" class="form-control" id="" placeholder="Invoice Number" disabled>
+
+                        </div>
+                      </div>
+                      <div class="form-group row">
+                        <label for="" id="purchaseReturnsLabelDateThree"
+                          class="col-sm-3 col-form-label pr-0 text-right">Date</label>
+                        <div class="col-sm-9">
+                          <input type="date" class="form-control" id="" placeholder="">
+                        </div>
+                      </div>
+                      <div class="form-group row">
+                        <label for="" id="purchaseReturnsLabelStatus" class="col-sm-3 col-form-label pr-0 text-right">Status <span
+                            class="text-danger">*</span></label>
+                        <div class="col-sm-9">
+                          <ng-select [items]="testing" id="" bindLabel="test" [loading]="Loading">
+                          </ng-select>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-lg-4">
+                      <div class="form-group row">
+                        <label for="" id="purchaseReturnsLabelGRN" class="col-sm-3 col-form-label pr-0 text-right">GRN #</label>
+                        <div class="col-sm-9">
+                          <input type="text" class="form-control" id="purchaseReturnsGRN" placeholder="GRN Number">
+                        </div>
+                      </div>
+                      <div class="form-group row">
+                        <label for="" id="purchaseReturnsLabelDateThree"
+                          class="col-sm-3 col-form-label pr-0 text-right">Date</label>
+                        <div class="col-sm-9">
+                            <input type="date" [ngModel]="today | date:'yyyy-MM-dd'" name="dt2" class="form-control" id="purchaseReturnsDateThree" [disabled]="true">
+                        </div>
+                      </div>
+                      <div class="form-group row">
+                        <label for="" id="purchaseReturnsLabelStatus" class="col-sm-3 col-form-label pr-0 text-right">Type <span
+                            class="text-danger">*</span></label>
+                        <div class="col-sm-9">
+                          <ng-select [items]="testing" id="" bindLabel="test" [loading]="Loading">
+                          </ng-select>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <h6 class="border border-primary p-2 mt-3 mb-4 bg-light text-white">Item Details</h6>
+
+                  <div class="row">
+                    <div class="col-lg-3">
+                      <div class="form-group row">
+                        <label for="" class="col-sm-3 col-form-label pr-0 text-right" id="purchaseInvoiceLabelCode">Code</label>
+                        <div class="col-sm-9">
+                          <ng-select [items]="testing" id="" bindLabel="test" [loading]="Loading">
+                          </ng-select>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-lg-3">
+                      <div class="form-group row">
+                        <label for="" class="col-sm-3 col-form-label pr-0 text-right" id="purchaseInvoiceLabelQuant">Qty</label>
+                        <div class="col-sm-9 ">
+                          <input type="text" class="form-control" id="" placeholder="Purchase Quantity" id="">
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-lg-3">
+                      <div class="form-group row">
+                        <label for="" class="col-sm-3 col-form-label pr-0 text-right" id="purchaseInvoiceLabelQuant">Qty <span
+                            class="text-danger">*</span></label>
+                        <div class="col-sm-9 ">
+                          <input type="text" class="form-control" id="" placeholder="Return Quantity" id="">
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-lg-3">
+                      <div class="form-group row">
+                        <label for="" class="col-sm-3 col-form-label pr-0 text-right" id="purchaseInvoiceLabelCode">Type <span
+                            class="text-danger">*</span></label>
+                        <div class="col-sm-9">
+                          <ng-select [items]="testing" id="" bindLabel="test" [loading]="Loading">
+                          </ng-select>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="row">
+                    <div class="col text-center">
+                      <button class="btn btn-primary" id="">
+                        Add to the Grid
+                      </button>
+                    </div>
+                  </div>
+
+                  <div class="row">
+                    <div class="col-12 text-right pb-2">
+                      <button class="btn btn-secondary">Delete</button>
+                    </div>
+                  </div>
+
+                  <div class="row">
+                    <div class="col-12 pb-4">
+                      <ag-grid-angular *ngIf="showGrid" [gridOptions]="purchaseInvoiceGridOptions"
+                        style="width: 100%; height: 200px;" class="ag-theme-balham">
+                      </ag-grid-angular>
+                    </div>
+                  </div>
+
+                  <div class="row py-3">
+                    <div class="col-lg-4">
+                      <div class="form-group row">
+                        <label for="" id="purchaseReturnsLabelItems" class="col-sm-3 col-form-label pr-0 text-right">Items</label>
+                        <div class="col-sm-9">
+                          <input type="text" class="form-control" id="purchaseReturnsItems" placeholder="Total Items">
+                        </div>
+                      </div>
+                      <div class="form-group row">
+                        <label for="" id="purchaseReturnsLabelQty" class="col-sm-3 col-form-label pr-0 text-right">Qty</label>
+                        <div class="col-sm-9">
+                          <input type="text" class="form-control" id="purchaseReturnsQty" placeholder="Total Quantity">
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-lg-4">
+                      <div class="form-group row">
+                        <label for="" id="purchaseReturnsLabelBonus" class="col-sm-3 col-form-label pr-0 text-right">Bonus</label>
+                        <div class="col-sm-9">
+                          <input type="text" class="form-control" id="purchaseReturnsBonus" placeholder="Bonus Quantity">
+                        </div>
+                      </div>
+                      <div class="form-group row">
+                        <label for="" id="purchaseReturnsLabelCharges"
+                          class="col-sm-3 col-form-label pr-0 text-right">Charges</label>
+                        <div class="col-sm-9">
+                          <input type="text" class="form-control" id="purchaseReturnsCharges" placeholder="Service Charges">
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-lg-4">
+                      <div class="form-group row">
+                        <label for="" id="purchaseReturnsLabelRoundOff" class="col-sm-3 col-form-label pr-0 text-right">Round
+                          Off</label>
+                        <div class="col-sm-9">
+                          <input type="text" class="form-control" id="purchaseReturnsRoundOff" placeholder="Round Off">
+                        </div>
+                      </div>
+                      <div class="form-group">
+                        <div class="col-sm-12 text-center">
+                          <h5 class="mb-0 pt-2"> Total Amount: 189.00</h5>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                </form>
+
+                <div class="row">
+                  <div class="col mb-3 pt-2 text-center">
+                    <button class="btn btn-primary px-4">Save</button>
+                    <button class="btn btn-secondary px-4 ml-3">Cancel</button>
+                  </div>
+                </div>
+
+              </div>
+              </div>
+            </div>
+
+
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+<ng4-loading-spinner [threshold]="0" [loadingText]="'Please wait...'" [timeout]="400000000"> </ng4-loading-spinner>

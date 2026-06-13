@@ -1,0 +1,268 @@
+<div id="editHospitalGrid" class="row pt-3">
+    <div class="col">
+      <form class="form-inline">
+        <input class="form-control no-right-border-radius" type="text" placeholder="Search here.." aria-label="Search"
+        [(ngModel)]="key" [ngModelOptions]="{standalone:true}">
+        <button class="btn btn-primary no-left-border-radius" (click)="search()">Search</button>
+      </form>
+    </div>
+    <div class="col text-right">
+      <button class="btn btn-primary px-4 edit-btn" [disabled]="hospitalGridOptions?.api?.getSelectedRows()?.length === 0"
+        data-toggle="modal" id="common-grid-btn" (click)="editGrid()">Edit</button>
+    </div>
+  </div>
+
+  <div class="row grid-area">
+    <div class="col py-3">
+      <ag-grid-angular style="width: 100%; height: 620px;" class="ag-theme-balham" id="common-grid" [rowData]="rowData"
+        [columnDefs]="columnDefs" *ngIf="showGrid" [gridOptions]="hospitalGridOptions">
+      </ag-grid-angular>
+    </div>
+  </div>
+
+
+  <div class="hospitalInformationForm" id="hospital-Information" style="display:none">
+    <form #hospitalForm="ngForm" [formGroup]="hospitalInformationForm" (keydown.enter)="$event.preventDefault()"
+      (ngSubmit)="onSubmit()" class="full-height">
+
+      <h6 class="border border-primary p-2 mt-3 mb-4 bg-light text-white">Generic Details</h6>
+
+      <div class="row">
+          <div class="col-lg-4">
+              <div class="form-group row">
+                <label for="" class="col-sm-3 col-form-label pr-0 text-right" id="editHospitalLabelName">Name <span
+                    class="text-danger">*</span></label>
+                <div class="col-sm-9">
+                  <input [(ngModel)]="hospitalName" type="text" id="editHospitalName" class="form-control"
+                    formControlName="hospitalName" placeholder="Hospital Name">
+                  <div *ngIf="hospitalInformationForm.get('hospitalName')?.touched" class="error-msg-common text-danger">
+                    <div *ngIf="hospitalInformationForm.get('hospitalName').errors?.required">
+                      * required field
+                    </div>
+                  </div>
+                  <div class="error-msg-common text-danger" *ngIf="checkHospitalName()">
+                    Name Already Exits
+                  </div>
+                </div>
+              </div>
+              <div class="form-group row">
+                <label for="" class="col-sm-3 col-form-label pr-0 text-right" id="editHospitalLabelLicense">License <span
+                    class="text-danger">*</span></label>
+                <div class="col-sm-9">
+                  <input type="text" class="form-control" formControlName="license" id="editHospitalLicense"
+                    placeholder="License">
+                  <div *ngIf="hospitalInformationForm.get('license')?.touched" class="error-msg-common text-danger">
+                    <div *ngIf="hospitalInformationForm.get('license').errors?.required">
+                      * required field
+                    </div>
+                  </div>
+                  <div *ngIf="hospitalInformationForm.get('license')?.invalid" class="error-msg-common text-danger">
+                      <div
+                        *ngIf="!hospitalInformationForm.get('license').errors?.required && hospitalInformationForm?.get('license')?.errors">
+                        * not a valid input
+                      </div>
+                    </div>
+                </div>
+              </div>
+              <div class="form-group row">
+                <label for="" class="col-sm-3 col-form-label pr-0 text-right" id="editHospitalLabelPhone">Phone <span
+                    class="text-danger">*</span></label>
+                <div class="col-sm-9">
+                  <input type="text" class="form-control" id="editHospitalPhone" formControlName="phoneNumber"
+                    placeholder="Phone Number">
+                  <div *ngIf="hospitalInformationForm.get('phoneNumber')?.touched" class="error-msg-common text-danger">
+                    <div *ngIf="hospitalInformationForm.get('phoneNumber').errors?.required">
+                      * required field
+                    </div>
+
+                    <div *ngIf="hospitalInformationForm.get('phoneNumber')?.invalid" class="error-msg-common text-danger">
+                      <div
+                        *ngIf="!hospitalInformationForm.get('phoneNumber').errors?.required && hospitalInformationForm?.get('phoneNumber')?.errors">
+                        * not a valid input
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-lg-4">
+              <div class="form-group row">
+                <label for="" class="col-sm-3 col-form-label pr-0 text-right" id="editHospitalLabelEmail">Email </label>
+                <div class="col-sm-9">
+                  <input type="text" class="form-control" id="editHospitalEmail" formControlName="emailId" placeholder="Email">
+                  <div
+                    *ngIf="hospitalInformationForm.get('emailId')?.invalid && hospitalInformationForm.get('emailId')?.touched"
+                    class="error-msg-common text-danger">
+                    <div
+                      *ngIf="!hospitalInformationForm.get('emailId').errors?.required && hospitalInformationForm?.get('emailId')?.errors">
+                      * not a valid input
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="form-group row">
+                <label for="" class="col-sm-3 col-form-label pr-0 text-right" id="editHospitalLabelHelpLine">Helpline
+                </label>
+                <div class="col-sm-9">
+                  <input type="text" class="form-control" id="editHospitalHelpLine" formControlName="helpLine"
+                    placeholder="Helpline Number">
+                  <div *ngIf="hospitalInformationForm.get('helpLine')?.invalid" class="error-msg-common text-danger">
+                    <div
+                      *ngIf="!hospitalInformationForm.get('helpLine').errors?.required && hospitalInformationForm?.get('helpLine')?.errors">
+                      * not a valid input
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="form-group row">
+                <label for="" class="col-sm-3 col-form-label pr-0 text-right" id="editHospitalLabelFax">FAX </label>
+                <div class="col-sm-9">
+                  <input type="text" class="form-control" id="editHospitalFax" formControlName="fax" placeholder="FAX Number">
+                  <div *ngIf="hospitalInformationForm.get('fax')?.invalid && hospitalInformationForm.get('fax')?.touched"
+                    class="error-msg-common text-danger">
+                    <div
+                      *ngIf="!hospitalInformationForm.get('fax').errors?.required && hospitalInformationForm?.get('fax')?.errors">
+                      * not a valid input
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-lg-4">
+              <div class="form-group row">
+                <label for="" class="col-sm-3 col-form-label pr-0 text-right" id="editHospitalLabelWebsite"> Website </label>
+                <div class="col-sm-9">
+                  <input type="text" class="form-control" id="editHospitalWebsite" formControlName="website"
+                    placeholder="Website">
+                  <div *ngIf="hospitalInformationForm.get('website')?.invalid" class="error-msg-common text-danger">
+                    <div
+                      *ngIf="!hospitalInformationForm.get('website').errors?.required && hospitalInformationForm?.get('website')?.errors">
+                      * not a valid input
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="form-group row">
+                <div class="col-sm-12 justify-content-end d-flex pt-2">
+                  <div class="d-inline mr-3">
+                    <label class="mb-0" id="addHospitalLabelStatus">Status</label>
+                  </div>
+                  <div class="custom-control d-inline custom-radio mr-3">
+                    <input name="activeS" type="radio" value="Y" class="custom-control-input" formControlName="activeS"
+                      id="activate">
+                    <label class="custom-control-label" id="addHospitalActive" for="activate">Activate</label>
+                  </div>
+                  <div class="custom-control d-inline custom-radio">
+                    <input name="activeS" type="radio" value="N" class="custom-control-input" formControlName="activeS"
+                      id="deactivate">
+                    <label class="custom-control-label" id="addHospitalDeActive" for="deactivate">De Activate</label>
+                  </div>
+                </div>
+              </div>
+            </div>
+      </div>
+
+      <h6 class="border border-primary p-2 mt-3 mb-4 bg-light text-white">Address Details</h6>
+
+      <div class="row">
+          <div class="col-lg-4">
+              <div class="form-group row">
+                <label for="" class="col-sm-3 col-form-label pr-0 text-right" id="addHospitalLabelAddressOne">Address 1 <span
+                    class="text-danger">*</span></label>
+                <div class="col-sm-9">
+                  <input type="text" class="form-control" id="addHospitalAddressOne" formControlName="addressLine1"
+                    placeholder="Address 1">
+                  <div *ngIf="hospitalInformationForm.get('addressLine1')?.touched" class="error-msg-common text-danger">
+                    <div *ngIf="hospitalInformationForm.get('addressLine1').errors?.required">
+                      * required field
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="form-group row">
+                <label for="" class="col-sm-3 col-form-label pr-0 text-right" id="addHospitalLabelAddressTwo">Address 2
+                </label>
+                <div class="col-sm-9">
+                  <input type="text" class="form-control" id="addHospitalAddressTwo" formControlName="addressLine2"
+                    placeholder="Address 2">
+                </div>
+              </div>
+            </div>
+            <div class="col-lg-4">
+              <div class="form-group row">
+                <label for="" class="col-sm-3 col-form-label pr-0 text-right" id="editHospitalLabelCountry">Country <span
+                    class="text-danger">*</span></label>
+                <div class="col-sm-9">
+                  <ng-select (change)="onCountrySelected($event)" id="editHospitalCountry" placeholder="-- Select --"
+                    [(ngModel)]="selectedCountry" [items]="countries" formControlName="country"
+                    bindLabel="countryName">
+                  </ng-select>
+                  <div *ngIf="hospitalInformationForm.get('country')?.touched" class="error-msg-common text-danger">
+                    <div *ngIf="hospitalInformationForm.get('country').errors?.required">
+                      * required field
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="form-group row">
+                <label for="" class="col-sm-3 col-form-label pr-0 text-right" id="editHospitalLabelState">State / Province<span
+                    class="text-danger">*</span></label>
+                <div class="col-sm-9">
+                  <ng-select [items]="states" id="editHospitalState" placeholder="-- Select --" [(ngModel)]="selectedState"
+                  formControlName="state" bindLabel="provinceName">
+                  </ng-select>
+                  <div *ngIf="hospitalInformationForm.get('state')?.touched" class="error-msg-common text-danger">
+                    <div *ngIf="hospitalInformationForm.get('state').errors?.required">
+                      * required field
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-lg-4">
+              <div class="form-group row">
+                <label for="" class="col-sm-3 col-form-label pr-0 text-right" id="editHospitalLabelCity">City <span
+                    class="text-danger">*</span></label>
+                <div class="col-sm-9">
+                  <input type="text" class="form-control" id="editHospitalCity" formControlName="cityName" placeholder="City">
+                  <div *ngIf="hospitalInformationForm.get('cityName')?.touched" class="error-msg-common text-danger">
+                    <div *ngIf="hospitalInformationForm.get('cityName').errors?.required">
+                      * required field
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="form-group row">
+                <label for="" class="col-sm-3 col-form-label pr-0 text-right" id="editHospitalLabelPinCode">Pin Code <span
+                    class="text-danger">*</span></label>
+                <div class="col-sm-9">
+                  <input type="text" class="form-control" id="editHospitalPincode" formControlName="zipCode"
+                    placeholder="Pin Code">
+                    <div *ngIf="hospitalInformationForm.get('zipCode')?.touched" class="error-msg-common text-danger">
+                      <div *ngIf="hospitalInformationForm.get('zipCode').errors?.required">
+                        * required field
+                      </div>
+                    </div>
+                    <div *ngIf="hospitalInformationForm.get('zipCode')?.invalid" class="error-msg-common text-danger">
+                      <div
+                        *ngIf="!hospitalInformationForm.get('zipCode').errors?.required && hospitalInformationForm?.get('zipCode')?.errors">
+                        * not a valid input
+                      </div>
+                    </div>
+                </div>
+              </div>
+            </div>
+      </div>
+
+      <div class="row">
+        <div class="col mb-3 pt-2 text-center">
+          <button (click)="onSubmit()" class="btn btn-primary px-4 mu-adduser-save" [disabled]="checkFormDisability() || checkHospitalName()"
+            >Update</button>
+            <button  type="reset" class="btn btn-secondary px-4 ml-3" (click)="reset();hospitalInformationForm.controls.activeS.setValue('Y')" id="mu-adduser-cancel">Cancel</button>
+
+        </div>
+      </div>
+
+    </form>
+  </div>
+  <ng4-loading-spinner [loadingText]="'Please wait...'" [timeout]="400000000"> </ng4-loading-spinner>

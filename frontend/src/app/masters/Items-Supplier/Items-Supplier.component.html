@@ -1,0 +1,28 @@
+<ul class="nav nav-pills mb-3 border-bottom border-secondary" id="pills-tab" role="tablist">
+    <li class="nav-item">
+        <a class="nav-link active" id="addItemSupplierLink" data-toggle="pill" href="#pills-add" (click)="selectedTab = 'add'" role="tab"
+            aria-controls="pills-add" aria-selected="true">Add Item Supplier</a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" id="editItemSupplierLink" data-toggle="pill" href="#pills-edit" role="tab" (click)="selectedTab = 'edit'"
+            aria-controls="pills-edit" aria-selected="true">Edit Item Supplier</a>
+    </li>
+</ul>
+<div class="tab-content" id="pills-tabContent">
+
+    <div *ngIf="selectedTab === 'add'" class="tab-pane fade show active" id="pills-add" role="tabpanel"
+        aria-labelledby="pills-add-tab">
+
+        <add-item-supplier></add-item-supplier>
+
+    </div>
+
+    <div *ngIf="selectedTab === 'edit'" class="tab-pane fade show" id="pills-edit" role="tabpanel"
+        aria-labelledby="pills-edit-tab">
+
+        <edit-item-supplier></edit-item-supplier>
+
+
+    </div>
+
+</div>

@@ -1,0 +1,68 @@
+ <div *ngIf="showTodaysSalesChart" id="salesHomeChart">
+    <div class="row col-sm-8" style="margin: 0 auto;">
+    <div class="col-lg-4 thumbnail thumbnail1 table-todaysales-border" >
+      <p>Today's Sales</p>
+      <div >
+        <span class="values"><span style="color:black;font-size:23px;">KSh</span>&nbsp;&nbsp;{{todaySales | number:'.2'}}</span>
+       </div>
+     </div>
+    <div class="col-lg-3 thumbnail thumbnail1 table-todaysales-border" >
+      <p>Cash</p>
+      <p class="values">{{cashCount}}</p>
+       <span>({{cashAmount | number:'.2'}})</span>
+    </div>
+    <div class="col-lg-3  thumbnail thumbnail1 table-todaysales-border">
+      <p>Credit</p>
+      <p class="values">{{creditCount}}</p>
+      <span>({{creditAmount | number:'.2'}})</span>
+    </div>
+  </div>
+  <div class="row col-sm-8" style="margin: 0 auto;">
+    <div class="col-lg-4 thumbnail thumbnail1 table-todaysales-border" >
+      <p>Credit Card</p>
+      <div>
+        <p class="values">{{creditCardCount}}</p>
+        <span>({{creditCardAMount | number:'.2'}})</span>
+      </div>
+     </div>
+    <div class="col-lg-3 thumbnail thumbnail1 table-todaysales-border" >
+      <p>M-pesa</p>
+      <p class="values">{{upiCount}}</p>
+      <span>({{upiAmount | number:'.2'}})</span>
+    </div>
+    <div class="col-lg-3  thumbnail thumbnail1 table-todaysales-border">
+      <p>Cheque</p>
+      <p class="values">{{chequeCount}}</p>
+       <span>({{chequeAmount | number:'.2'}})</span>
+    </div>
+  </div>
+  <div class="row col-sm-8" style="margin: 0 auto;">
+    <div class="col-lg-4 thumbnail thumbnail1 table-todaysales-border" >
+      <p>Credit Note(s) Received</p>
+      <div>
+        <p class="values">{{creditNoteCount}}</p>
+        <span>({{creditNoteAmount | number:'.2'}})</span>
+      </div>
+     </div>
+     <div class="col-lg-3 thumbnail thumbnail1 table-todaysales-border" >
+      <p>Credit Note(s) Issued</p>
+      <p class="values">{{creditNoteIssuedCount}}</p>
+      <span>({{creditNoteIssuedAmount | number:'.2'}})</span>
+    </div>
+    <div class="col-lg-3  thumbnail thumbnail1 table-todaysales-border">
+      <p>SR Credit Note(s) Issued</p>
+      <p class="values">{{salesReturnCreditNoteCount}}</p>
+       <span>({{salesReturnCreditNoteAmount | number:'.2'}})</span>
+    </div> 
+  </div>
+  <div class="row col-sm-8" style="margin: 0 auto;">
+    <div class="col-lg-10 thumbnail thumbnail1 table-todaysales-border" style="padding: 10px;">
+      <p>Today's Sales Compared to Previous Day</p>
+      <div>
+        <span class="arrow-up" *ngIf = "showTop"></span>
+        <span class="arrow-down" *ngIf = "showDown"></span>
+        <span class="values" ><span style="color:black; font-size:23px; margin-left:-37px;">KSh</span>&nbsp;&nbsp;{{yesterday | number:'.2'}}</span>
+     </div>
+    </div>
+  </div>
+</div> 

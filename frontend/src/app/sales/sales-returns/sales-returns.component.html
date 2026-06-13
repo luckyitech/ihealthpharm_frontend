@@ -1,0 +1,625 @@
+<ul class="nav nav-pills mb-3 border-bottom border-secondary" id="pills-tab" role="tablist">
+  <li class="nav-item">
+    <a class="nav-link active" id="" data-toggle="pill" href="#pills-new" role="tab" aria-controls="pills-home"
+      (click)="SalesReturnFun()" aria-selected="true">Sales Returns</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" id="creditHistory" data-toggle="pill" (click)="SalesReturnHistory()" href="#pills-edit"
+      role="tab" aria-controls="pills-edit" aria-selected="true">History</a>
+  </li>
+</ul>
+
+<div *ngIf="salesReturnForm">
+  <div class="tab-content" id="pills-tabContent">
+
+    <div class="tab-pane fade show active" id="pills-new" role="tabpanel" aria-labelledby="pills-home-tab">
+
+      <form class="" #salesreturnForm="ngForm" [formGroup]="salesReturnFormInformation"
+        (keydown.enter)="$event.preventDefault()" (ngSubmit)="onSubmit()">
+        <h6 class="border border-primary p-2 mt-3 mb-4 bg-light text-white">Sales Returns Details</h6>
+
+        <div class="row">
+          <div class="col-lg-3">
+            <div class="form-group row">
+              <label for="" id="salesReturnLabelSR" class="col-sm-3 col-form-label pr-0 text-right">SR #</label>
+              <div class="col-sm-9">
+                <input type="text" formControlName="salesReturnNumber" class="form-control" id="salesReturnSR"
+                  placeholder="SR Number" [(ngModel)]="salesReturnNumber" disabled>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-3">
+            <div class="form-group row">
+              <label for="" id="salesReturnBillIdLabelType" class="col-sm-3 col-form-label pr-0 text-right">Bill #
+                <span class="text-danger">*</span>
+              </label>
+              <div class="col-sm-9">
+                <ng-select [items]="RetrievedSalesIds" id="salesReturnBillId" bindLabel="billCode"
+                  placeholder="-- Select --" [(ngModel)]="selectedBill" formControlName="billNumber"
+                  (keyup)="alternativeBillSearch($event)" (change)="onBillSelected($event)">
+                </ng-select>
+                <div *ngIf="salesReturnFormInformation.get('billNumber')?.touched" class="error-msg-common text-danger">
+                  <div *ngIf="salesReturnFormInformation.get('billNumber').errors?.required">
+                    * required field
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-3">
+            <div class="form-group row">
+              <label for="" id="salesReturnPaymentTypeLabel" class="col-sm-3 col-form-label pr-0 text-right">Type
+                <span class="text-danger">*</span>
+              </label>
+              <div class="col-sm-9">
+
+                <ng-select [items]="paymentTypes" id="salesReturnPaymentType" bindLabel="type" placeholder="-- Select --"
+                  [(ngModel)]="selPaymetObj" formControlName="paymentType" (change)="onPaymentTypeSelected($event)">
+                </ng-select>
+                <div *ngIf="salesReturnFormInformation.get('paymentType')?.touched"
+                  class="error-msg-common text-danger">
+                  <div *ngIf="salesReturnFormInformation.get('paymentType').errors?.required">
+                    * required field
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-lg-3">
+            <div class="form-group row">
+              <label for="" id="salesReturnBillTypeLabel" class="col-sm-3 col-form-label pr-0 text-right">Bill Type
+                <span class="text-danger">*</span>
+              </label>
+              <div class="col-sm-9">
+
+                <ng-select [items]="listOfBillTypes" id="salesReturnPaymentType" bindLabel="type" placeholder="-- Select --"
+                  [(ngModel)]="selectedBillType" formControlName="billType" (change)="onBillTypeSelected($event)">
+                </ng-select>
+                <div *ngIf="salesReturnFormInformation.get('billType')?.touched"
+                  class="error-msg-common text-danger">
+                  <div *ngIf="salesReturnFormInformation.get('billType').errors?.required">
+                    * required field
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-lg-3">
+            <div class="form-group row">
+              <label for="" id="salesReturnLabelDate" class="col-sm-3 col-form-label pr-0 text-right">Date</label>
+              <div class="col-sm-9">
+                <input type="date" class="form-control" id="salesReturnDate" formControlName="salesReturnDate" disabled>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-3">
+            <div class="form-group row">
+              <label for="" id="salesReturnCustomerNameLabel"
+                class="col-sm-3 col-form-label pr-0 text-right">Customer</label>
+              <div class="col-sm-9">
+                <input type="text" class="form-control" id="salesReturnCustomerName" formControlName="customerName"
+                  placeholder="Customer Name">
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-3">
+            <div class="form-group row">
+              <label for="" id="salesReturnInsuranceLabel"
+                class="col-sm-3 col-form-label pr-0 text-right">Insurance</label>
+              <div class="col-sm-9">
+                <input type="text" class="form-control" id="salesReturnInsurance" formControlName="policyCode"
+                  placeholder="Insurance">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-lg-3">
+            <div class="form-group row">
+              <label for="" id="salesReturnLabelDate" class="col-sm-3 col-form-label pr-0 text-right">Status
+                <span class="text-danger">*</span>
+              </label>
+              <div class="col-sm-9">
+                <ng-select [items]="stockStatus" id="salesStatusCode" bindLabel="name" placeholder="-- Select --"
+                  [(ngModel)]="defaultStockStatus" formControlName="status" (change)="onStockStatusChanged($event)">
+                </ng-select>
+                <div *ngIf="salesReturnFormInformation.get('status')?.touched" class="error-msg-common text-danger">
+                  <div *ngIf="salesReturnFormInformation.get('status').errors?.required">
+                    * required field
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-3">
+            <div class="form-group row">
+              <label for="" id="salesReturnCustomerPhoneLabel"
+                class="col-sm-3 col-form-label pr-0 text-right">Phone</label>
+              <div class="col-sm-9">
+                <input type="text" class="form-control" id="salesReturnCustomerPhone" formControlName="phoneNumber"
+                  placeholder="Customer Phone">
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-3">
+            <div class="form-group row">
+              <label for="" id="salesReturnMembershipLabel"
+                class="col-sm-3 col-form-label pr-0 text-right">Membership</label>
+              <div class="col-sm-9">
+                <input type="text" class="form-control" id="salesReturnMembership"
+                  formControlName="membershipCardNumber" placeholder="Membership">
+              </div>
+            </div>
+          </div>
+        </div>
+        <h6 class="border border-primary p-2 mt-3 mb-4 bg-light text-white">Item Details</h6>
+
+        <div class="row">
+          <div class="col-lg-3">
+            <div class="form-group row">
+              <label for="" class="col-sm-3 col-form-label pr-0 text-right" id="salesReturnItemIdLabel">Name <span
+                  class="text-danger">*</span></label>
+              <div class="col-sm-9">
+                <ng-select [items]="items" id="salesReturnItemId" bindLabel="itemsModel.itemName"
+                  placeholder="-- Item Name --" [(ngModel)]="selectedItem" formControlName="itemNameSelected"
+                  (change)="onItemCodeChange($event)">
+                </ng-select>
+
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-3">
+            <div class="form-group row">
+              <label for="" class="col-sm-3 col-form-label pr-0 text-right"
+                id="salesReturnPurchaseQuantityLabel">Qty</label>
+              <div class="col-sm-9 ">
+                <label disabled type="text" class="form-control" id="salesReturnPurchaseQuantity"
+                  placeholder="Sale Quantity">{{viewReturnQty}}</label>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-3">
+            <div class="form-group row">
+              <label for="" class="col-sm-3 col-form-label pr-0 text-right" id="salesReturnReturnQuantityLabel">Qty
+                <span class="text-danger">*</span></label>
+              <div class="col-sm-9 ">
+                <input type="number" class="form-control" id="salesReturnReturnQuantity" placeholder="Return Quantity"
+                  formControlName="returnQuantity">
+                <div
+                  *ngIf="salesReturnFormInformation?.get('returnQuantity')?.errors && !salesReturnFormInformation.get('returnQuantity').errors?.required"
+                  class="error-msg-common text-danger">
+                  * Retrun qty should not be greater than Sale qty
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-3">
+            <div class="form-group row">
+              <label for="" class="col-sm-3 col-form-label pr-0 text-right" id="salesReturnReturnTypeLabel">Type <span
+                  class="text-danger">*</span></label>
+              <div class="col-sm-9">
+                <ng-select placeholder="-- Select --" [items]="ReturnType" id="salesReturnReturnType" bindLabel="type"
+                  [(ngModel)]="selectedReturnType" formControlName="salesReturnType"
+                  (change)="onChangeReturnType($event)">
+                </ng-select>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col text-center pb-3">
+            <input type="button" class="btn btn-primary" id="AddtoGrid" [disabled]="checkFormGrid()"
+              (click)="addSelected()" value="Add to Grid">
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-12 pb-4">
+            <ag-grid-angular style="width: 100%; height: 200px;" class="ag-theme-balham" [rowData]="rowData"
+              [columnDefs]="columnDefs" (gridReady)="onGridReady($event)" [gridOptions]="salesReturnGridOptions">
+            </ag-grid-angular>
+          </div>
+        </div>
+
+        <h6 class="border border-primary p-2 mt-3 mb-4 bg-light text-white">Total Charges</h6>
+
+        <div class="row py-3">
+          <div class="col-lg-4">
+            <div class="form-group row">
+              <label for="" id="salesReturnItemsLabel" class="col-sm-3 col-form-label pr-0 text-right">Items</label>
+              <div class="col-sm-9">
+                <input disabled type="text" name="itemCount" formControlName="itemsCount" class="form-control"
+                  id="salesReturnsItems" [(ngModel)]="itemsCount" placeholder="Total Items">
+
+              </div>
+            </div>
+            <div class="form-group row">
+              <label for="" id="salesReturnTotalQuantityLabel" class="col-sm-3 col-form-label pr-0 text-right">Total
+                Qty</label>
+              <div class="col-sm-9">
+                <input type="text" class="form-control" id="salesReturnTotalQuantity" disabled type="text"
+                  name="totQuant" [(ngModel)]="totalQuantity" formControlName="totalQuantity"
+                  placeholder="Total Quantity">
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-4">
+            <div class="form-group row">
+              <label for="" id="salesReturnsLabelBonus" class="col-sm-3 col-form-label pr-0 text-right">Bonus</label>
+              <div class="col-sm-9">
+                <input type="text" class="form-control" disabled id="salesReturnsBonus" formControlName="bonusQuantity"
+                  name="bonusQty" [(ngModel)]="bonusQuantity" placeholder="Bonus Quantity">
+              </div>
+            </div>
+            <div class="form-group row">
+              <label for="" id="salesReturnsLabelCharges"
+                class="col-sm-3 col-form-label pr-0 text-right">Charges</label>
+              <div class="col-sm-9">
+                <input type="number" class="form-control" id="salesReturnsCharges" formControlName="charges"
+                  (keyup)="onServiceCharge($event)" placeholder="Service Charges">
+                <div *ngIf="salesReturnFormInformation.get('charges')?.invalid" class="error-msg-common text-danger">
+                  <div
+                    *ngIf="!salesReturnFormInformation.get('charges').errors?.required && salesReturnFormInformation?.get('charges')?.errors">
+                    * not a valid input
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-4">
+            <div class="form-group row">
+              <label for="" id="salesReturnsLabelRoundOff" class="col-sm-3 col-form-label pr-0 text-right">Round
+                Off</label>
+              <div class="col-sm-9">
+                <input type="double" class="form-control" id="salesReturnsRoundOff" formControlName="roundOff"
+                  (keyup.enter)="onRoundOff($event)" id="salesReturnRoundOff" placeholder="0.0">
+
+              </div>
+
+            </div>
+            <div class="form-group">
+              <div class="col-sm-12 text-center">
+                <h5 class="mb-0 pt-2"> Total Amount: {{totalAmount}}</h5>
+
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </form>
+
+      <div class="row">
+        <div class="col mb-3 pt-2 text-center">
+          <button class="btn btn-primary px-4" id="SalesReturnSaveBtn" [disabled]="checkFormDisability()"
+            (click)="onSubmit()">Save</button>
+          <input type="button" class="btn btn-secondary px-4 ml-3" id="SalesReturnCancelBtn" (click)="onReset()"
+            value="Cancel">
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+</div>
+
+
+<div *ngIf="history">
+
+  <h6 class="border border-primary p-2 mt-3 mb-4 bg-light text-white">SR History</h6>
+  <div class="tab-content" id="pills-tabContent">
+
+    <div class="tab-pane fade show active" id="pills-new" role="tabpanel" aria-labelledby="pills-home-tab">
+      <div class="row">
+        <div class="col-sm-10">
+
+        </div>
+        <div class="col-sm-2 pb-2" style="padding-left: 100px;">
+          <button class="btn btn-primary" (click)="onPrint()">Print</button>
+          </div>
+      </div>
+      <div class="row">
+        <div class="col-12 pb-4">
+          <ag-grid-angular [rowData]="historyData" [gridOptions]="salesReturnHistoryGridOptions"
+            style="width: 100%; height: 400px;" class="ag-theme-balham" [columnDefs]="creditGridDefs"
+            [paginationPageSize]="paginationSize" [pagination]="true" (cellClicked)="onCellClicked($event)"
+            (selectionChanged)="onCheckBoxChanged($event)">
+          </ag-grid-angular>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+</div>
+
+<ng4-loading-spinner [loadingText]="'Please wait...'" [timeout]="400000000"> </ng4-loading-spinner>
+
+
+<div class="modal fade" id="approvedModal" tabindex="-1" role="dialog" aria-labelledby="pendingLabel">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Sales Return History Details</h4>
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="tab-content" id="pills-tabContent">
+
+          <div class="tab-pane fade show active" id="pills-new" role="tabpanel" aria-labelledby="pills-home-tab">
+
+            <form class="" (keydown.enter)="$event.preventDefault()">
+              <h6 class="border border-primary p-2 mt-3 mb-4 bg-light text-white">Sales Returns Details </h6>
+
+              <div class="row">
+                <div class="col-lg-4">
+                  <div class="form-group row">
+                    <label for="" id="salesReturnLabelSR" class="col-sm-3 col-form-label pr-0 text-right">SR #</label>
+                    <div class="col-sm-9">
+                      <input type="text" class="form-control" id="salesReturnSR" placeholder="SR Number"
+                        [ngModel]="salesReturnNo" [ngModelOptions]="{standalone: true}" disabled>
+                    </div>
+                  </div>
+                  <div class="form-group row">
+                    <label for="" id="salesReturnLabelDate" class="col-sm-3 col-form-label pr-0 text-right">Date</label>
+                    <div class="col-sm-9">
+                      <input type="date" class="form-control" id="salesReturnDate" [ngModel]="salesReturnDate"
+                        [ngModelOptions]="{standalone: true}" disabled>
+                    </div>
+                  </div>
+                  <div class="form-group row">
+                    <label for="" id="salesReturnLabelDate" class="col-sm-3 col-form-label pr-0 text-right">Status
+                      <span class="text-danger">*</span>
+                    </label>
+                    <div class="col-sm-9">
+                      <ng-select [items]="stockStatus" id="salesStatusCode" bindLabel="name" placeholder="-- Select --"
+                        [(ngModel)]="status" [ngModelOptions]="{standalone: true}" disabled>
+                      </ng-select>
+
+                    </div>
+                  </div>
+                  
+                </div>
+                <div class="col-lg-4">
+                  <div class="form-group row">
+                    <label for="" id="salesReturnBillIdLabelType" class="col-sm-3 col-form-label pr-0 text-right">Bill #
+                      <span class="text-danger">*</span>
+                    </label>
+                    <div class="col-sm-9">
+                      <ng-select [items]="RetrievedSalesIds" id="salesReturnBillId" bindLabel="billCode" disabled
+                        placeholder="-- Select --" [(ngModel)]="billNumber" [ngModelOptions]="{standalone: true}">
+                      </ng-select>
+
+                    </div>
+                  </div>
+                  <div class="form-group row">
+                    <label for="" id="salesReturnCustomerNameLabel"
+                      class="col-sm-3 col-form-label pr-0 text-right">Customer</label>
+                    <div class="col-sm-9">
+                      <input type="text" class="form-control" id="salesReturnCustomerName" placeholder="Customer Name"
+                        [(ngModel)]="customerNm" [ngModelOptions]="{standalone: true}" disabled>
+                    </div>
+                  </div>
+                  <div class="form-group row">
+                    <label for="" id="salesReturnCustomerPhoneLabel"
+                      class="col-sm-3 col-form-label pr-0 text-right">Phone</label>
+                    <div class="col-sm-9">
+                      <input type="text" class="form-control" id="salesReturnCustomerPhone" placeholder="Customer Phone"
+                        [(ngModel)]="custPhNo" [ngModelOptions]="{standalone: true}" disabled>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-lg-4">
+                  <div class="form-group row">
+                    <label for="" id="salesReturnPaymentTypeLabel" class="col-sm-3 col-form-label pr-0 text-right">Pay Type
+                     
+                    </label>
+                    <div class="col-sm-9">
+
+                      <ng-select [items]="PaymentType" id="salesReturnPaymentType" bindLabel="name" disabled
+                        placeholder="-- Select --" [(ngModel)]="paymentType" [ngModelOptions]="{standalone: true}">
+                      </ng-select>
+
+                    </div>
+                  </div>
+                  <div class="form-group row">
+                    <label for="" id="salesReturnInsuranceLabel"
+                      class="col-sm-3 col-form-label pr-0 text-right">Insurance</label>
+                    <div class="col-sm-9">
+                      <input type="text" class="form-control" placeholder="Insurance" [(ngModel)]="custPolicyCd"
+                        [ngModelOptions]="{standalone: true}" disabled>
+                    </div>
+                  </div>
+                  <div class="form-group row">
+                    <label for="" id="salesReturnMembershipLabel"
+                      class="col-sm-3 col-form-label pr-0 text-right">Membership</label>
+                    <div class="col-sm-9">
+                      <input type="text" class="form-control" id="salesReturnMembership" placeholder="Membership"
+                        [(ngModel)]="custMembershipCardNo" [ngModelOptions]="{standalone: true}" disabled>
+                    </div>
+                  </div>
+
+                  <div class="form-group row">
+                    <label for="" id="salesReturnBillTypeLabel" class="col-sm-3 col-form-label pr-0 text-right">Bill Type
+                     
+                    </label>
+                    <div class="col-sm-9">
+
+                      <ng-select [items]="listOfBillTypes" id="salesReturnBillType" bindLabel="type" disabled
+                        placeholder="-- Select --" [(ngModel)]="billType" [ngModelOptions]="{standalone: true}">
+                      </ng-select>
+
+                    </div>
+                  </div>
+                </div>
+              
+              </div>
+
+              <h6 class="border border-primary p-2 mt-3 mb-4 bg-light text-white">Item Details</h6>
+
+              <div class="row">
+                <div class="col-lg-3">
+                  <div class="form-group row">
+                    <label for="" class="col-sm-3 col-form-label pr-0 text-right" id="salesReturnItemIdLabel">Name <span
+                        class="text-danger">*</span></label>
+                    <div class="col-sm-9">
+                      <ng-select [items]="itemList" bindLabel="itemName" placeholder="-- Item Name --"
+                        [(ngModel)]="selectedItem" [ngModelOptions]="{standalone: true}">
+                      </ng-select>
+
+                    </div>
+                  </div>
+                </div>
+                <div class="col-lg-3">
+                  <div class="form-group row">
+                    <label for="" class="col-sm-3 col-form-label pr-0 text-right"
+                      id="salesReturnPurchaseQuantityLabel">Qty</label>
+                    <div class="col-sm-9 ">
+                      <label disabled type="text" class="form-control" id="salesReturnPurchaseQuantity"
+                        placeholder="Sale Quantity">{{viewReturnQty}}</label>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-lg-3">
+                  <div class="form-group row">
+                    <label for="" class="col-sm-3 col-form-label pr-0 text-right"
+                      id="salesReturnReturnQuantityLabel">Qty
+                      <span class="text-danger">*</span></label>
+                    <div class="col-sm-9 ">
+                      <input type="number" class="form-control" id="salesReturnReturnQuantity"
+                        placeholder="Return Quantity" disabled>
+
+                    </div>
+                  </div>
+                </div>
+                <div class="col-lg-3">
+                  <div class="form-group row">
+                    <label for="" class="col-sm-3 col-form-label pr-0 text-right" id="salesReturnReturnTypeLabel">Type
+                      <span class="text-danger">*</span></label>
+                    <div class="col-sm-9">
+                      <ng-select placeholder="-- Select --" [items]="ReturnType" id="salesReturnReturnType"
+                        bindLabel="type" [(ngModel)]="selectedReturnType" [ngModelOptions]="{standalone: true}"
+                        disabled>
+                      </ng-select>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col text-center pb-3">
+                  <input type="button" class="btn btn-primary" id="AddtoGrid" [disabled]="checkFormGrid()"
+                    (click)="addSelected()" value="Add to Grid">
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col-12 pb-4">
+                  <ag-grid-angular style="width: 100%; height: 200px;" class="ag-theme-balham"
+                    [rowData]="historyGridData" [columnDefs]="columnDefs"
+                    [gridOptions]="salesReturnHistoryItemsGridOptions">
+                  </ag-grid-angular>
+                </div>
+              </div>
+
+              <h6 class="border border-primary p-2 mt-3 mb-4 bg-light text-white">Total Charges</h6>
+
+              <div class="row py-3">
+                <div class="col-lg-4">
+                  <div class="form-group row">
+                    <label for="" id="salesReturnItemsLabel"
+                      class="col-sm-3 col-form-label pr-0 text-right">Items</label>
+                    <div class="col-sm-9">
+                      <input disabled type="text" name="itemCount" class="form-control" [(ngModel)]="totalQty"
+                        [ngModelOptions]="{standalone: true}" placeholder="Total Items" disabled>
+
+                    </div>
+                  </div>
+                  <div class="form-group row">
+                    <label for="" id="salesReturnTotalQuantityLabel"
+                      class="col-sm-3 col-form-label pr-0 text-right">Total
+                      Qty</label>
+                    <div class="col-sm-9">
+                      <input type="text" class="form-control" id="salesReturnTotalQuantity" disabled type="text"
+                        name="totQuant" [(ngModel)]="totalCount" [ngModelOptions]="{standalone: true}" disabled
+                        placeholder="Total Quantity">
+                    </div>
+                  </div>
+                </div>
+                <div class="col-lg-4">
+                  <div class="form-group row">
+                    <label for="" id="salesReturnsLabelBonus"
+                      class="col-sm-3 col-form-label pr-0 text-right">Bonus</label>
+                    <div class="col-sm-9">
+                      <input type="text" class="form-control" disabled [(ngModel)]="bonus"
+                        [ngModelOptions]="{standalone: true}" placeholder="Bonus Quantity">
+                    </div>
+                  </div>
+                  <div class="form-group row">
+                    <label for="" id="salesReturnsLabelCharges"
+                      class="col-sm-3 col-form-label pr-0 text-right">Charges</label>
+                    <div class="col-sm-9">
+                      <input type="number" class="form-control" disabled placeholder="Service Charges"
+                        [(ngModel)]="charges" [ngModelOptions]="{standalone: true}">
+
+                    </div>
+                  </div>
+                </div>
+                <div class="col-lg-4">
+                  <div class="form-group row">
+                    <label for="" id="salesReturnsLabelRoundOff" class="col-sm-3 col-form-label pr-0 text-right">Round
+                      Off</label>
+                    <div class="col-sm-9">
+                      <input type="double" class="form-control" id="salesReturnsRoundOff" disabled
+                        id="salesReturnRoundOff" placeholder="0.0">
+
+                    </div>
+
+                  </div>
+                  <div class="form-group">
+                    <div class="col-sm-12 text-center">
+                      <h5 class="mb-0 pt-2"> Total Amount: {{finalAmount}}</h5>
+
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+            </form>
+            <div class="form-group row">
+              <label for="" id="salesReturnStatus" class="col-sm-3 col-form-label pr-0 text-right">Payment Status</label>
+              <div class="col-sm-6">
+                <input type="text" class="form-control" id="salesReturnPaymentStatus" disabled
+                 value="{{paymentStatusRead}}">
+
+              </div>
+
+            </div>
+            <div class="row">
+              <div class="col-3"></div>
+              <div class="col-6">
+                <label for="" class="col-form-label px-0 text-center w-100" id="salesReturnRMarks">Remarks</label>
+                <textarea name="" class="form-control" id="salesReturnRMarks" cols="30" rows="6" [(ngModel)]="remarks"
+                  [ngModelOptions]="{standalone: true}" disabled></textarea>
+              </div>
+              <div class="col-3"></div>
+            </div>
+            <div class="row">
+              <div class="col mb-3 pt-2 text-center">
+                <input type="button" class="btn btn-secondary px-4 ml-3" id="SalesReturnCancelBtn"
+                  (click)="onPopupReset()" value="Cancel">
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,17 @@
+<div class="monthlySalesChart" *ngIf="showMonthlySalesChart">
+    <highcharts-chart 
+    [Highcharts]="Highcharts"
+   
+    [constructorType]="chartConstructor"
+    [options]="chartOptions"
+    [callbackFunction]="chartCallback"
+   
+    [(update)]="updateFlag"
+    [oneToOne]="oneToOneFlag"
+    [runOutsideAngular]="runOutsideAngularFlag"
+   
+    style="width: 50%; height: 450px; display: block; margin-left: 230px; margin-top: 10px;"
+   *ngIf="showhicharts">
+  </highcharts-chart> 
+ </div>
+

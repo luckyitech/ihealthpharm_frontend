@@ -1,0 +1,213 @@
+<div class="container-fluid ">
+  <header class="row" id="headrow">
+    <div class="col logo-wrap bg-white d-flex align-items-center position-relative px-lg-5">
+      <img src="../assets/images/Docpharm.png" class="img-fluid m-auto" alt="">
+      <span class="side-menu-toggler position-absolute">
+        <fa-icon [icon]="faBars" class="font-15px text-white"></fa-icon>
+      </span>
+    </div>
+    <div class="col-lg p-0">
+      <nav class="navbar navbar-expand-lg navbar-light navbar-primary text-primary py-2 py-lg-0" id="firstNav">
+        <span class="navbar-brand d-lg-none text-primary" href="#">Account Options</span>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#top-options"
+          aria-controls="top-options" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="top-options">
+          <ul class="navbar-nav ml-auto">
+            <li class="nav-item d-flex align-items-center">
+              <a class="nav-link mr-2 mr-lg-0" href="#">
+                <!-- <i [disabled]="employeeImage!=null||employeeImage!=undefined" class="fas fa-user rounded-circle small-thumb" style="height:25px;width:25px"></i> -->
+                <a [routerLink]=""><img *ngIf="employeeImage!=null&&employeeImage!=undefined ;else defaultImg"
+                    src="data:image/jpeg;base64,{{employeeImage}}" style="height:23px;width:25px"
+                    class="rounded-circle small-thumb" alt="">
+                </a>
+                <ng-template #defaultImg>
+                  <a [routerLink]="">
+                    <img src="../assets/images/user.png" class="rounded-circle small-thumb" alt=""
+                      style="height:23px;width:25px">
+                  </a>
+                </ng-template>
+              </a>
+              <span>{{userId}}</span>
+            </li>
+            <li class="nav-item px-0 px-lg-3">
+              <a class="nav-link pt-1" data-toggle="modal" data-target="#exampleModal">
+                <fa-icon [icon]="faCog" class="font-15px text-primary"></fa-icon>
+              </a>
+            </li>
+            <li class="nav-item">
+              <div class="btn-group mt-1">
+                <button type="button" class="btn btn-link px-0 px-lg-2" data-toggle="dropdown" aria-haspopup="true"
+                  aria-expanded="false" >
+                  <fa-icon [icon]="faBell" class="text-primary"></fa-icon><span class="badge badge-danger">{{checkListPendingNumber}}</span>
+                </button>
+                <div class="dropdown-menu dropdown-menu-right">
+                  <button class="dropdown-item" type="button">Action</button>
+                  <button class="dropdown-item checklist" type="button" [routerLink]="['home/checklist']" (click)="tab='list'">Check list</button>
+                  <button class="dropdown-item" type="button" >Notifications</button>
+                 <!--  <button class="dropdown-item" type="button" [routerLink]="['home/notifications']">Notifications</button> -->
+                </div>
+                <!-- <button class="btn px-0 px-lg-2" (click)="logout()">
+                  <span class="glyphicon glyphicon-log-out"></span>
+                </button> -->
+                <button type="button" class="btn btn-default btn-sm" title="Logout" (click)="logout()">
+                  <i class="fa fa-sign-out text-primary" style="font-size:19px;" aria-hidden="true"></i>
+                </button>
+              </div>
+            </li>
+            <li class="nav-item d-flex align-items-center border-left-lg">
+              <a class="nav-link mr-2 mr-lg-0" [routerLink]="" style="position: relative; left: 7px;">
+                <img src="../assets/images/pharma.ico" class="rounded-circle small-thumb bg-white" alt="">
+              </a>
+              <span>IHealth Pharm</span>
+            </li>
+          </ul>
+        </div>
+      </nav>
+      <nav class="navbar navbar-expand-lg navbar-dark bg-primary py-2 py-lg-0 px-lg-0" id="secondNav">
+        <span class="navbar-brand d-lg-none" href="#">Main Menu</span>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#top-menu"
+          aria-controls="top-menu" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="top-menu">
+          <ul class="navbar-nav mr-auto">
+            <li class="nav-item px-3">
+              <a class="nav-link home" [routerLink]="['/home']">
+                <fa-icon [icon]="faClinicMedical" class="mr-2"></fa-icon>Home
+              </a>
+            </li>
+            <li class="nav-item px-3">
+              <a class="nav-link" [routerLink]="['/master']">
+                <fa-icon [icon]="faFolder" class="mr-2"></fa-icon>Master
+              </a>
+            </li>
+            <li class="nav-item px-3 stockClick">
+              <a class="nav-link" [routerLink]="['/stock']">
+                <fa-icon [icon]="faLayerGroup" class="mr-2"></fa-icon>Stock
+              </a>
+            </li>
+            <li class="nav-item px-3 salesClick">
+              <a class="nav-link" [routerLink]="['/sales']">
+                <fa-icon [icon]="faFileInvoiceDollar" class="mr-2"></fa-icon>Sales
+              </a>
+            </li>
+            <li class="nav-item px-3 financeClick">
+              <a class="nav-link" [routerLink]="['/finance']">
+                <fa-icon [icon]="faWallet" class="mr-2"></fa-icon>Finance
+              </a>
+            </li>
+            <li class="nav-item px-3">
+              <a class="nav-link">
+                <fa-icon [icon]="faUsers" class="mr-2"></fa-icon>CRM
+              </a>
+            </li>
+            <li class="nav-item px-3">
+              <a class="nav-link" [routerLink]="['/reports']">
+                <fa-icon [icon]="faChartLine" class="mr-2"></fa-icon>Reports
+              </a>
+            </li>
+          </ul>
+        </div>
+      </nav>
+    </div>
+  </header>
+  <div class="row justify-content-center">
+    <router-outlet></router-outlet>
+  </div>
+</div>
+<!--Modal-->
+
+<div *ngIf="showPopUp" class="modal fade" id="exampleModal" tabindex="-1" role="dialog"
+  aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Reset Password</h5>
+      </div>
+      <div class="modal-body">
+        <form #resetPasswordForm="ngForm" [formGroup]="passwordResetForm" class="full-height">
+          <div class="form-group">
+            <label for="" class="col-form-label" id="CurrentPwdLabel">Current Password
+            </label>
+            <div class="input-group">
+              <input [type]="show ? 'text' : 'password'" class="form-control" (keyup)="onPwdEnter($event)"
+                id="currentPwd" formControlName="passwordCurrent" style="border-radius: 4px;">
+              <span (click)="password()" id="showPassword">
+                <i class="fa fa-eye" aria-hidden="true"></i>
+              </span>
+            </div>
+          </div>
+          <div *ngIf="passwordResetForm.get('passwordCurrent')?.touched" class="error-msg-common text-danger">
+            <div *ngIf="passwordResetForm.get('passwordCurrent').errors?.required">
+              * required field
+            </div>
+            <div *ngIf="showErrorMsg">
+              * Password doesn't match with current password
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="" class="col-form-label" id="newPwdLabel">New Password
+            </label>
+            <div class="input-group">
+              <input [type]="showNewPwd ? 'text' : 'password'" class="form-control" id="newPwd"
+                formControlName="passwordNew" pattern="(.){6,10}" style="border-radius: 4px;">
+              <span (click)="passwordNew()" id="showPassword1" >
+                <i class="fa fa-eye 1" aria-hidden="true"></i>
+              </span>
+            </div>
+            <div *ngIf="passwordResetForm.get('passwordNew')?.touched" class="error-msg-common text-danger">
+              <div *ngIf="passwordResetForm.get('passwordNew').errors?.required">
+                * required field
+              </div>
+            </div>
+            <!-- <div *ngIf="passwordResetForm?.get('passwordNew')?.touched" class="error-msg-common text-danger">
+              <div *ngIf="passwordResetForm.get('passwordNew').errors?.pattern">
+                * not a valid input
+                </div>
+              </div> -->
+              <div *ngIf="passwordResetForm.get('passwordNew')?.invalid" class="error-msg-common text-danger">
+                <div
+                  *ngIf="!passwordResetForm.get('passwordNew').errors?.required && passwordResetForm?.get('passwordNew')?.errors">
+                  * not a valid input(length should be 6 to 10 characters)
+                </div>
+              </div>
+            
+            <!--<div *ngIf="passwordResetForm.get('passwordNew')?.invalid" class="error-msg-common text-danger">
+              <div
+                *ngIf="!passwordResetForm.get('passwordNew').errors?.required && passwordResetForm?.get('passwordNew')?.errors">
+                * not a valid input
+              </div>
+            </div> -->
+          </div>
+          <div class="form-group">
+            <label for="" class="col-form-label" id="ConfirmPasswordLabel">Confirm Password
+            </label>
+            <div class="input-group">
+              <input [type]="showconfirmPwd ? 'text' : 'password'" (keyup)="onConfirmPwd($event)" id="confirmPwd"
+                class="form-control" formControlName="passwordConfirm" style="border-radius: 4px;">
+              <span (click)="passwordConfirm()" id="showPassword2" >
+                <i class="fa fa-eye 2" aria-hidden="true"></i>
+              </span>
+            </div>
+
+            <div *ngIf="passwordResetForm.get('passwordConfirm')?.touched" class="error-msg-common text-danger">
+              <div *ngIf="passwordResetForm.get('passwordConfirm').errors?.required">
+                * required field
+              </div>
+              <div *ngIf="checkCfrmPwd">
+                * Password doesn't match
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal" (click)="closeStatus()">Close</button>
+        <button type="button" class="btn btn-primary" [disabled]="checkFormDisability()" (click)="updatePassword()">Update</button>
+      </div>
+    </div>
+  </div>
+</div>

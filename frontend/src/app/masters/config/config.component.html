@@ -1,0 +1,245 @@
+<div class="tab-content" id="pills-tabContent">
+  <div class="tab-pane fade show active" id="pills-new" role="tabpanel" aria-labelledby="pills-home-tab">
+    <form #discountForm="ngForm" [formGroup]="discountsForm" (keydown.enter)="$event.preventDefault()"
+      (ngSubmit)="onSubmit()" class="full-height" class="">
+      <h6 class="border border-primary p-2 mt-3 mb-4 bg-light text-white">Discount Details</h6>
+      <div class="form-group row">
+        <div class="col-sm-5 d-flex align-items-center">
+          <div class="d-inline mr-4">
+            <label class="mb-0">Discount% <span class="text-danger">*</span></label>
+          </div>
+          <div class="col-sm-9">
+            <input type="text" formControlName="discountValue" class="form-control" id="discountValue"
+              placeholder="Discount Percentage">
+
+            <div *ngIf="discountsForm.get('discountValue')?.touched" class="error-msg-common text-danger">
+              <div *ngIf="discountsForm.get('discountValue').errors?.required">
+                * required field
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-sm-4 d-flex align-items-center">
+          <div class="d-inline mr-3">
+            <label class="mb-0">Active</label>
+          </div>
+          <div class="col-sm-6">
+            <div class="custom-control d-inline custom-radio mr-3">
+              <input name="activeS" type="radio" value="Y" class="custom-control-input" formControlName="activeS"
+                id="activate">
+              <label class="custom-control-label" for="activate">Yes</label>
+            </div>
+            <div class="custom-control d-inline custom-radio">
+              <input name="activeS" type="radio" value="N" class="custom-control-input" formControlName="activeS"
+                id="deactivate">
+              <label class="custom-control-label" for="deactivate">No</label>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="col-sm-1 d-flex align-items-center">
+          <input type="submit" value="Save" class="btn btn-primary px-4" *ngIf="saveHide" id="mu-adduser-save">
+          <input type="button" value="Update" (click)="onDiscountUpdate()" class="btn btn-primary px-4"
+            *ngIf="updateHide" id="mu-adduser-save">
+        </div>
+
+      </div>
+      <div class="form-group row">
+        <div class="col text-right">
+          <input type="button" value="Edit" class="btn btn-primary px-4 edit-btn" data-toggle="modal"
+            id="common-grid-btn" (click)="discountGrid()">
+        </div>
+      </div>
+
+    </form>
+
+
+    <div class="row">
+      <div class="col-12 pb-4">
+        <ag-grid-angular [gridOptions]="discountsGridOptions" style="width: 100%; height: 200px;" class="ag-theme-fresh"
+          [rowData]="discounts">
+        </ag-grid-angular>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="tab-content" id="pills-tabContent">
+  <div class="tab-pane fade show active" id="pills-new" role="tabpanel" aria-labelledby="pills-home-tab">
+    <form #configsForm="ngForm" [formGroup]="configForm" (keydown.enter)="$event.preventDefault()"
+      (ngSubmit)="onSubmitConfig()" class="full-height" class="">
+
+      <h6 class="border border-primary p-2 mt-3 mb-4 bg-light text-white">Margin Details</h6>
+      <div class="form-group row">
+        <div class="col-sm-4 d-flex align-items-center">
+          <div class="d-inline mr-4">
+            <label class="mb-0">Config Value <span class="text-danger">*</span></label>
+          </div>
+          <div class="col-sm-6">
+            <input type="text" formControlName="configValue" class="form-control" id="discountValue"
+              placeholder="Margin Percentage">
+
+            <div *ngIf="discountsForm.get('configValue')?.touched" class="error-msg-common text-danger">
+              <div *ngIf="discountsForm.get('configValue').errors?.required">
+                * required field
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-sm-4 d-flex align-items-center">
+
+          <div class="col-sm-6" style="white-space: nowrap;">
+            <div class="">
+              <input name="configDesc" type="radio" value="margin" class="boundary" formControlName="configDesc">
+              <label for="margin">Margin Boundary %</label>
+            </div>
+          </div>
+          <div class="col-sm-6">
+            <div class="">
+              <input name="configDesc" type="radio" class="boundary" value="maxdiscount" formControlName="configDesc">
+              <label for="maxdiscount">Markup %</label>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="col-sm-4 d-flex align-items-center ">
+          <div class="d-inline mr-3">
+            <label class="mb-0">Active</label>
+          </div>
+          <div class="col-sm-4">
+            <input name="activeS" class="activeYes" type="radio" value="Y" formControlName="activeS">
+            <label for="activate">Yes</label>
+          </div>
+          <div class="col-sm-4">
+            <input name="activeS" type="radio" class="activeYes" value="N" formControlName="activeS">
+            <label for="deactivate">No</label>
+          </div>
+        </div>
+
+
+      </div>
+      <div class="d-flex align-items-center">
+        <!-- here -->
+        <input type="button" value="Save" class="btn btn-primary px-4 text-center save-button"  data-toggle="modal" data-target="#configSave" *ngIf="saveMarginHide"
+          id="mu-adduser-save" [disabled]="checkFormDisability()">
+
+
+        <input type="button" value="Update" data-toggle="modal" data-target="#configupdate"
+          class="btn btn-primary px-4 text-center save-button" *ngIf="updateMarginHide" id="mu-adduser-save" [disabled]="checkFormDisability()">
+      </div>
+      <div class="form-group row">
+        <div class="col text-right">
+          <input type="button" value="Edit" class="btn btn-primary px-4 edit-btn" data-toggle="modal"
+            id="common-grid-btn" (click)="marginGrid()">
+        </div>
+      </div>
+
+    </form>
+
+
+    <div class="row">
+      <div class="col-12 pb-4">
+        <ag-grid-angular [gridOptions]="configGridOptions" style="width: 100%; height: 200px;" class="ag-theme-fresh"
+          [rowData]="configs">
+        </ag-grid-angular>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div class="tab-content" id="pills-tabContent">
+  <div class="tab-pane fade show active" id="pills-new" role="tabpanel" aria-labelledby="pills-home-tab">
+    <form #configStatus="ngForm" [formGroup]="configStatusForm" (keydown.enter)="$event.preventDefault()"
+      (ngSubmit)="saveConfigStatus()" class="full-height" class="">
+
+      <h6 class="border border-primary p-2 mt-3 mb-4 bg-light text-white">Configuration Status Details</h6>
+      <div class="form-group row">
+        <div class="col-sm-12 d-flex align-items-center">
+          <div class="d-inline mr-8">
+            <label class="mb-0">Configuration Status <span class="text-danger">*</span></label>
+          </div>
+          <div class="col-sm-2" style="white-space: nowrap;">
+            <div class="">
+              <input name="configStatusValue" type="radio" value="activate" class="boundary" formControlName="configStatusValue">
+              <label for="margin">Activate</label>
+            </div>
+          </div>
+          <div class="col-sm-2">
+            <div class="">
+              <input name="configStatusValue" type="radio" class="boundary" value="deactive" formControlName="configStatusValue">
+              <label for="maxdiscount">De-Activate</label>
+            </div>
+          </div>
+
+          <div class="col-sm-2">
+            <div class="col text-right">
+              <input type="submit" value="Submit" class="btn btn-primary px-4 edit-btn">
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+    </form>
+  </div>
+</div>
+
+<div class="modal" id="configupdate" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+
+      <!-- Modal Header -->
+      <div class="modal-header">
+        <h4 class="modal-title">Update Configuration</h4>
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+      </div>
+
+      <!-- Modal body -->
+      <div class="modal-body">
+        <h3>Please Stop Sales This Change Will Update Stock Prices</h3>
+      </div>
+
+      <!-- Modal footer -->
+      <div class="modal-footer">
+        <input type="button" value="Update" (click)="onMarginUpdate()" data-dismiss="modal"
+          class="btn btn-primary px-4 text-center save-button" *ngIf="updateMarginHide">
+        <button type="button" class="btn btn-primary px-4 text-center save-button" data-dismiss="modal">Close</button>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="configSave" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+
+      <!-- Modal Header -->
+      <div class="modal-header">
+        <h4 class="modal-title">Save Configuration</h4>
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+      </div>
+
+      <!-- Modal body -->
+      <div class="modal-body">
+        <h3>Please Stop Sales This Change Will Update Stock Prices</h3>
+      </div>
+
+      <!-- Modal footer -->
+      <div class="modal-footer">
+
+        <input type="button" value="Save" class="btn btn-primary px-4 text-center save-button" data-dismiss="modal" (click)="onSubmitConfig()"  *ngIf="saveMarginHide">
+        <button type="button" class="btn btn-primary px-4 text-center save-button" data-dismiss="modal">Close</button>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<ng4-loading-spinner [loadingText]="'Please wait...'" [timeout]="400000000"> </ng4-loading-spinner>

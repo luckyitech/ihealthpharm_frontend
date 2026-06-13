@@ -1,0 +1,551 @@
+<div class="tab-content" id="pills-tabContent">
+
+  <div class="tab-pane fade show active" id="pills-new" role="tabpanel" aria-labelledby="pills-home-tab">
+
+    <form #paymentsForm="ngForm" [formGroup]="paymentsInformationForm" (keydown.enter)="$event.preventDefault()"
+      (ngSubmit)="onPaymentsSubmit()" class="full-height">
+
+      <h6 class="border border-primary p-2 mt-3 mb-4 bg-light text-white">Payable Details</h6>
+      <div class="row">
+        <div class="col-lg-4">
+
+        </div>
+
+        <div class="col-lg-4">
+          <div class="form-group">
+            <div class="col-sm-12 benificiary d-flex pt-2 px-0">
+              <div class="d-inline mr-3">
+                <label id="receiptLabelFrom" class="mb-0">Benificiary</label>
+              </div>
+              <div class="custom-control d-inline custom-radio mr-3">
+                <input (change)="onTypeChanged($event)" type="radio" value="Y"
+                  class="custom-control-input checkradiotrue" id="ins" [(ngModel)]="supplier"
+                  [ngModelOptions]="{standalone:true}" name="supplier" />
+                <label id="receiptLabelInsurance" class="custom-control-label" for="ins">Supplier</label>
+              </div>
+              <div class="custom-control d-inline custom-radio">
+                <input (change)="onTypeChanged($event)" type="radio" value="N"
+                  class="custom-control-input checkradiofalse" [(ngModel)]="customer" id="cust"
+                  [ngModelOptions]="{standalone:true}" name="customer" />
+                <label id="receiptLabelCustomer" class="custom-control-label" for="cust">Customer</label>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+
+        <div class="col-lg-4">
+          <div class="form-group row" id="policyDiv">
+            <label id="supplierName" class="col-sm-3 col-form-label px-0 text-right">Supplier Name
+            </label>
+            <div class="col-sm-12">
+              <ng-select [(ngModel)]="selectedSupplier" [ngModelOptions]="{standalone: true}"
+                (keyup)="searchSupplierName($event)" (change)="onSupplierSelected($event)" placeholder="-- Select --"
+                [items]="suppliers" bindLabel="supplierName" id="paymentsInputSupplier">
+              </ng-select>
+              <div *ngIf="paymentsInformationForm.get('selectedSupplier')?.touched"
+                class="error-msg-common text-danger">
+                <div *ngIf="paymentsInformationForm.get('selectedSupplier').errors?.required">
+                  * required field
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="form-group row" id="customerDiv" style="display: none;">
+            <label id="custName" for="" class="col-sm-3 col-form-label px-0 text-right">CustomerName
+            </label>
+            <div class="col-sm-12">
+              <ng-select [(ngModel)]="selectedCustomer" (change)="onCustomerSelected($event)"
+                placeholder="-- select -- " id="paymentsInputSupplier" [items]="customers" bindLabel="customerName"
+                [ngModelOptions]="{standalone: true}">
+              </ng-select>
+              <div *ngIf="paymentsInformationForm.get('selectedCustomer')?.touched"
+                class="error-msg-common text-danger">
+                <div *ngIf="paymentsInformationForm.get('selectedCustomer').errors?.required">
+                  * required field
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-12 py-3">
+          <ag-grid-angular style="width: 100%; height: 230px;" class="ag-theme-balham" [columnDefs]="columnDefs"
+            [gridOptions]="paymentsGridOptions" (cellClicked)='onCellClicked($event)'>
+          </ag-grid-angular>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-lg-3">
+          <div class="form-group row">
+            <label for="" class="col-sm-4 col-form-label px-0 text-right" id="paymentsLabelInvoice">Payables</label>
+            <div class="col-sm-8">
+              <input type="text" formControlName="totalInvoiceAmount" class="form-control" id="paymentsInvoice"
+                placeholder="Payables Amount" disabled>
+
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="" class="col-sm-4 col-form-label px-0 text-right" id="paymentsLabelAdvance">Advance</label>
+            <div class="col-sm-8">
+              <input type="text" formControlName="totalAdvanceAmount" class="form-control" id="paymentsAdvance"
+                placeholder="Total Advance" disabled>
+
+            </div>
+          </div>
+          <div *ngIf="showApproveBy" class="form-group row">
+            <label for="" class="col-sm-4 col-form-label px-0 text-right" id="debitCreditNoteLabelDnDate">Approved By
+            </label>
+            <div class="col-sm-8">
+              <input type="text" class="form-control" id="debitCreditNoteDnDate" placeholder="Approved By"
+                formControlName="approvedByEmp" value={{this.approvedEmpName}} disabled>
+            </div>
+          </div>
+
+        </div>
+        <div class="col-lg-3">
+          <div class="form-group row">
+            <label for="" class="col-sm-4 col-form-label px-0 text-right" id="paymentsLabelCredit">Credit</label>
+            <div class="col-sm-8">
+              <input type="text" formControlName="totalCreditAmount" class="form-control" id="paymentsCredit"
+                placeholder="Total Credit" disabled>
+
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="" class="col-sm-4 col-form-label px-0 text-right" id="paymentsLabelDebit">Debit</label>
+            <div class="col-sm-8">
+              <input type="text" formControlName="totalDebitAmount" class="form-control" id="paymentsDebit"
+                placeholder="Total Debit" disabled>
+
+            </div>
+          </div>
+          <div *ngIf="showApproveBy" class="form-group row">
+            <label for="" class="col-sm-4 col-form-label px-0 text-right">Approved
+              Date
+
+            </label>
+            <div class="col-sm-8">
+              <input type="date" class="form-control" placeholder="" formControlName="approvedDate" disabled>
+            </div>
+          </div>
+
+        </div>
+
+
+        <div class="col-lg-3">
+          <div class="form-group row">
+            <label for="" class="col-sm-4 col-form-label px-0 text-right" id="paymentsLabelRoundOff">Round Off</label>
+            <div class="col-sm-8">
+              <input type="double" class="form-control" id="paymentsRoundOff" formControlName="totalRoundOff"
+                (keyup.enter)="onRoundOff($event)" placeholder="0.0">
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="" class="col-sm-4 col-form-label px-0 text-right" id="paymentsLabelRoundOff">Status<span
+                class="text-danger">*</span></label>
+            <div class="col-sm-8">
+              <ng-select placeholder="-- select --" [items]="status" bindLabel="name" [(ngModel)]="selectedStatus"
+                formControlName="selectedStatus" (change)="onPaymentSelected($event)">
+              </ng-select>
+              <div *ngIf="paymentsInformationForm.get('selectedStatus')?.touched" class="error-msg-common text-danger">
+                <div *ngIf="paymentsInformationForm.get('selectedStatus').errors?.required">
+                  * required field
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-3">
+          <div class="form-group row">
+            <label for="" class="col-sm-8 col-form-label px-0 text-center h3" id="paymentsLabelAmtPaid">Amount to be
+              Paid: </label>
+            <div class="col-sm-0 text-center pt-0">
+              <h5 class="mb-0 pt-2"> {{totalAmountToBePaid}}</h5>
+            </div>
+          </div>
+          <div class="form-group row">
+            <div class="col-sm-1"></div>
+            <input [disabled]="makePayment" type="button" (click)="statusSelected($event)"
+              class="btn btn-primary col-sm-9 col-form-label px-0 " id="paymentsInputSupplier"
+              value="Send For Approval">
+          </div>
+          <div class="row">
+            <div class="col sm-1"> </div>
+            <input type="button" id="cancelTab" (click)="reset()" class="btn btn-primary col-sm-9 col-form-label px-0"
+              value="Cancel">
+          </div>
+        </div>
+      </div>
+
+      <ng-container *ngIf="showPaymentType">
+        <div class="form-group row" id="paymentDiv">
+          <div class="col-sm-8 d-flex">
+            <div class="d-inline mr-3">
+              <label class="mb-0">Payment Type</label>
+            </div>
+            <div class="custom-control d-inline custom-radio mr-4">
+              <input name="payment-type" type="radio" value="cash" (click)="cashSelected($event)"
+                class="custom-control-input" id="cash" />
+              <label class="custom-control-label" for="cash">Cash</label>
+            </div>
+            <div class="custom-control d-inline custom-radio mr-4">
+              <input name="payment-type" type="radio" value="card" (click)="cardSelected($event)"
+                class="custom-control-input" id="card" />
+              <label class="custom-control-label " for="card">Card</label>
+            </div>
+
+
+            <div class="custom-control d-inline custom-radio mr-4">
+              <input name="payment-type" type="radio" value="m-pesa" (click)="mPesaSelected($event)"
+                class="custom-control-input" id="m-pesa" />
+              <label class="custom-control-label " for="m-pesa">M-Pesa</label>
+            </div>
+
+            <div class="custom-control d-inline custom-radio mr-4">
+              <input type="radio" name="payment-type" value="cheque" (click)="chequeSelected($event)"
+                class="custom-control-input" id="cheque" />
+              <label class="custom-control-label " for="cheque">Cheque</label>
+            </div>
+          </div>
+
+        </div>
+      </ng-container>
+
+      <ng-container *ngIf="showPaymentType">
+        <div class="row" *ngIf="cashCheckbox ||  card || cheque ||mPesaCheckbox ">
+          <div class="col-sm-2"></div>
+          <div class="col-sm-8">
+            <table class="table table-bordered border-primary">
+              <thead>
+                <tr>
+                  <th>Payment Type</th>
+                  <th>Amount</th>
+                  <th>Cheque/Card/Phone No</th>
+                  <th>Tranx No/Auth Code/Cheque Date</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngIf="cashCheckbox">
+                  <td>Cash</td>
+                  <td><input type="text" class="form-control form-height" formControlName="cashAmount"
+                      value={{cashAmount}} /></td>
+                  <td colspan="2"></td>
+                </tr>
+
+
+                <tr *ngIf="card">
+                  <td>Card</td>
+                  <td><input type="text" class="form-control form-height" formControlName="creditCardAmount"
+                      value={{cardAmount}} /></td>
+                  <td><input type="text" class="form-control form-height" formControlName="creditCardNo" /></td>
+                  <td>
+                    <input type="text" class="form-control form-height" formControlName="authCode" />
+                  </td>
+                </tr>
+
+                <tr *ngIf="mPesaCheckbox">
+                  <td>M-Pesa</td>
+                  <td><input type="text" class="form-control form-height" formControlName="upiAmount"
+                      value={{upiAmount}} /></td>
+                  <td><input type="text" class="form-control form-height" formControlName="upiPhoneNo" /></td>
+                  <td><input type="text" class="form-control form-height" formControlName="authCode" /></td>
+                </tr>
+                <tr *ngIf="cheque">
+                  <td>Cheque</td>
+                  <td><input type="text" class="form-control form-height" formControlName="chequeAmount"
+                      [(ngModel)]="chequeAmount" value={{chequeAmount}} appTwoDecimal/></td>
+                  <td><input type="text" class="form-control form-height" formControlName="chequeNumber"
+                      [(ngModel)]="chequeNumber" />
+                    <div
+                      *ngIf="paymentsInformationForm.get('chequeNumber')?.invalid && paymentsInformationForm.get('chequeNumber')?.touched"
+                      class="error-msg-common text-danger">
+                      <div
+                        *ngIf="!paymentsInformationForm.get('chequeNumber').errors?.required && paymentsInformationForm?.get('chequeNumber')?.errors">
+                        * not a valid input
+                      </div>
+                    </div>
+                  </td>
+                  <td>
+                    <input type="date" class="form-control form-height" formControlName="chequeDate"
+                      [(ngModel)]="chequeDate" />
+                  </td>
+                </tr>
+
+                <!-- For Second cheque -->
+                <tr *ngIf="cheque && showSecondCheque">
+                  <td>Cheque</td>
+                  <td><input type="text" class="form-control form-height" formControlName="chequeAmountTwo"
+                      [(ngModel)]="chequeAmountTwo" value={{chequeAmountTwo}} appTwoDecimal /></td>
+                  <td><input type="text" class="form-control form-height" formControlName="chequeNumberTwo"
+                      [(ngModel)]="chequeNumberTwo" />
+                    <div
+                      *ngIf="paymentsInformationForm.get('chequeNumberTwo')?.invalid && paymentsInformationForm.get('chequeNumberTwo')?.touched"
+                      class="error-msg-common text-danger">
+                      <div
+                        *ngIf="!paymentsInformationForm.get('chequeNumberTwo').errors?.required && paymentsInformationForm?.get('chequeNumberTwo')?.errors">
+                        * not a valid input
+                      </div>
+                    </div>
+                  </td>
+                  <td>
+                    <input type="date" class="form-control form-height" formControlName="chequeDateTwo"
+                      [(ngModel)]="chequeDateTwo" />
+                  </td>
+
+                </tr>
+
+                <!-- For Third Cheque -->
+                <tr *ngIf="cheque && showThirdCheque">
+                  <td>Cheque</td>
+                  <td><input type="text" class="form-control form-height" formControlName="chequeAmountThree"
+                      [(ngModel)]="chequeAmountThree" value={{chequeAmountThree}} appTwoDecimal/></td>
+                  <td><input type="text" class="form-control form-height" formControlName="chequeNumberThree"
+                      [(ngModel)]="chequeNumberThree" />
+                    <div
+                      *ngIf="paymentsInformationForm.get('chequeNumberThree')?.invalid && paymentsInformationForm.get('chequeNumberThree')?.touched"
+                      class="error-msg-common text-danger">
+                      <div
+                        *ngIf="!paymentsInformationForm.get('chequeNumberThree').errors?.required && paymentsInformationForm?.get('chequeNumberThree')?.errors">
+                        * not a valid input
+                      </div>
+                    </div>
+                  </td>
+                  <td>
+                    <input type="date" class="form-control form-height" formControlName="chequeDateThree"
+                      [(ngModel)]="chequeDateThree" />
+                  </td>
+
+                </tr>
+
+                <!-- For Fourth Cheque -->
+                <tr *ngIf="cheque && showFourthCheque">
+                  <td>Cheque</td>
+                  <td><input type="text" class="form-control form-height" formControlName="chequeAmountFour"
+                      [(ngModel)]="chequeAmountFour" value={{chequeAmountFour}} appTwoDecimal/></td>
+                  <td><input type="text" class="form-control form-height" formControlName="chequeNumberFour"
+                      [(ngModel)]="chequeNumberFour" />
+                    <div
+                      *ngIf="paymentsInformationForm.get('chequeNumberFour')?.invalid && paymentsInformationForm.get('chequeNumberFour')?.touched"
+                      class="error-msg-common text-danger">
+                      <div
+                        *ngIf="!paymentsInformationForm.get('chequeNumberFour').errors?.required && paymentsInformationForm?.get('chequeNumberFour')?.errors">
+                        * not a valid input
+                      </div>
+                    </div>
+                  </td>
+                  <td>
+                    <input type="date" class="form-control form-height" formControlName="chequeDateFour"
+                      [(ngModel)]="chequeDateFour" />
+                  </td>
+
+                </tr>
+                  <!-- For Fourth Cheque -->
+                  <tr *ngIf="cheque && showFifthCheque">
+                    <td>Cheque</td>
+                    <td><input type="text" class="form-control form-height" formControlName="chequeAmountFive"
+                        [(ngModel)]="chequeAmountFive" value={{chequeAmountFive}} appTwoDecimal/></td>
+                    <td><input type="text" class="form-control form-height" formControlName="chequeNumberFive"
+                        [(ngModel)]="chequeNumberFive" />
+                      <div
+                        *ngIf="paymentsInformationForm.get('chequeNumberFive')?.invalid && paymentsInformationForm.get('chequeNumberFive')?.touched"
+                        class="error-msg-common text-danger">
+                        <div
+                          *ngIf="!paymentsInformationForm.get('chequeNumberFive').errors?.required && paymentsInformationForm?.get('chequeNumberFive')?.errors">
+                          * not a valid input
+                        </div>
+                      </div>
+                    </td>
+                    <td>
+                      <input type="date" class="form-control form-height" formControlName="chequeDateFive"
+                        [(ngModel)]="chequeDateFive" />
+                    </td>
+  
+                  </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="col-sm-2"></div>
+        </div>
+      </ng-container>
+
+      <!-- Modal -->
+      <div *ngIf="statusGrid" class="itemSearchModal" id="itemSearchModal" tabindex="-1" role="dialog"
+        aria-labelledby="itemSearchModalLabel">
+        <div class="modal-dialog" style="margin-top: 220px" role="document">
+          <div class="modal-content" style="height: 250px">
+            <div class="modal-body">
+
+              <div class="row">
+                <div class="col-lg-6">
+                  <div class="form-group row">
+                    <label for="" class="col-sm-4 col-form-label px-0 text-right" id="CreditNoteLabelDnDate">Approved By
+
+                    </label>
+                    <div class="col-sm-8">
+                      <ng-select placeholder="-- select --" id="CreditNoteDnDate" [items]="employees"
+                        (change)="selectedEmployee($event)" bindLabel="empName" [ngModel]="approvedBy"
+                        [ngModelOptions]="{standalone: true}">
+                      </ng-select>
+
+
+                    </div>
+                  </div>
+                  <div class="form-group row">
+                    <label for="" class="col-sm-4 col-form-label px-0 text-right" id="CreditNoteLabelDnDate">Approved
+                      Pin
+                    </label>
+                    <div class="col-sm-8">
+                      <div class="buttonInside">
+                        <input type="text" (keyup)="pinEnter($event)" placeholder="Approved Pin"
+                          [type]="show ? 'text' : 'password'" class="form-control" id="debitCreditNoteDnDate"
+                          formControlName="approvedPin">
+
+                      </div>
+                      <div *ngIf="paymentsInformationForm.get('approvedPin')?.invalid"
+                        class="error-msg-common text-danger">
+                        <div
+                          *ngIf="!paymentsInformationForm.get('approvedPin').errors?.required && paymentsInformationForm?.get('approvedPin')?.errors">
+                          * not a valid input
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+
+
+              </div>
+            </div>
+            <div class="modal-footer">
+              <input type="button" data-dismiss="modal" class="btn btn-primary px-4 mr-2" (click)="onPaymentsSubmit()"
+                [disabled]="makePin" value="OK">
+              <input type="button" class="btn btn-secondary px-4" data-dismiss="modal" (click)="closeStatus()"
+                value="Close">
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+
+  </div>
+
+</div>
+
+<!-- Modal -->
+
+<div *ngIf="paymentGrid" class="itemSearchModal" id="itemSearchModal" tabindex="-1" role="dialog"
+  aria-labelledby="itemSearchModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-body">
+
+        <div class="row">
+          <div class="col-lg-4">
+            <div class="form-group row">
+              <label for="" class="col-sm-2 col-form-label px-0 text-right" id="newStockLabelItemCd">From</label>
+              <div class="col-sm-10">
+                <input type="date" class="form-control" id="" [(ngModel)]="startDate"
+                  [ngModelOptions]="{standalone: true}">
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-4">
+            <div class="form-group row">
+              <label for="" class="col-sm-2 col-form-label px-0 text-right" id="newStockLabelItemCd">To</label>
+              <div class="col-sm-10">
+                <input type="date" class="form-control" id="" [(ngModel)]="endDate"
+                  [ngModelOptions]="{standalone: true}">
+              </div>
+            </div>
+          </div>
+
+          <div class="col-lg-4">
+            <div class="form-group row">
+              <label for="" class="col-sm-2 col-form-label px-0 text-right" id="newStockLabelItemCd">Status</label>
+              <div class="col-sm-10">
+                <!-- formControlName="selectedPaymentStatus" -->
+                <ng-select [items]="paymentStatusArray" bindLabel="name" placeholder="-- Select --" id="newStockBatch#"
+                  [ngModelOptions]="{standalone: true}" [(ngModel)]="selectedPaymentStatus">
+                </ng-select>
+
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-lg-5">
+            <div class="form-group row">
+              <label for="" class="col-sm-3 col-form-label px-0 text-right" id="newStockLabelItemCd">Search By</label>
+              <div class="col-sm-9">
+                <input type="text" class="form-control" id="" placeholder="Grn No / Invoice No"
+                  [(ngModel)]="searchCodeValue" (change)="searchCode($event)" [ngModelOptions]="{standalone: true}">
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-5">
+            <div class="form-group row">
+
+            </div>
+          </div>
+          <div class="col-lg-2">
+            <div class="form-group row">
+              <div class="col-sm-12 text-right">
+                <input type="button" class="btn btn-primary btn-block" (click)="getSalesBySearch()" value="Search">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-sm-12 py-2">
+          <ag-grid-angular style="width: 100%; height: 370px;" [rowData]="rowData" class="ag-theme-balham"
+            id="grid-wrapper" [gridOptions]="accountPayablesGridOptions" [columnDefs]="gridColumnDefs"
+            [pagination]="true" [cacheOverflowSize]="cacheOverflowSize"
+            [maxConcurrentDatasourceRequests]="maxConcurrentDatasourceRequests" [paginationPageSize]="paginationSize">
+          </ag-grid-angular>
+        </div>
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" data-dismiss="modal"
+          [disabled]="accountPayablesGridOptions?.api?.getSelectedRows()?.length === 0"
+          class="btn btn-primary px-4 mr-2" (click)="getSelectedGridItems()">OK</button>
+
+        <button type="button" class="btn btn-secondary px-4" data-dismiss="modal" (click)="closePopUp()">Close</button>
+        <button type="button" class="btn btn-secondary px-4" data-dismiss="modal" (click)="close()">Reset &
+          Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Multipayment modal popup -->
+<div *ngIf="multiChequePayModal" class="itemSearchModal" id="itemSearchModal" tabindex="-1" role="dialog"
+  aria-labelledby="itemSearchModalLabel">
+  <div class="modal-dialog" style="margin-top: 12%;margin-left:30%" role="document">
+    <div class="modal-content" style="height: 150px;width:50%">
+      <div class="modal-body">
+
+        <div class="row">
+          <div class="col-lg-6">
+            <div class="form-group row ml-3">
+              <label>Pay by Multiple Payment ?</label>
+              </div>
+              <div class="form-group row ml-3">
+              <button type="button" data-dismiss="modal" class="btn btn-primary px-4 mr-2" (click)="onYesClick()">Yes</button>
+              <button type="button" data-dismiss="modal" class="btn btn-primary px-4 mr-2" (click)="onNoClick()">No</button>
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<ng4-loading-spinner [loadingText]="'Please wait...'" [timeout]="400000000"> </ng4-loading-spinner>

@@ -1,0 +1,278 @@
+<div id="" class="row pt-3 pl-3">
+    <div class="row col-lg-10">
+        <div class="col-lg-3">
+            <div class="form-group row">
+
+                <div class="col-sm-12">
+                    <input type="date" placeholder="From Txn Date" class="form-control" id="" [(ngModel)]="fromTxnDate">
+                </div>
+
+            </div>
+        </div>
+        <div class="col-lg-3">
+            <div class="form-group row">
+
+
+                <div class="col-sm-12">
+                    <input type="date" placeholder="To Txn Date" class="form-control" id="" [(ngModel)]="toTxnDate">
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="form-group row">
+
+                <div class="col-sm-12">
+                    <input type="text" placeholder="Txn Ref No" class="form-control" id=""
+                        [(ngModel)]="transactionRefNo">
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-1">
+            <div class="form-group row">
+                <div class="col-sm-12">
+                    <button class="btn btn-primary" (click)="getTransactionsBySearch()">Search</button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- <div class="col text-right">
+      <button class="btn btn-primary px-4 edit-btn"
+          [disabled]="pettyCashGridOptions?.api?.getSelectedRows()?.length === 0" id="common-grid-btn"
+          (click)="editGrid()">Edit</button>
+
+  </div> -->
+
+    <div class="row col-lg-12">
+        <div class="col-lg-5">
+            <div class="form-group row">
+                <div class="col-sm-12">
+                    <ng-select placeholder="-- Select Party --" [items]="accountNames" bindLabel="accountName"
+                        [(ngModel)]="selectedSearchParty" (clear)="onSearchPartyClear()">
+                    </ng-select>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-5">
+            <div class="form-group row">
+                <div class="col-sm-12">
+                    <ng-select placeholder="-- Select Counter Party --" [items]="accountNames" bindLabel="accountName"
+                        [(ngModel)]="selectedSearchCounterParty" (clear)="onSearchCounterPartyClear()">
+                    </ng-select>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<div class="row grid-area">
+    <div class="col py-3">
+
+        <ag-grid-angular style="width: 100%; height: 500px;" class="ag-theme-balham" [rowData]="rowData"
+            [gridOptions]='BankTxnGridOptions' (cellClicked)='onCellClicked($event)' [pagination]="true"
+            [cacheOverflowSize]="gridCacheOverFlowSize"
+            [maxConcurrentDatasourceRequests]="txnMaxConcurrentDatasourceRequests"
+            [paginationPageSize]="txnEditPaginationSize">
+        </ag-grid-angular>
+    </div>
+</div>
+
+
+<div class="modal fade" id="approvedModal" tabindex="-1" role="dialog" aria-labelledby="pendingLabel">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="module_box loginBox__shadow rhythmMargin1 col-10 col-md-08 col-lg-08 mt-n5" id="nav-tab"
+            role="tablist">
+            <div class="modal-content mx-auto">
+                <div class="modal-header">
+                    <h4 class="modal-title">Expenses Details</h4>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+                <div class="modal-body">
+
+                    <div class="tab-content" id="pills-tabContent">
+                        <div class="tab-pane fade show active" id="pills-home" role="tabpanel"
+                            aria-labelledby="pills-home-tab">
+                            <form #expensesForm="ngForm" [formGroup]="expensesInformationForm"
+                                (keydown.enter)="$event.preventDefault()" class="full-height ">
+
+
+                                <div class="row">
+                                    <div class="col-lg-6">
+                                        <div class="form-group row">
+                                            <label for="" class="col-sm-3 col-form-label px-0 text-right"
+                                                id="expensesLabelEn">EN#
+                                            </label>
+                                            <div class="col-sm-9">
+                                                <input type="text" class="form-control" id="expensesNo"
+                                                    placeholder="Expense No" [(ngModel)]="expenseNumber"
+                                                    formControlName="expenseNo" disabled>
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <label for="" class="col-sm-3 col-form-label pr-0 text-right"
+                                                id="expensesDateLabel">Date
+                                            </label>
+                                            <div class="col-sm-9">
+                                                <input formControlName="date" type="date" class="form-control"
+                                                    id="expensesDate" placeholder="" disabled>
+
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <label for="" class="col-sm-3 col-form-label pr-0 text-right"
+                                                id="expensesFromAccountIdLabel">Party
+                                            </label>
+                                            <div class="col-sm-9">
+                                                <ng-select placeholder="-- select --" [items]="bankNames"
+                                                    bindLabel="accountName" id="expensesFromAccount"
+                                                    [(ngModel)]="selectedFromAccount" formControlName="account"
+                                                    (change)="onFromAccountSelected($event)" (clear)="onPartyClear()"
+                                                    disabled>
+                                                </ng-select>
+
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <label for="" class="col-sm-3 col-form-label pr-0 text-right"
+                                                id="ToAccountIdLabel">Counter Party
+                                            </label>
+                                            <div class="col-sm-9">
+                                                <ng-select placeholder="-- select --" [items]="counterPartyAccountNames"
+                                                    bindLabel="accountName" [(ngModel)]="selectedToAccount"
+                                                    formControlName="counterPartyNo" (clear)="onClear()"
+                                                    (change)="oncounterPartySelected($event)" disabled>
+                                                </ng-select>
+
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group row">
+                                            <label for="" class="col-sm-3 col-form-label pr-0 text-right"
+                                                id="expensesReferenceLabelId">Reference
+                                            </label>
+                                            <div class="col-sm-9">
+                                                <input formControlName="reference" type="text" class="form-control"
+                                                    id="expensesReference" placeholder="Reason" disabled>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-6">
+                                        <div class="form-group row">
+
+                                        </div>
+                                        <div class="form-group row">
+                                            <label for="" class="col-sm-3 col-form-label pr-0 text-right"
+                                                id="expensesBalanceLabelId">Balance
+                                            </label>
+                                            <div class="col-sm-9">
+                                                <input formControlName="balance" type="text" class="form-control"
+                                                    id="expensesBalance" placeholder="Balance" disabled>
+
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <label for="" class="col-sm-3 col-form-label pr-0 text-right"
+                                                id="expensesAmountLabelId">Amount
+                                            </label>
+                                            <div class="col-sm-9">
+                                                <input formControlName="amount" type="text" class="form-control"
+                                                    id="expensesAmount" placeholder="Amount"
+                                                    (keyup)="onAmountChange($event)" disabled>
+
+
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <label for="" class="col-sm-3 col-form-label pr-0 text-right"
+                                                id="expensesModeLabel">Mode
+                                            </label>
+                                            <div class="col-sm-9">
+                                                <ng-select placeholder="-- select --" [items]="modes" bindLabel="name"
+                                                    [(ngModel)]="selectedMode" formControlName="mode"
+                                                    (change)="onModeSelected($event)" disabled>
+                                                </ng-select>
+
+                                            </div>
+                                        </div>
+                                        <div class="form-group row" *ngIf="displayCardNO">
+                                            <label for="" class="col-sm-3 col-form-label pr-0 text-right"
+                                                id="expensesCardNoLbelId">Card No
+                                            </label>
+                                            <div class="col-sm-9">
+                                                <input formControlName="cardNo" type="text" class="form-control"
+                                                    id="expensesCardNo" placeholder="Enter Card No" disabled>
+
+
+                                            </div>
+                                        </div>
+                                        <div class="form-group row" *ngIf="displayChequeNO">
+                                            <label for="" class="col-sm-3 col-form-label pr-0 text-right"
+                                                id="expensesChequeNoLabelId">Cheque No
+                                            </label>
+                                            <div class="col-sm-9">
+                                                <input formControlName="chequeNo" type="text" class="form-control"
+                                                    id="expensesChequeNo" placeholder="Enter Cheque No" disabled>
+
+
+                                            </div>
+                                        </div>
+                                        <div class="form-group row" *ngIf="displaytxnId">
+                                            <label for="" class="col-sm-3 col-form-label pr-0 text-right"
+                                                id="expensesTransactionLabelId">Txn No
+                                            </label>
+                                            <div class="col-sm-9">
+                                                <input formControlName="txnId" type="text" class="form-control"
+                                                    id="expensesTransaction" placeholder="Enter Transaction Id"
+                                                    (keyup)="onSearchTransactionId($event)" disabled>
+
+
+                                            </div>
+                                        </div>
+                                        <div class="form-group row" *ngIf="displayPhoneNumber">
+                                            <label for="" id="addLabelExpensesPhone"
+                                                class="col-sm-3 col-form-label pr-0 text-right">Phone</label>
+                                            <div class="col-sm-9">
+
+                                                <input type="text" class="form-control" id="addExpensesPhone"
+                                                    formControlName="phoneNumber" placeholder="Phone" disabled>
+
+
+                                            </div>
+                                        </div>
+                                        <div class="form-group row">
+                                            <label for="" class="col-sm-3 col-form-label pr-0 text-right"
+                                                id="expensesReasonLabel">Reason
+                                            </label>
+                                            <div class="col-sm-9">
+                                                <textarea type="text" id="ExpensesAddReason" formControlName="reason"
+                                                    class="form-control" disabled></textarea>
+
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row pt-4">
+                                    <div class="col mb-3 pt-2 text-center">
+
+                                        <input type="button" class="btn btn-secondary px-4 ml-3" (click)="cancelForm()"
+                                            id="mu-adduser-cancel expensesCancel" value="Cancel">
+                                    </div>
+                                </div>
+                            </form>
+
+
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,80 @@
+<form #addTillBalanceForm="ngForm" [formGroup]="tillBalInformationForm" (keydown.enter)="$event.preventDefault()"
+    class="full-height ">
+
+    <h6 class="border border-primary p-2 mt-3 mb-4 bg-light text-white">Till Balance</h6>
+
+    <div class="row">
+        <div class="col-lg-4">
+            <div class="form-group row">
+                <label for="" class="col-sm-3 col-form-label pr-0 text-right" id="fromAccountIdLabel">Till Account
+                    <span class="text-danger">*</span></label>
+                <div class="col-sm-9">
+                    <ng-select placeholder="-- select --" [items]="accountNames" bindLabel="accountName"
+                        [(ngModel)]="selectedAccount" formControlName="tillAccount" (clear)="onAccNameClear()" (change)="onTillAccountSelected($event)">
+                    </ng-select>
+                    <div *ngIf="tillBalInformationForm.get('tillAccount')?.touched" class="error-msg-common text-danger">
+                        <div *ngIf="tillBalInformationForm.get('tillAccount').errors?.required">
+                            * required field
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label for="" class="col-sm-3 col-form-label pr-0 text-right" id="prevBalLabel">Previous Balance
+                    <span class="text-danger">*</span></label>
+                <div class="col-sm-9">
+                    <input formControlName="prevBalance" type="text" class="form-control" id="prevBalId" placeholder=""
+                        disabled>
+
+                </div>
+            </div>
+            <div class="form-group row">
+                <label for="" class="col-sm-3 col-form-label pr-0 text-right" id="currentBalLabel">Current Balance
+                    <span class="text-danger">*</span></label>
+                <div class="col-sm-9">
+                    <input formControlName="curBalance" type="text" class="form-control" id="currentBalId" (keyup)="onCurrentBalEnter($event)"
+                        placeholder="Enter Amount">
+                    <div *ngIf="tillBalInformationForm.get('curBalance')?.touched" class="error-msg-common text-danger">
+                        <div *ngIf="tillBalInformationForm.get('curBalance').errors?.required">
+                            * required field
+                        </div>
+                    </div>
+                    <div *ngIf="tillBalInformationForm.get('curBalance')?.invalid" class="error-msg-common text-danger">
+                        <div
+                            *ngIf="!tillBalInformationForm.get('curBalance').errors?.required && tillBalInformationForm?.get('curBalance')?.errors">
+                            * not a valid input
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label for="" class="col-sm-3 col-form-label pr-0 text-right" id="asOfDateLabel">As Of Date
+                    <span class="text-danger">*</span></label>
+                <div class="col-sm-9">
+                    <input formControlName="asOfDate" type="text" class="form-control" id="asOfDateId" placeholder="" disabled>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="form-group row">
+                <label for="" class="col-sm-3 col-form-label pr-0 text-right" id="adjAmtLabelId">Adjusted Amount
+                    <span class="text-danger">*</span></label>
+                <div class="col-sm-9">
+                    <input formControlName="adjustedAmount" type="text" class="form-control" id="adjAmountId" placeholder=""
+                        disabled>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <div class="row pt-4">
+        <div class="col mb-3 pt-2 text-center">
+            <button (click)="onSubmit()" class="btn btn-primary px-4" [disabled]="checkFormDisability()"
+                id="mu-adduser-save">Save</button>
+            <input type="button" class="btn btn-secondary px-4 ml-3" (click)="reset()" id="mu-adduser-cancel"
+                value="Cancel">
+        </div>
+    </div>
+</form>
+<ng4-loading-spinner [loadingText]="'Please wait...'" [timeout]="400000000"> </ng4-loading-spinner>

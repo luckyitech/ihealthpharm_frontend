@@ -1,0 +1,149 @@
+<div id="itemCatGrid" class="row pt-3">
+<!--   <div class="col">
+    <form class="form-inline">
+      <input class="form-control no-right-border-radius" type="text" placeholder="Search here.." aria-label="Search">
+      <button id="editCategoryBtnSearch"class="btn btn-primary no-left-border-radius">Search</button>
+    </form>
+  </div> -->
+  <div class="col text-right">
+    <button class="btn btn-primary px-4 edit-btn"
+    [disabled]="itemGridOptions?.api?.getSelectedRows()?.length === 0"  id="common-item-grid-btn"
+    data-toggle="modal" (click)="editGrid()">Edit</button>
+  </div>
+</div>
+
+<div class="row grid-area">
+  <div class="col py-3">
+    <ag-grid-angular style="width: 100%; height: 620px;" class="ag-theme-balham" [rowData]="rowData"
+    *ngIf="showGrid"  [gridOptions]="itemGridOptions" id="common-item-grid-category"
+      [columnDefs]="columnDefs">
+    </ag-grid-angular>
+  </div>
+</div>
+<div class="itemCategoryForm" id="itemCategory-Information" style="display: none;">
+    <form [formGroup]="itemCategoryForm" (keydown.enter)="$event.preventDefault()" (ngSubmit)="onSubmit()">
+        <h6 class="border border-primary p-2 mt-3 mb-4 bg-light text-white">Category Details</h6>
+
+        <div class="row">
+          <div class="col-lg-6">
+            <div class="form-group row">
+              <label  id="addCategoryLabelCode" for="" class="col-sm-3 col-form-label pr-0 text-right">Code <span class="text-danger">*</span></label>
+              <div class="col-sm-9">
+                <input  type="text" class="form-control" id="addCategoryCode" formControlName="categoryCode"  placeholder="Category Code">
+                <div *ngIf="f.categoryCode?.touched" class="error-msg-common text-danger">
+                    <div *ngIf="f.categoryCode.errors?.required">
+                      Required Field
+                    </div>
+                  </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-6">
+            <div class="form-group row">
+              <label id="addCategoryLabelDescription" for="" class="col-sm-3 col-form-label pr-0 text-right">Description <span
+                  class="text-danger">*</span></label>
+              <div class="col-sm-9">
+                <input  type="text" class="form-control"  formControlName="categoryDescription" id="addCategoryDescription" placeholder="Category Description">
+                <div *ngIf="f.categoryDescription?.touched" class="error-msg-common text-danger">
+                    <div *ngIf="f.categoryDescription.errors?.required">
+                      Required Field
+                    </div>
+                  </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-lg-6">
+            <div class="form-group row">
+              <label id="addCategoryLabelDescription" for="" class="col-sm-3 col-form-label pr-0 text-right">Margin% </label>
+              <div class="col-sm-9">
+                <input  type="text" class="form-control"  formControlName="marginPercentage" id="addMarginPercentage" placeholder="Margin Percentage">
+                <div *ngIf="f.marginPercentage?.touched" class="error-msg-common text-danger">
+                    <div *ngIf="f.marginPercentage.errors?.pattern">
+                      Invalid Format
+                    </div>
+                  </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row mt-3">
+          <div class="col-lg-6 d-flex align-items-center justify-content-end">
+            <div class="form-group row">
+              <div class="col-sm-12 d-flex align-items-center">
+                <div class="d-inline mr-3">
+                  <label id="addCategoryLabelItemType" class="mb-0">Item Type</label>
+                </div>
+                <div class="custom-control d-inline custom-radio mr-3">
+                  <input name="medicalOrNonMedical" type="radio" class="custom-control-input" value="M"
+                    formControlName="medicalOrNonMedical" id="medi">
+                  <label id="addCategoryLabelMedical" class="custom-control-label" for="medi">Medical</label>
+                </div>
+                <div class="custom-control d-inline custom-radio">
+                  <input name="medicalOrNonMedical" type="radio" class="custom-control-input" value="N"
+                    formControlName="medicalOrNonMedical" id="non-medi">
+                  <label id="addCategoryLabelNonMedical" class="custom-control-label" for="non-medi">Non Medical</label>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-6 d-flex align-items-center justify-content-end">
+            <div class="form-group row">
+              <div class="col-sm-12 d-flex">
+                <div class="d-inline mr-3">
+                  <label id="addCategoryLabelStatus" class="mb-0">Status</label>
+                </div>
+                <div class="custom-control d-inline custom-radio mr-3">
+                  <input name="activeS" type="radio" class="custom-control-input" value="Y" formControlName="activeS" id="act">
+                  <label id="addCategoryLabelActivate" class="custom-control-label" for="act" >Activate</label>
+                </div>
+                <div class="custom-control d-inline custom-radio">
+                  <input name="activeS" type="radio" class="custom-control-input" value="N" formControlName="activeS" id="deAct">
+                  <label id="addCategoryLabelDeActivate" class="custom-control-label" for="deAct">De Activate</label>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col mb-3 pt-2 text-center">
+              <input type="button" data-toggle="modal" data-target="#configupdate"  [disabled]="checkFormDisability()"
+              class="btn btn-primary px-4 saved-item btn-save-text" value="Update">
+              <input type="reset" class="btn btn-secondary px-4 ml-3 btn-cancel-text" id="mu-adduser-cancel"
+                (click)="reset()"
+                value="Cancel" />
+          </div>
+        </div>
+
+      </form>
+
+
+</div>
+<div class="modal" id="configupdate" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+
+      <!-- Modal Header -->
+      <div class="modal-header">
+        <h4 class="modal-title">Update Configuration</h4>
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+      </div>
+
+      <!-- Modal body -->
+      <div class="modal-body">
+        <h3>Please Stop Sales This Change Will Update Stock Prices</h3>
+      </div>
+
+      <!-- Modal footer -->
+      <div class="modal-footer">
+        <button (click)="onSubmit()" type="submit"
+        class="btn btn-primary px-4 saved-item btn-save-text" data-dismiss="modal">Update</button>
+        <button type="button" class="btn btn-primary px-4 text-center save-button" data-dismiss="modal">Close</button>
+      </div>
+
+    </div>
+  </div>
+</div>
+<ng4-loading-spinner [loadingText]="'Please wait...'" [timeout]="400000000"> </ng4-loading-spinner>

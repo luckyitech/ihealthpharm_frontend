@@ -1,0 +1,263 @@
+<form #manufacturerForm="ngForm" [formGroup]="manufacturerInformationForm" (keydown.enter)="$event.preventDefault()"
+  (ngSubmit)="onSubmit()" class="full-height">
+
+  <h6 class="border border-primary p-2 mt-3 mb-4 bg-light text-white">Generic Details</h6>
+
+  <div class="row">
+    <div class="col-lg-4">
+      <div class="form-group row">
+        <label id="addManufacturerLabelManufacturerName" for=""
+          class="col-sm-3 col-form-label pr-0 text-right">Manufacturer <span class="text-danger">*</span></label>
+        <div class="col-sm-9">
+          <input type="text" class="form-control" id="addManufacturerName" formControlName="name"
+            placeholder="Manufacturer Name">
+          <div *ngIf="manufacturerInformationForm.get('name')?.touched" class="error-msg-common text-danger">
+            <div *ngIf="manufacturerInformationForm.get('name').errors?.required">
+              * required field
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group row">
+        <label id="addManufacturerLabelLicense" for="" class="col-sm-3 col-form-label pr-0 text-right">License
+        </label>
+        <div class="col-sm-9">
+          <input type="text" class="form-control" id="addManufacturerLicense" formControlName="licence"
+            placeholder="License">
+          <div *ngIf="manufacturerInformationForm.get('licence')?.invalid" class="error-msg-common text-danger">
+            <div
+              *ngIf="!manufacturerInformationForm.get('licence').errors?.required && manufacturerInformationForm?.get('licence')?.errors">
+              * not a valid input
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-4">
+      <div class="form-group row">
+        <label id="addManufacturerLabelPhone" for="" class="col-sm-3 col-form-label pr-0 text-right">Phone
+        </label>
+        <div class="col-sm-9">
+          <input type="text" class="form-control" id="addManufacturerPhone" formControlName="phoneNumber"
+            placeholder="Phone Number">
+          <div *ngIf="manufacturerInformationForm.get('phoneNumber')?.invalid" class="error-msg-common text-danger">
+            <div
+              *ngIf="!manufacturerInformationForm.get('phoneNumber').errors?.required && manufacturerInformationForm?.get('phoneNumber')?.errors">
+              * not a valid input
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="form-group row">
+        <label id="addManufacturerLabelEmail" for="" class="col-sm-3 col-form-label pr-0 text-right">Email </label>
+        <div class="col-sm-9">
+          <input type="text" class="form-control" id="addManufacturerEmail" formControlName="emailId"
+            placeholder="Email">
+          <div
+            *ngIf="manufacturerInformationForm.get('emailId')?.invalid && manufacturerInformationForm.get('emailId')?.touched"
+            class="error-msg-common text-danger">
+            <div
+              *ngIf="!manufacturerInformationForm.get('emailId').errors?.required && manufacturerInformationForm?.get('emailId')?.errors">
+              * not a valid input
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-4">
+      <div class="form-group row">
+        <label id="addManufacturerLabelWebsite" for="" class="col-sm-3 col-form-label pr-0 text-right">Website </label>
+        <div class="col-sm-9">
+          <input type="text" class="form-control" id="addManufacturerWebsite" formControlName="website"
+            placeholder="Website URL">
+          <div *ngIf="manufacturerInformationForm.get('website')?.invalid" class="error-msg-common text-danger">
+            <div
+              *ngIf="!manufacturerInformationForm.get('website').errors?.required && manufacturerInformationForm?.get('website')?.errors">
+              * not a valid input
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="form-group row">
+        <div class="col-sm-12 justify-content-end d-flex pt-2">
+          <div class="d-inline mr-3">
+            <label id="addManufacturerLabelStatus" class="mb-0">Status</label>
+          </div>
+          <div class="custom-control d-inline custom-radio mr-3">
+            <input name="activeS" type="radio" value="Y" class="custom-control-input" formControlName="activeS"
+              id="activate">
+            <label id="addManufacturerLabelActivate" class="custom-control-label" for="activate">Activate</label>
+          </div>
+          <div class="custom-control d-inline custom-radio">
+            <input name="activeS" type="radio" value="N" class="custom-control-input" formControlName="activeS"
+              id="deactivate">
+            <label id="addManufacturerLabelDeActive" class="custom-control-label" for="deactivate">De Activate</label>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h6 class="border border-primary p-2 mt-3 mb-4 bg-light text-white">Contact Person Details</h6>
+
+  <div class="row">
+    <div class="col-lg-4">
+      <div class="form-group row">
+        <label id="addManufacturerLabelFirstName" for="" class="col-sm-3 col-form-label pr-0 text-right">First Name
+        </label>
+        <div class="col-sm-9">
+          <input type="text" class="form-control" id="addManufacturerFirstName" formControlName="contactPersonFirstName"
+            placeholder="First Name">
+        </div>
+      </div>
+      <div class="form-group row">
+        <label id="addManufacturerLabelMiddleName" for="" class="col-sm-3 col-form-label pr-0 text-right">Middle
+          Name</label>
+        <div class="col-sm-9">
+          <input type="text" class="form-control" id="addManufacturerMiddleName"
+            formControlName="contactPersonMiddleName" placeholder="Middle Name">
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-4">
+      <div class="form-group row">
+        <label id="addManufacturerLabelLastName" for="" class="col-sm-3 col-form-label pr-0 text-right">Last Name
+        </label>
+        <div class="col-sm-9">
+          <input type="text" class="form-control" id="addManufacturerLastName" formControlName="contactPersonLastName"
+            placeholder="Last Name">
+
+        </div>
+      </div>
+      <div class="form-group row">
+        <label id="addManufacturerLabelContactEmail" for="" class="col-sm-3 col-form-label pr-0 text-right">Email
+        </label>
+        <div class="col-sm-9">
+          <input type="text" class="form-control" id="addManufacturerContactEmail" formControlName="contactPersonEmail"
+            placeholder="Email">
+          <div
+            *ngIf="manufacturerInformationForm.get('contactPersonEmail')?.invalid &&  manufacturerInformationForm.get('contactPersonEmail')?.touched"
+            class="error-msg-common text-danger">
+            <div
+              *ngIf="!manufacturerInformationForm.get('contactPersonEmail').errors?.required && manufacturerInformationForm?.get('contactPersonEmail')?.errors ">
+              * not a valid input
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-4">
+      <div class="form-group row">
+        <label id="addManufacturerLabelContactPhone" for="" class="col-sm-3 col-form-label pr-0 text-right">Phone
+        </label>
+        <div class="col-sm-9">
+          <input type="text" class="form-control" id="addManufacturerContactPhone"
+            formControlName="contactPersonPhoneNumber" placeholder="Phone Number">
+          <div *ngIf="manufacturerInformationForm.get('contactPersonPhoneNumber')?.invalid"
+            class="error-msg-common text-danger">
+            <div
+              *ngIf="!manufacturerInformationForm.get('contactPersonPhoneNumber').errors?.required && manufacturerInformationForm?.get('contactPersonPhoneNumber')?.errors ">
+              * not a valid input
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="form-group row">
+        <label id="addManufacturerLabelFax" for="" class="col-sm-3 col-form-label pr-0 text-right">FAX </label>
+        <div class="col-sm-9">
+          <input type="text" class="form-control" id="addManufacturerFax" formControlName="fax" placeholder="FAX">
+          <div
+            *ngIf="manufacturerInformationForm.get('fax')?.invalid && manufacturerInformationForm.get('fax')?.touched"
+            class="text-danger">
+            <div
+              *ngIf="!manufacturerInformationForm.get('fax').errors?.required && manufacturerInformationForm?.get('fax')?.errors">
+              * not a valid input
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h6 class="border border-primary p-2 mt-3 mb-4 bg-light text-white">Address Details</h6>
+
+  <div class="row">
+    <div class="col-lg-4">
+      <div class="form-group row">
+        <label id="addManufacturerLabelAddressOne" for="" class="col-sm-3 col-form-label pr-0 text-right">Address 1
+        </label>
+        <div class="col-sm-9">
+          <input type="text" class="form-control" id="addManufacturerAddressOne" formControlName="addressLine1"
+            placeholder="Address 1">
+
+        </div>
+      </div>
+      <div class="form-group row">
+        <label id="addManufacturerLabelAddressTwo" for="" class="col-sm-3 col-form-label pr-0 text-right">Address
+          2</label>
+        <div class="col-sm-9">
+
+          <input type="text" class="form-control" id="addManufacturerAddressTwo" formControlName="addressLine2"
+            placeholder="Address 2">
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-4">
+      <div class="form-group row">
+        <label id="addManufacturerLabelCountry" for="" class="col-sm-3 col-form-label pr-0 text-right">Country
+        </label>
+        <div class="col-sm-9">
+          <ng-select id="addManufacturerCountry" [(ngModel)]="selectedCountry" formControlName="countryId"
+            (change)="onCountrySelected($event)" placeholder="-- select --" [items]="countries" bindLabel="countryName">
+          </ng-select>
+        </div>
+      </div>
+      <div class="form-group row">
+        <label id="addManufacturerLabelState" for="" class="col-sm-3 col-form-label pr-0 text-right">State /
+          Province </label>
+        <div class="col-sm-9">
+          <ng-select id="addManufacturerState" [(ngModel)]="selectedState" formControlName="provinceId"
+            placeholder="-- select --" [items]="states" bindLabel="provinceName">
+          </ng-select>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-4">
+      <div class="form-group row">
+        <label id="addManufacturerLabelCity" for="" class="col-sm-3 col-form-label pr-0 text-right">City </label>
+        <div class="col-sm-9">
+          <input type="text" class="form-control" id="addManufacturerCity" formControlName="cityName"
+            placeholder="City">
+        </div>
+      </div>
+      <div class="form-group row">
+        <label id="addManufacturerLabelPinCode" for="" class="col-sm-3 col-form-label pr-0 text-right">Pin Code
+        </label>
+        <div class="col-sm-9">
+          <input type="text" class="form-control" id="addManufacturerPinCode" formControlName="zipCode"
+            placeholder="Pin Code">
+
+          <div *ngIf="manufacturerInformationForm.get('zipCode')?.invalid" class="error-msg-common text-danger">
+            <div
+              *ngIf="!manufacturerInformationForm.get('zipCode').errors?.required && manufacturerInformationForm?.get('zipCode')?.errors">
+              * not a valid input
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row pt-4">
+    <div class="col mb-3 pt-2 text-center">
+      <button type="submit" class="btn btn-primary px-4" [disabled]="checkFormDisability()"
+        id="mu-adduser-save">Save</button>
+      <input type="button" value="Cancel" class="btn btn-secondary px-4 ml-3"
+        (click)="reset();manufacturerInformationForm.controls.activeS.setValue('Y')" id="mu-adduser-cancel">
+    </div>
+  </div>
+
+</form>
+<ng4-loading-spinner [loadingText]="'Please wait...'" [timeout]="400000000"> </ng4-loading-spinner>

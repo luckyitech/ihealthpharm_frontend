@@ -1,0 +1,1725 @@
+<nav>
+  <div class="nav nav-tabs" id="nav-tab" role="tablist">
+    <a class="nav-item nav-link active" id="nav-employee-tab" data-toggle="tab" href="#nav-employee-single" role="tab"
+      aria-controls="nav-employee-single" aria-selected="true">Employee</a>
+    <a class="nav-item nav-link" id="nav-membership-tab" data-toggle="tab" href="#nav-membership" role="tab"
+      aria-controls="nav-membership" aria-selected="false">Membership</a>
+    <a class="nav-item nav-link" id="nav-honor-tab" data-toggle="tab" href="#nav-honor" role="tab"
+      aria-controls="nav-honor" aria-selected="false">Honor</a>
+    <a class="nav-item nav-link" id="nav-interest-tab" data-toggle="tab" href="#nav-interest" role="tab"
+      aria-controls="nav-interest" aria-selected="false">Interest</a>
+    <a class="nav-item nav-link" id="nav-publication-tab" data-toggle="tab" href="#nav-publication" role="tab"
+      aria-controls="nav-publication" aria-selected="false">Publication</a>
+    <a class="nav-item nav-link" id="nav-education-tab" data-toggle="tab" href="#nav-education" role="tab"
+      aria-controls="nav-education" aria-selected="false">Education</a>
+    <a class="nav-item nav-link" id="nav-history-tab" data-toggle="tab" href="#nav-history" role="tab"
+      aria-controls="nav-history" aria-selected="false">History</a>
+    <a class="nav-item nav-link" id="nav-salary-tab" data-toggle="tab" href="#nav-salary" role="tab"
+      aria-controls="nav-salary" aria-selected="false">Salary</a>
+    <a *ngIf="showAccess" class="nav-item nav-link" id="nav-access-tab" data-toggle="tab" href="#nav-access" role="tab"
+      aria-controls="nav-access" aria-selected="false">Access</a>
+  </div>
+</nav>
+
+<div class="tab-content" id="nav-item">
+
+  <div class="tab-pane fade show active" id="nav-employee-single" role="tabpanel" aria-labelledby="nav-employee-tab">
+    <form #employeeForm="ngForm" [formGroup]="employeeInformationForm" (keydown.enter)="$event.preventDefault()"
+      class="full-height ">
+
+      <h6 class="border border-primary p-2 mt-3 mb-4 bg-light text-white">Generic Details</h6>
+
+      <div class="row">
+        <div class="col-lg-4">
+          <div class="form-group row">
+            <label id="employeeSingleLabelCode" for="" class="col-sm-3 col-form-label pr-0 text-right">Code </label>
+            <div class="col-sm-9">
+              <input disabled type="text" class="form-control" id="employeeSingleCode" placeholder="Employee Code"
+                formControlName="employeeCode">
+            </div>
+          </div>
+          <div class="form-group row">
+            <label id="employeeSingleLabelPharmId" for="" class="col-sm-3 col-form-label pr-0 text-right">Pharm ID
+              <span class="text-danger">*</span> </label>
+            <div class="col-sm-9">
+              <!-- <input type="text" class="form-control" id="employeeSinglePharmId" placeholder="Pharmacy ID"
+                  formControlName="pharmacyId"> -->
+
+              <ng-select [(ngModel)]="selectedUnMappedPharmacyNames" [items]="unMappedPharmacies"
+                bindLabel="pharmacyName" placeholder="-- Select --" formControlName="pharmacyId">
+              </ng-select>
+
+              <div *ngIf="employeeInformationForm.get('pharmacyId')?.touched" class="error-msg-common text-danger">
+                <div *ngIf="employeeInformationForm.get('pharmacyId').errors?.required">
+                  required field
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="form-group row">
+            <label id="employeeSingleLabelTitle" class="col-sm-3 col-form-label pr-0 text-right">Title <span
+                class="text-danger">*</span></label>
+            <div class="col-sm-9">
+              <ng-select id="employeeSingleTitle" [items]="testing" bindLabel="test" placeholder="--select--"
+                [(ngModel)]="selectedTitle" formControlName="title">
+              </ng-select>
+              <div *ngIf="employeeInformationForm.get('title')?.touched" class="error-msg-common text-danger">
+                <div *ngIf="employeeInformationForm.get('title').errors?.maxlength">
+                  field length should be less then 5
+                </div>
+                <div *ngIf="employeeInformationForm.get('title').errors?.required">
+                  * required field
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-4">
+          <div class="form-group row">
+            <label id="employeeSingleLabelGender" for="" class="col-sm-3 col-form-label pr-0 text-right">Gender <span
+                class="text-danger">*</span></label>
+            <div class="col-sm-9">
+              <ng-select id="employeeSingleGender" [items]="genders" bindLabel="name" placeholder="--select--"
+                [(ngModel)]="selectedEmpGender" formControlName="genderCode">
+              </ng-select>
+              <div *ngIf="employeeInformationForm.get('genderCode')?.touched" class="error-msg-common text-danger">
+                <div *ngIf="employeeInformationForm.get('genderCode').errors?.required">
+                  * required field
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="form-group row">
+            <label id="employeeSingleLabelFirstName" for="" class="col-sm-3 col-form-label pr-0 text-right">First Name
+              <span class="text-danger">*</span></label>
+            <div class="col-sm-9">
+              <input type="text" class="form-control" id="employeeSingleFirstName" placeholder="First Name"
+                formControlName="firstName" (change)="userNameGenerator($event)">
+              <div *ngIf="employeeInformationForm.get('firstName')?.touched" class="error-msg-common text-danger">
+                <div *ngIf="employeeInformationForm.get('firstName').errors?.required">
+                  * required field
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="form-group row">
+            <label id="employeeSingleLabelLastName" for="" class="col-sm-3 col-form-label pr-0 text-right">Last Name
+              <span class="text-danger">*</span></label>
+            <div class="col-sm-9">
+              <input type="text" class="form-control" id="employeeSingleLastName" placeholder="Last Name"
+                formControlName="lastName">
+              <div *ngIf="employeeInformationForm.get('lastName')?.touched" class="error-msg-common text-danger">
+                <div *ngIf="employeeInformationForm.get('lastName').errors?.required">
+                  * required field
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-4">
+          <div class="form-group row">
+            <label id="employeeSingleLabelDOB" for="" class="col-sm-3 col-form-label pr-0 text-right">DOB <span
+                class="text-danger">*</span></label>
+            <div class="col-sm-9">
+              <input type="date" class="form-control" id="employeeSingleDOB" placeholder="Last Name"
+                formControlName="dateOfBirth">
+              <div *ngIf="employeeInformationForm.get('dateOfBirth')?.touched" class="error-msg-common text-danger">
+                <div *ngIf="employeeInformationForm.get('dateOfBirth').errors?.required">
+                  * required field
+                </div>
+              </div>
+              <div class="error-msg-common text-danger" *ngIf="employeeInformationForm.get('dateOfBirth').errors &&
+                employeeInformationForm.get('dateOfBirth').dirty &&
+                employeeInformationForm.get('dateOfBirth').errors.invalidDob">
+                not valid date
+              </div>
+            </div>
+
+
+          </div>
+          <div class="form-group row">
+            <label id="employeeSingleLabelEmail" for="" class="col-sm-3 col-form-label pr-0 text-right">Email </label>
+            <div class="col-sm-9">
+              <input type="text" class="form-control" id="employeeSingleEmail" placeholder="Email"
+                formControlName="emailId">
+              <div
+                *ngIf="employeeInformationForm.get('emailId')?.invalid && employeeInformationForm.get('emailId')?.touched"
+                class="error-msg-common text-danger">
+                <div
+                  *ngIf="!employeeInformationForm.get('emailId').errors?.required && employeeInformationForm?.get('emailId')?.errors">
+                  * not a valid input
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <h6 class="border border-primary p-2 mt-3 mb-4 bg-light text-white">Contact Details</h6>
+
+      <div class="row">
+        <div class="col-lg-4">
+          <div class="form-group row">
+            <label id="employeeSingleLabelPhone" for="" class="col-sm-3 col-form-label pr-0 text-right">Phone <span
+                class="text-danger">*</span></label>
+            <div class="col-sm-9">
+              <input type="text" class="form-control" id="employeeSinglePhone" placeholder="Phone Number"
+                formControlName="phoneNumber">
+              <div *ngIf="employeeInformationForm.get('phoneNumber')?.touched" class="error-msg-common text-danger">
+                <div *ngIf="employeeInformationForm.get('phoneNumber').errors?.required">
+                  * required field
+                </div>
+              </div>
+              <div *ngIf="employeeInformationForm.get('phoneNumber')?.invalid" class="error-msg-common text-danger">
+                <div
+                  *ngIf="!employeeInformationForm.get('phoneNumber').errors?.required && employeeInformationForm?.get('phoneNumber')?.errors">
+                  * not a valid input
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="form-group row">
+            <label id="employeeSingleLabelLandLine" for="" class="col-sm-3 col-form-label pr-0 text-right">Landline
+            </label>
+            <div class="col-sm-9">
+              <input type="text" class="form-control" id="employeeSingleLandLine" placeholder="Landline Number"
+                formControlName="landlineNumber">
+            </div>
+          </div>
+          <div class="form-group row">
+            <label id="employeeSingleLabelCountry" for="" class="col-sm-3 col-form-label pr-0 text-right">Country <span
+                class="text-danger">*</span></label>
+            <div class="col-sm-9">
+              <ng-select id="employeeSingleCountry" [items]="countries" bindLabel="countryName"
+                (change)="onCountrySelected($event)" placeholder="-- select --" [(ngModel)]="seletedCountry"
+                formControlName="country">
+              </ng-select>
+              <div *ngIf="employeeInformationForm.get('country')?.touched" class="error-msg-common text-danger">
+                <div *ngIf="employeeInformationForm.get('country').errors?.required">
+                  * required field
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="form-group row">
+            <label id="employeeSingleLabelState" for="" class="col-sm-3 col-form-label pr-0 text-right">State /
+              Province<span class="text-danger">*</span></label>
+            <div class="col-sm-9">
+              <ng-select id="employeeSingleState" [items]="states" bindLabel="provinceName"
+                (change)="onStateSelected($event)" placeholder="-- select --" [(ngModel)]="seletedState"
+                formControlName="state">
+              </ng-select>
+              <div *ngIf="employeeInformationForm.get('state')?.touched" class="error-msg-common text-danger">
+                <div *ngIf="employeeInformationForm.get('state').errors?.required">
+                  required field
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-4">
+          <div class="form-group row">
+            <label id="employeeSingleLabelCity" for="" class="col-sm-3 col-form-label pr-0 text-right">City </label>
+            <div class="col-sm-9">
+              <input type="text" class="form-control" id="employeeSingleCity" placeholder="City" formControlName="city">
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="" id="employeeSingleLabelPinCode" class="col-sm-3 col-form-label pr-0 text-right">Pin code <span
+                class="text-danger">*</span></label>
+            <div class="col-sm-9">
+              <input type="text" class="form-control" id="employeeSinglePinCode" placeholder="Pin code"
+                formControlName="postalCode">
+              <div *ngIf="employeeInformationForm.get('postalCode')?.touched" class="error-msg-common text-danger">
+                <div *ngIf="employeeInformationForm.get('postalCode').errors?.required">
+                  * required field
+                </div>
+              </div>
+              <div *ngIf="employeeInformationForm.get('postalCode')?.invalid" class="error-msg-common text-danger">
+                <div
+                  *ngIf="!employeeInformationForm.get('postalCode').errors?.required && employeeInformationForm?.get('postalCode')?.errors">
+                  * not a valid input
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="" id="employeeSingleLabelAddressOne" class="col-sm-3 col-form-label pr-0 text-right">Address
+              <span class="text-danger">*</span></label>
+            <div class="col-sm-9">
+              <input type="text" class="form-control" id="employeeSingleAddressOne" formControlName="addressLine1"
+                placeholder="Address Line 1">
+              <div *ngIf="employeeInformationForm.get('addressLine1')?.touched" class="error-msg-common text-danger">
+                <div *ngIf="employeeInformationForm.get('addressLine1').errors?.required">
+                  * required field
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="" id="employeeSingleLabelAddressTwo" class="col-sm-3 col-form-label pr-0 text-right">Address
+            </label>
+            <div class="col-sm-9">
+              <input type="text" class="form-control" formControlName="addressLine2" id="employeeSingleAddressTwo"
+                placeholder="Address Line 2">
+
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-4">
+
+          <div class="form-group row">
+            <label for="" id="employeeSingleLabelProfPhoto" class="col-sm-3 col-form-label pr-0 text-right">Prof Photo
+            </label>
+            <div class="col-sm-9">
+              <input #profPhoto type="file" (change)="uploadDocuments($event, 'profileImage')" accept="image/*"
+                class="form-control-file" id="employeeSingleProfPhoto">
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="" id="employeeSingleLabelCondCert" class="col-sm-3 col-form-label pr-0 text-right">Cond Cert
+            </label>
+            <div class="col-sm-9">
+              <input #condCert type="file" (change)="uploadDocuments($event, 'policeGoodConductCertificate')" accept="image/*,application/pdf,application/msword,
+                  application/vnd.openxmlformats-officedocument.wordprocessingml.document" class="form-control-file"
+                id="employeeSingleCondCert">
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+      <h6 class="border border-primary p-2 mt-3 mb-4 bg-light text-white">Work Details</h6>
+
+      <div class="row">
+        <div class="col-lg-4">
+          <div class="form-group row">
+            <label for="" id="employeeSingleLabelEmpType" class="col-sm-3 col-form-label pr-0 text-right">Emp Type
+              <span class="text-danger">*</span></label>
+            <div class="col-sm-9">
+              <ng-select id="employeeSingleEmpType" [items]="employeeTypes" bindLabel="employeeTypeDesc"
+                placeholder="-- select --" [(ngModel)]="selectedEmpType" formControlName="employeeTypeModel">
+              </ng-select>
+              <div *ngIf="employeeInformationForm.get('employeeTypeModel')?.touched"
+                class="error-msg-common text-danger">
+                <div *ngIf="employeeInformationForm.get('employeeTypeModel').errors?.required">
+                  required field
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="" id="employeeSingleLabelDOJ" class="col-sm-3 col-form-label pr-0 text-right">DOJ <span
+                class="text-danger">*</span></label>
+            <div class="col-sm-9">
+              <input type="date" formControlName="dateOfJoining" class="form-control" id="employeeSingleDOJ"
+                placeholder="Date of Joining">
+              <div *ngIf="employeeInformationForm.get('dateOfJoining')?.touched" class="error-msg-common text-danger">
+                <div *ngIf="employeeInformationForm.get('dateOfJoining').errors?.required">
+                  * required field
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="" id="employeeSingleLabelBiography" class="col-sm-3 col-form-label pr-0 text-right">Biography
+            </label>
+            <div class="col-sm-9">
+              <input type="text" formControlName="bipgraphyDesc" class="form-control" id="employeeSingleBiography"
+                placeholder="Biography Description">
+            </div>
+          </div>
+          <div class="form-group row">
+            <div class="col-sm-12 justify-content-end d-flex">
+              <div class="d-inline mr-3">
+                <label id="employeeSingleLabelWeekend" class="mb-0">Night Shifts / Weekend</label>
+              </div>
+              <div class="custom-control d-inline custom-radio mr-3">
+                <input name="nightShifts" value="Y" formControlName="nightShifts" type="radio" class="" id="yes">
+                <label id="employeeSingleLabelWeekendYes" class="" for="yes">Yes</label>
+              </div>
+              <div class="custom-control d-inline custom-radio">
+                <input name="nightShifts" value="N" formControlName="nightShifts" type="radio" class="" id="no">
+                <label id="employeeSingleLabelWeekendNo" class="" for="no">No</label>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-4">
+          <div class="form-group row">
+            <label for="" id="employeeSingleLabelNHIF" class="col-sm-3 col-form-label pr-0 text-right">NHIF </label>
+            <div class="col-sm-9">
+              <input type="text" formControlName="nhifNumber" class="form-control" id="employeeSingleNHIF"
+                placeholder="NHIF Number">
+              <div *ngIf="employeeInformationForm.get('nhifNumber')?.invalid" class="error-msg-common text-danger">
+                <div
+                  *ngIf="!employeeInformationForm.get('nhifNumber').errors?.required && employeeInformationForm?.get('nhifNumber')?.errors">
+                  * not a valid input
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="" id="employeeSingleLabelKRA" class="col-sm-3 col-form-label pr-0 text-right">KRA </label>
+            <div class="col-sm-9">
+              <input type="text" formControlName="kraPin" class="form-control" id="employeeSingleKRA"
+                placeholder="KRA Pin">
+              <div *ngIf="employeeInformationForm.get('kraPin')?.invalid" class="error-msg-common text-danger">
+                <div
+                  *ngIf="!employeeInformationForm.get('kraPin').errors?.required && employeeInformationForm?.get('kraPin')?.errors">
+                  * not a valid input
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="" id="employeeSingleLabelNSSF" class="col-sm-3 col-form-label pr-0 text-right">NSSF<span
+                class="text-danger">*</span> </label>
+            <div class="col-sm-9">
+              <input type="text" formControlName="nssfNumber" class="form-control" id="employeeSingleNSSF"
+                placeholder="NSSF Number">
+              <div *ngIf="employeeInformationForm.get('nssfNumber')?.touched" class="error-msg-common text-danger">
+                <div *ngIf="employeeInformationForm.get('nssfNumber').errors?.required">
+                  * required field
+                </div>
+              </div>
+
+              <div *ngIf="employeeInformationForm.get('nssfNumber')?.invalid" class="error-msg-common text-danger">
+                <div
+                  *ngIf="!employeeInformationForm.get('nssfNumber').errors?.required && employeeInformationForm?.get('nssfNumber')?.errors">
+                  * not a valid input
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="" id="employeeSingleLabelIDNo" class="col-sm-3 col-form-label pr-0 text-right">ID </label>
+            <div class="col-sm-9">
+              <input type="text" formControlName="identificationNumber" class="form-control" id="employeeSingleIDNo"
+                placeholder="Identification Number">
+              <div *ngIf="employeeInformationForm.get('identificationNumber')?.invalid"
+                class="error-msg-common text-danger">
+                <div
+                  *ngIf="!employeeInformationForm.get('identificationNumber').errors?.required && employeeInformationForm?.get('identificationNumber')?.errors">
+                  * not a valid input
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-4">
+          <div class="form-group row">
+            <label for="" id="employeeSingleLabelFulltime" class="col-sm-3 col-form-label pr-0 text-right">Full/Part
+            </label>
+            <div class="col-sm-9">
+              <input type="text" formControlName="employeeTypeFullTimOrPartTime" class="form-control"
+                id="employeeSingleFulltime" placeholder="Full/Part Time">
+              <div *ngIf="employeeInformationForm.get('employeeTypeFullTimOrPartTime')?.touched"
+                class="error-msg-common text-danger">
+                <div *ngIf="employeeInformationForm.get('employeeTypeFullTimOrPartTime').errors?.required">
+                  * required field
+                </div>
+              </div>
+            </div>
+
+            <div *ngIf="employeeInformationForm.get('employeeTypeFullTimOrPartTime')?.invalid"
+              class="error-msg-common text-danger">
+              <div
+                *ngIf="!employeeInformationForm.get('employeeTypeFullTimOrPartTime').errors?.required && employeeInformationForm?.get('employeeTypeFullTimOrPartTime')?.errors">
+                * not a valid input
+              </div>
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="" id="employeeSingleLabelSalary" class="col-sm-3 col-form-label pr-0 text-right">Salary <span
+                class="text-danger">*</span></label>
+            <div class="col-sm-9">
+              <input type="text" formControlName="salary" class="form-control" id="employeeSingleSalary"
+                placeholder="Salary">
+              <div *ngIf="employeeInformationForm.get('salary')?.touched" class="error-msg-common text-danger">
+                <div *ngIf="employeeInformationForm.get('salary').errors?.required">
+                  * required field
+                </div>
+              </div>
+              <div *ngIf="employeeInformationForm.get('salary')?.invalid" class="error-msg-common text-danger">
+                <div
+                  *ngIf="!employeeInformationForm.get('salary').errors?.required && employeeInformationForm?.get('salary')?.errors">
+                  * not a valid input
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="" id="employeeSingleLabelDesg" class="col-sm-3 col-form-label pr-0 text-right">Desig <span
+                class="text-danger">*</span></label>
+            <div class="col-sm-9">
+              <input type="text" formControlName="designation" class="form-control" id="employeeSingleDesg"
+                placeholder="Designation">
+              <div *ngIf="employeeInformationForm.get('designation')?.touched" class="error-msg-common text-danger">
+                <div *ngIf="employeeInformationForm.get('designation').errors?.required">
+                  * required field
+                </div>
+              </div>
+              <div *ngIf="employeeInformationForm.get('designation')?.invalid" class="error-msg-common text-danger">
+                <div
+                  *ngIf="!employeeInformationForm.get('designation').errors?.required && employeeInformationForm?.get('designation')?.errors">
+                  * not a valid input
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="" id="employeeSingleLabelBlGroup" class="col-sm-3 col-form-label pr-0 text-right">Bl Group
+            </label>
+            <div class="col-sm-9">
+              <input type="text" formControlName="bloodGroup" class="form-control" id="employeeSingleBlGroup"
+                placeholder="Blood Group">
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+      <h6 class="border border-primary p-2 mt-3 mb-4 bg-light text-white">Documents</h6>
+
+      <div class="row">
+        <div class="col-lg-4">
+          <div class="form-group row">
+            <label for="" id="employeeSingleLabelContract" class="col-sm-3 col-form-label pr-0 text-right">Contract
+            </label>
+            <div class="col-sm-9 pt-1">
+              <input #contract type="file" class="form-control-file"
+                (change)="uploadDocuments($event, 'signedContract')" id="employeeSingleContract">
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-4">
+          <div class="form-group row">
+            <label for="" id="employeeSingleLabelIdentDoc" class="col-sm-3 col-form-label pr-0 text-right">Ident Doc
+            </label>
+            <div class="col-sm-9 pt-1">
+              <input #identDoc type="file" class="form-control-file"
+                (change)="uploadDocuments($event, 'identificationDocument')" id="employeeSingleIdentDoc">
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-4">
+          <div class="form-group row">
+            <label for="" id="employeeSingleLabelResume" class="col-sm-3 col-form-label pr-0 text-right">Resume</label>
+            <div class="col-sm-9 pt-1">
+              <input #resume type="file" class="form-control-file" (change)="uploadDocuments($event, 'resume')"
+                id="employeeSingleResume">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col mb-3 pt-2 text-center">
+          <button (click)="onEmployeeSubmit()" id="employeeSingleSaveBtn" class="btn btn-primary px-4"
+            [disabled]="checkFormDisability()">Save</button>
+          <input type="button" value="Cancel" id="employeeSingleCancelBtn" class="btn btn-secondary px-4 ml-3"
+            (click)="reset();employeeInformationForm.controls.activeS.setValue('Y')">
+        </div>
+      </div>
+
+    </form>
+
+  </div>
+  <div class="tab-pane fade" id="nav-membership" role="tabpanel" aria-labelledby="nav-membership-tab">
+    <form #employeeProfForm="ngForm" [formGroup]="employeeProfessionalMembershipInformationForm"
+      (keydown.enter)="$event.preventDefault()" class="full-height">
+
+      <h6 class="border border-primary p-2 mt-3 mb-4 bg-light text-white">Membership Details</h6>
+
+      <div class="row">
+        <div class="col-lg-4">
+          <div class="form-group row">
+            <label for="" id="employeeMembershipLabelName" class="col-sm-3 col-form-label pr-0 text-right">Name </label>
+            <div class="col-sm-9">
+              <input type="text" class="form-control" id="employeeMembershipName" placeholder="Membership Name"
+                formControlName="membershipName">
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-4">
+          <div class="form-group row">
+            <label for="" id="employeeMembershipLabelStartDate" class="col-sm-3 col-form-label pr-0 text-right">Start
+              Date </label>
+            <div class="col-sm-9">
+              <input type="date" class="form-control" id="employeeMembershipStartDate" placeholder=""
+                formControlName="startDate">
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-4">
+          <div class="form-group row">
+            <label for="" id="employeeMembershipLabelEndDate" class="col-sm-3 col-form-label pr-0 text-right">End Date
+            </label>
+            <div class="col-sm-9">
+              <input type="date" class="form-control" id="employeeMembershipEndDate" placeholder=""
+                formControlName="endDate">
+              <div class="error-msg-common text-danger" *ngIf="employeeProfessionalMembershipInformationForm.get('endDate').errors &&
+                  employeeProfessionalMembershipInformationForm.get('endDate').dirty &&
+                  employeeProfessionalMembershipInformationForm.get('endDate').errors.invalidDob">
+                not valid date
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col mb-3 pt-2 text-center">
+          <button (click)="onProfessionalMemberShipSubmit()" id="employeeMembershipSaveBtn" class="btn btn-primary px-4"
+            [disabled]="checkProfessionalMemberShipFormDisability()">Save</button>
+          <button id="employeeMembershipCancelBtn" class="btn btn-secondary px-4 ml-3"
+            (click)="membershipReset()">Cancel</button>
+        </div>
+      </div>
+
+    </form>
+
+  </div>
+  <div class="tab-pane fade" id="nav-honor" role="tabpanel" aria-labelledby="nav-honor-tab">
+    <form #employeeHonorForm="ngForm" [formGroup]="employeeHonorInformationForm"
+      (keydown.enter)="$event.preventDefault()" class="full-height">
+
+      <h6 class="border border-primary p-2 mt-3 mb-4 bg-light text-white">Honor Details</h6>
+
+      <div class="row">
+        <div class="col-lg-4">
+          <div class="form-group row">
+            <label for="" id="employeeHonorLabelName" class="col-sm-3 col-form-label pr-0 text-right">Name </label>
+            <div class="col-sm-9">
+              <input type="text" class="form-control" id="employeeHonorName" placeholder="Honor Name"
+                formControlName="honorName">
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-4">
+          <div class="form-group row">
+            <label for="" id="employeeHonorLabelDesc" class="col-sm-3 col-form-label pr-0 text-right">Desc </label>
+            <div class="col-sm-9">
+              <input type="text" class="form-control" id="employeeHonorDesc" placeholder="Honor Description"
+                formControlName="honorDesc">
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-4">
+          <div class="form-group row">
+            <label id="employeeHonorLabelRecOn" for="" class="col-sm-3 col-form-label pr-0 text-right">Rec On </label>
+            <div class="col-sm-9">
+              <input type="date" class="form-control" id="employeeHonorRecOn" placeholder=""
+                formControlName="receivedDate">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col mb-3 pt-2 text-center">
+          <button (click)="onEmployeeHonorInformationFormSubmit()" id="employeeHonorSaveBtn"
+            class="btn btn-primary px-4" [disabled]="checkProfessionalMemberShipFormDisability()">Save</button>
+          <button id="employeeHonorCancelBtn" class="btn btn-secondary px-4 ml-3"
+            (click)="employeeHonorInformationFormReset();">Cancel</button>
+        </div>
+      </div>
+
+    </form>
+
+  </div>
+  <div class="tab-pane fade" id="nav-interest" role="tabpanel" aria-labelledby="nav-interest-tab">
+    <form #employeeIntrestForm="ngForm" [formGroup]="employeeInterestInformationForm"
+      (keydown.enter)="$event.preventDefault()" class="full-height">
+
+      <h6 class="border border-primary p-2 mt-3 mb-4 bg-light text-white">Interest Details</h6>
+
+      <div class="row">
+        <div class="col-lg-2"></div>
+        <div class="col-lg-8">
+          <div class="form-group row">
+            <label for="" id="employeeInterestLabelAOI" class="col-sm-12 col-form-label pr-0 text-center">Area of
+              Interest </label>
+            <div class="col-sm-12">
+              <textarea name="" id="employeeInterestAOI" class="form-control" rows="6"
+                placeholder="Area of Interest Description" formControlName="areaOfIntrestDesc"></textarea>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-2"></div>
+      </div>
+
+      <div class="row">
+        <div class="col mb-3 pt-2 text-center">
+          <button (click)="onEmployeeInterestInformationFormSubmit()" id="employeeInterestSaveBtn"
+            class="btn btn-primary px-4" [disabled]="checkProfessionalMemberShipFormDisability()">Save</button>
+          <button id="employeeInterestCancelBtn" class="btn btn-secondary px-4 ml-3"
+            (click)="employeeInterestInformationFormReset();">Cancel</button>
+        </div>
+      </div>
+
+    </form>
+
+  </div>
+  <div class="tab-pane fade" id="nav-publication" role="tabpanel" aria-labelledby="nav-publication-tab">
+    <form #employeePublicationForm="ngForm" [formGroup]="employeePublicationInformationForm"
+      (keydown.enter)="$event.preventDefault()" class="full-height">
+      <h6 class="border border-primary p-2 mt-3 mb-4 bg-light text-white">Publication Details</h6>
+
+      <div class="row">
+        <div class="col-lg-4">
+          <div class="form-group row">
+            <label for="" id="employeePublicationLabelName" class="col-sm-3 col-form-label pr-0 text-right">Name
+            </label>
+            <div class="col-sm-9">
+              <input type="text" class="form-control" id="employeePublicationName" placeholder="Publication Name"
+                formControlName="publicationName">
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-4">
+          <div class="form-group row">
+            <label for="" id="employeePublicationLabelDesc" class="col-sm-3 col-form-label pr-0 text-right">Desc
+            </label>
+            <div class="col-sm-9">
+              <input type="text" class="form-control" id="employeePublicationDesc" placeholder="Publication Description"
+                formControlName="publicationDesc">
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-4">
+          <div class="form-group row">
+            <label for="" id="employeePublicationLabelPubOn" class="col-sm-3 col-form-label pr-0 text-right">Pub On
+            </label>
+            <div class="col-sm-9">
+              <input type="date" class="form-control" id="employeePublicationPubOn" placeholder=""
+                formControlName="publishDate">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col mb-3 pt-2 text-center">
+          <button (click)="onEmployeePublicationInformationFormSubmit()" id="employeePublicationSaveBtn"
+            class="btn btn-primary px-4" [disabled]="checkProfessionalMemberShipFormDisability()">Save</button>
+          <button id="employeePublicationCancelBtn" class="btn btn-secondary px-4 ml-3"
+            (click)="employeePublicationInformationFormReset();">Cancel</button>
+        </div>
+      </div>
+
+    </form>
+
+  </div>
+  <div class="tab-pane fade" id="nav-education" role="tabpanel" aria-labelledby="nav-education-tab">
+    <form #employeeEducationForm="ngForm" [formGroup]="employeeEducationInformationForm"
+      (keydown.enter)="$event.preventDefault()" class="full-height">
+
+      <h6 class="border border-primary p-2 mt-3 mb-4 bg-light text-white">Education Details</h6>
+
+      <div class="row">
+        <div class="col-lg-4">
+          <div class="form-group row">
+            <label id="employeeEduLabelStudiedAt" for="" class="col-sm-3 col-form-label pr-0 text-right">Studied At
+            </label>
+            <div class="col-sm-9">
+              <input type="text" class="form-control" id="employeeEduStudiedAt" placeholder="Studied At"
+                formControlName="studiedAt">
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-4">
+          <div class="form-group row">
+            <label id="employeeEduLabelDegree" for="" class="col-sm-3 col-form-label pr-0 text-right">Degree </label>
+            <div class="col-sm-9">
+              <input type="text" class="form-control" id="employeeEduDegree" placeholder="Degree Name"
+                formControlName="degree">
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-4">
+          <div class="form-group row">
+            <label for="" id="employeeEduLabelGraduation" class="col-sm-3 col-form-label pr-0 text-right">Graduation
+            </label>
+            <div class="col-sm-9">
+              <input type="date" class="form-control" id="employeeEduGraduation" placeholder=""
+                formControlName="graduationDate">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col mb-3 pt-2 text-center">
+          <button (click)=onEmployeeEducationInformationFormSubmit() id="employeeEduSaveBtn"
+            class="btn btn-primary px-4" [disabled]="checkProfessionalMemberShipFormDisability()">Save</button>
+          <button id="employeeEduCancelBtn" class="btn btn-secondary px-4 ml-3"
+            (click)="employeeEducationInformationFormReset();">Cancel</button>
+        </div>
+      </div>
+
+    </form>
+
+  </div>
+  <div class="tab-pane fade" id="nav-history" role="tabpanel" aria-labelledby="nav-history-tab">
+    <form #employeeHistoryForm="ngForm" [formGroup]="employmentHistoryInformationForm"
+      (keydown.enter)="$event.preventDefault()" class="full-height">
+
+      <h6 class="border border-primary p-2 mt-3 mb-4 bg-light text-white">History Details</h6>
+
+      <div class="row">
+        <div class="col-lg-4">
+          <div class="form-group row">
+            <label for="" id="employeeHistoryLabelCompany" class="col-sm-3 col-form-label pr-0 text-right">Company
+            </label>
+            <div class="col-sm-9">
+              <input type="text" class="form-control" id="employeeHistoryCompany" placeholder="Company Name"
+                formControlName="companyName">
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="" id="employeeHistoryLabelEndDate" class="col-sm-3 col-form-label pr-0 text-right">End Date
+            </label>
+            <div class="col-sm-9">
+              <input type="date" class="form-control" id="employeeHistoryEndDate" placeholder=""
+                formControlName="endDate" (change)="selectEndDate($event)">
+              <div class="error-msg-common text-danger" *ngIf="employmentHistoryInformationForm.get('endDate').errors &&
+                employmentHistoryInformationForm.get('endDate').dirty &&
+                employmentHistoryInformationForm.get('endDate').errors.invalidDob">
+                * not valid date
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group row">
+            <label for="" id="employeeHistoryLabelMangPh" class="col-sm-3 col-form-label pr-0 text-right">Manag Ph
+            </label>
+            <div class="col-sm-9">
+              <input type="text" class="form-control" id="employeeHistoryMangPh" placeholder="Manager Phone"
+                formControlName="managerPhoneNumber">
+
+              <div *ngIf="employmentHistoryInformationForm.get('managerPhoneNumber')?.invalid"
+                class="error-msg-common text-danger">
+                <div
+                  *ngIf="!employmentHistoryInformationForm.get('managerPhoneNumber').errors?.required && employmentHistoryInformationForm?.get('managerPhoneNumber')?.errors">
+                  * not a valid input
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="" id="employeeHistoryLabelRefOne" class="col-sm-3 col-form-label pr-0 text-right">Ref 1 </label>
+            <div class="col-sm-9">
+              <input type="text" class="form-control" id="employeeHistoryRefOne" placeholder="Reference 1"
+                formControlName="reference1">
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-4">
+          <div class="form-group row">
+            <label for="" id="employeeHistoryLabelAddress" class="col-sm-3 col-form-label pr-0 text-right">Address
+            </label>
+            <div class="col-sm-9">
+              <input type="text" class="form-control" id="employeeHistoryAddress" placeholder="Company Address"
+                formControlName="compnayAddress">
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="" id="employeeHistoryLabelReporting" class="col-sm-3 col-form-label pr-0 text-right">Reporting
+            </label>
+            <div class="col-sm-9">
+              <input type="text" class="form-control" id="employeeHistoryReporting" placeholder="Reporting Details"
+                formControlName="reportingPersonDetails">
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="" id="employeeHistoryLabelDesig" class="col-sm-3 col-form-label pr-0 text-right">Desig </label>
+            <div class="col-sm-9">
+              <input type="text" class="form-control" id="employeeHistoryDesig" placeholder="Designation"
+                formControlName="designation">
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="" id="employeeHistoryLabelRefTwo" class="col-sm-3 col-form-label pr-0 text-right">Ref 2 </label>
+            <div class="col-sm-9">
+              <input type="text" class="form-control" id="employeeHistoryRefTwo" placeholder="Reference 2"
+                formControlName="reference2">
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-4">
+          <div class="form-group row">
+            <label for="" id="employeeHistoryLabelStartDate" class="col-sm-3 col-form-label pr-0 text-right">Start
+              Date
+            </label>
+            <div class="col-sm-9">
+              <input type="date" class="form-control" id="employeeHistoryStartDate" placeholder=""
+                formControlName="startDate" (change)="selectedStartDate($event)">
+            </div>
+          </div>
+
+          <div class="form-group row">
+            <label for="" id="employeeHistoryLabelManager" class="col-sm-3 col-form-label pr-0 text-right">Manager
+            </label>
+            <div class="col-sm-9">
+              <input type="text" class="form-control" id="employeeHistoryManager" placeholder="Manager Name"
+                formControlName="managerName">
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="" id="employeeHistoryLabelEmpType" class="col-sm-3 col-form-label pr-0 text-right">Emp Type
+            </label>
+            <div class="col-sm-9">
+              <input type="text" class="form-control" id="employeeHistoryEmpType" placeholder="Employer Type"
+                formControlName="employementType">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col mb-3 pt-2 text-center">
+          <button (click)="onEmploymentHistoryInformationFormSubmit()" id="employeeHistorySaveBtn"
+            class="btn btn-primary px-4" [disabled]="checkProfessionalMemberShipFormDisability()">Save</button>
+          <button id="employeeHistoryCancelBtn" class="btn btn-secondary px-4 ml-3"
+            (click)="employmentHistoryInformationFormReset();">Cancel</button>
+        </div>
+      </div>
+
+    </form>
+
+  </div>
+  <div class="tab-pane fade" id="nav-salary" role="tabpanel" aria-labelledby="nav-salary-tab">
+    <form #employeeSalaryForm="ngForm" [formGroup]="employeeSalaryInformationForm"
+      (keydown.enter)="$event.preventDefault()" class="full-height">
+
+      <h6 class="border border-primary p-2 mt-3 mb-4 bg-light text-white">Generic Details</h6>
+
+      <div class="row">
+        <div class="col-lg-4">
+          <div class="form-group row">
+            <label for="" id="employeeSalaryLabelSalDate" class="col-sm-3 col-form-label pr-0 text-right">Sal Date
+            </label>
+            <div class="col-sm-9">
+              <input type="date" class="form-control" id="employeeSalarySalDate" placeholder=""
+                formControlName="salaryDate">
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="" id="employeeSalaryLabelDA" class="col-sm-3 col-form-label pr-0 text-right">DA </label>
+            <div class="col-sm-9">
+              <input type="text" class="form-control" id="employeeSalaryDA" placeholder="DA" formControlName="da">
+              <div *ngIf="employeeSalaryInformationForm.get('da')?.invalid" class="error-msg-common text-danger">
+                <div
+                  *ngIf="!employeeSalaryInformationForm.get('da').errors?.required && employeeSalaryInformationForm?.get('da')?.errors">
+                  * not a valid input
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-4">
+          <div class="form-group row">
+            <label for="" id="employeeSalaryLabelBasic" class="col-sm-3 col-form-label pr-0 text-right">Basic </label>
+            <div class="col-sm-9">
+              <input type="text" class="form-control" id="employeeSalaryBasic" placeholder="Basic"
+                formControlName="basic">
+              <div *ngIf="employeeSalaryInformationForm.get('basic')?.invalid" class="error-msg-common text-danger">
+                <div
+                  *ngIf="!employeeSalaryInformationForm.get('basic').errors?.required && employeeSalaryInformationForm?.get('basic')?.errors">
+                  * not a valid input
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="" id="employeeSalaryLabelTDS" class="col-sm-3 col-form-label pr-0 text-right">TDS </label>
+            <div class="col-sm-9">
+              <input type="text" class="form-control" id="employeeSalaryTDS" placeholder="TDS" formControlName="tds">
+              <div *ngIf="employeeSalaryInformationForm.get('tds')?.invalid" class="error-msg-common text-danger">
+                <div
+                  *ngIf="!employeeSalaryInformationForm.get('tds').errors?.required && employeeSalaryInformationForm?.get('tds')?.errors">
+                  * not a valid input
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-4">
+          <div class="form-group row">
+            <label for="" id="employeeSalaryLabelHRA" class="col-sm-3 col-form-label pr-0 text-right">HRA </label>
+            <div class="col-sm-9">
+              <input type="text" class="form-control" id="employeeSalaryHRA" placeholder="HRA" formControlName="hra">
+              <div *ngIf="employeeSalaryInformationForm.get('hra')?.invalid" class="error-msg-common text-danger">
+                <div
+                  *ngIf="!employeeSalaryInformationForm.get('hra').errors?.required && employeeSalaryInformationForm?.get('hra')?.errors">
+                  * not a valid input
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="" id="employeeSalaryLabelESI" class="col-sm-3 col-form-label pr-0 text-right">ESI </label>
+            <div class="col-sm-9">
+              <input type="text" class="form-control" id="employeeSalaryESI" placeholder="ESI" formControlName="esi">
+              <div *ngIf="employeeSalaryInformationForm.get('esi')?.invalid" class="error-msg-common text-danger">
+                <div
+                  *ngIf="!employeeSalaryInformationForm.get('esi').errors?.required && employeeSalaryInformationForm?.get('esi')?.errors">
+                  * not a valid input
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <h6 class="border border-primary p-2 mt-3 mb-4 bg-light text-white">Other Deductions</h6>
+
+      <div class="row">
+        <div class="col-lg-4">
+          <div class="form-group row">
+            <label for="" id="employeeSalaryLabelMedical" class="col-sm-3 col-form-label pr-0 text-right">Medical
+            </label>
+            <div class="col-sm-9">
+              <input type="text" class="form-control" id="employeeSalaryMedical" placeholder="Medical"
+                formControlName="medical">
+              <div *ngIf="employeeSalaryInformationForm.get('medical')?.invalid" class="error-msg-common text-danger">
+                <div
+                  *ngIf="!employeeSalaryInformationForm.get('medical').errors?.required && employeeSalaryInformationForm?.get('medical')?.errors">
+                  * not a valid input
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="" id="employeeSalaryLabelPFEmp" class="col-sm-3 col-form-label pr-0 text-right">PF Emp </label>
+            <div class="col-sm-9">
+              <input type="text" class="form-control" id="employeeSalaryPFEmp" placeholder="PF Employer"
+                formControlName="pfEmployer">
+              <div *ngIf="employeeSalaryInformationForm.get('pfEmployer')?.invalid"
+                class="error-msg-common text-danger">
+                <div
+                  *ngIf="!employeeSalaryInformationForm.get('pfEmployer').errors?.required && employeeSalaryInformationForm?.get('pfEmployer')?.errors">
+                  * not a valid input
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-4">
+          <div class="form-group row">
+            <label for="" id="employeeSalaryLabelTax" class="col-sm-3 col-form-label pr-0 text-right">Tax </label>
+            <div class="col-sm-9">
+              <input type="text" class="form-control" id="employeeSalaryTax" placeholder="Professional Tax"
+                formControlName="ptax">
+              <div *ngIf="employeeSalaryInformationForm.get('ptax')?.invalid" class="error-msg-common text-danger">
+                <div
+                  *ngIf="!employeeSalaryInformationForm.get('ptax').errors?.required && employeeSalaryInformationForm?.get('ptax')?.errors">
+                  * not a valid input
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="" id="employeeSalaryLabelGrSal" class="col-sm-3 col-form-label pr-0 text-right">Gr Salary
+            </label>
+            <div class="col-sm-9">
+              <input type="text" class="form-control" id="employeeSalaryGrSal" placeholder="Gross Salary"
+                formControlName="grossSalary">
+              <div *ngIf="employeeSalaryInformationForm.get('grossSalary')?.invalid"
+                class="error-msg-common text-danger">
+                <div
+                  *ngIf="!employeeSalaryInformationForm.get('grossSalary').errors?.required && employeeSalaryInformationForm?.get('grossSalary')?.errors">
+                  * not a valid input
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-4">
+          <div class="form-group row">
+            <label for="" id="employeeSalaryLabelPFEmployee" class="col-sm-3 col-form-label pr-0 text-right">PF Emp
+            </label>
+            <div class="col-sm-9">
+              <input type="text" class="form-control" id="employeeSalaryPFEmployee" placeholder="PF Employee"
+                formControlName="pfEmployee">
+              <div *ngIf="employeeSalaryInformationForm.get('pfEmployee')?.invalid"
+                class="error-msg-common text-danger">
+                <div
+                  *ngIf="!employeeSalaryInformationForm.get('pfEmployee').errors?.required && employeeSalaryInformationForm?.get('pfEmployee')?.errors">
+                  * not a valid input
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col mb-3 pt-2 text-center">
+          <button (click)="onEmployeeSalaryInformationFormSubmit()" id="employeeSalarySaveBtn"
+            class="btn btn-primary px-4" [disabled]="checkProfessionalMemberShipFormDisability()">Save</button>
+          <button id="employeeSalaryCancelBtn" class="btn btn-secondary px-4 ml-3"
+            (click)="employeeSalaryInformationFormReset();">Cancel</button>
+        </div>
+      </div>
+
+    </form>
+
+  </div>
+  <div class="tab-pane fade" id="nav-access" role="tabpanel" aria-labelledby="nav-access-tab">
+    <form #employeeCredentialsForm="ngForm" [formGroup]="employeeCredentialsInformationForm"
+      (keydown.enter)="$event.preventDefault()" class="full-height">
+
+      <h6 class="border border-primary p-2 mt-3 mb-4 bg-light text-white">Credential Details</h6>
+
+      <div class="row">
+        <div class="col-lg-6">
+          <div class="form-group row">
+            <label id="accessEmployeeLabelUserName" for="" class="col-sm-3 col-form-label pr-0 text-right">Username
+              <span class="text-danger">*</span>
+            </label>
+            <div class="col-sm-9">
+              <input type="text" formControlName="userName" class="form-control" id="accessEmployeeUserName"
+                placeholder="Username" disabled>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-6">
+          <div class="form-group row">
+            <label id="accessEmployeeLabelPassword" for="" class="col-sm-3 col-form-label pr-0 text-right">Password
+              <span class="text-danger">*</span>
+            </label>
+            <div class="col-sm-9">
+              <input [type]="showconfirmPwd ? 'text' : 'password'" formControlName="currentPassword"
+                class="form-control" id="accessEmployeePassword" placeholder="Password">
+              <span (click)="passwordConfirm()" id="showPassword2">
+                <i class="fa fa-eye 2"></i>
+              </span>
+              <div *ngIf="employeeCredentialsInformationForm.get('currentPassword')?.touched"
+                class="error-msg-common text-danger">
+                <div *ngIf="employeeCredentialsInformationForm.get('currentPassword').errors?.required">
+                  * required field
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-6">
+
+          <div class="form-group row">
+            <label id="accessEmployeeLabelPassword" for="" class="col-sm-3 col-form-label pr-0 text-right">Approval
+              Access Pin <span class="text-danger">*</span>
+            </label>
+            <div class="col-sm-9">
+              <div class="buttonInside">
+                <input [type]="show ? 'text' : 'password'" formControlName="approvalAccessPin" class="form-control"
+                  id="accessEmployeePassword" placeholder="Approval Access Pin">
+                <span (click)="password()" id="showPassword">
+                  <i class="fa fa-eye 2" aria-hidden="true"></i>
+                </span>
+              </div>
+              <div *ngIf="employeeCredentialsInformationForm.get('approvalAccessPin')?.touched"
+                class="error-msg-common text-danger">
+                <div *ngIf="employeeCredentialsInformationForm.get('approvalAccessPin').errors?.required">
+                  * required field
+                </div>
+              </div>
+              <div *ngIf="employeeCredentialsInformationForm.get('approvalAccessPin')?.invalid"
+                class="error-msg-common text-danger">
+                <div
+                  *ngIf="!employeeCredentialsInformationForm.get('approvalAccessPin').errors?.required && employeeCredentialsInformationForm?.get('approvalAccessPin')?.errors">
+                  * not a valid input
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-6">
+          <div class="form-group row">
+            <div class="col-sm-12 justify-content-end d-flex pt-2" id="statusLeft">
+              <div class="d-inline mr-3">
+                <label class="mb-0" id="addProviderLabelPinCode">Status</label>
+              </div>
+              <div class="custom-control d-inline custom-radio mr-3">
+                <input name="activeS" value="Y" formControlName="activeS" type="radio" class="" id="activate">
+                <label class="custom-control-label" id="addproviderLabelActive" for="activate">Activate</label>
+              </div>
+              <div class="custom-control d-inline custom-radio">
+                <input name="activeS" value="N" formControlName="activeS" type="radio" class="" id="deactivate">
+                <label class="custom-control-label" id="addproviderLabelDeActive" for="deactivate">De Activate</label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+
+      </div>
+      <form #employeePharmacyRoleForm="ngForm" [formGroup]="employeePharmacyRoleInformationForm"
+        (keydown.enter)="$event.preventDefault()" class="full-height">
+        <h6 class="border border-primary p-2 mt-3 mb-4 bg-light text-white">Role</h6>
+
+        <div class="row">
+          <div class="col-lg-6">
+            <div class="form-group row">
+              <label id="accessEmployeeLabelRole" for="" class="col-sm-3 col-form-label pr-0 text-right">Role
+                <span class="text-danger">*</span></label>
+              <div class="col-sm-9">
+                <ng-select id="accessEmployeeRole" [items]="pharmacyRoles" bindLabel="roleNm"
+                  [(ngModel)]="selectedPharmacyRoles" formControlName="employeeRole" placeholder="-- Select --">
+                </ng-select>
+
+                <div *ngIf="employeePharmacyRoleInformationForm.get('employeeRole')?.touched"
+                  class="error-msg-common text-danger">
+                  <div *ngIf="employeePharmacyRoleInformationForm.get('employeeRole').errors?.required">
+                    * required field
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-6">
+            <div class="form-group row">
+              <label id="accessEmployeeLabelPharmacyBranch" class="col-sm-3 col-form-label pr-0 text-right">Pharmacy
+                Branch <span class="text-danger">*</span></label>
+              <div class="col-sm-9">
+                <ng-select [items]="unMappedPharmacies" multiple="true" formControlName="pharmacyModel"
+                  bindLabel="pharmacyName" (change)="onUnMappedCheckedPharmacies($event)"
+                  [(ngModel)]="selectedUnMappedPharmacyNames" placeholder="-- Select --"
+                  id="accessEmployeePharmacyBranches">
+                </ng-select>
+
+                <div *ngIf="employeePharmacyRoleInformationForm.get('pharmacyModel')?.touched"
+                  class="error-msg-common text-danger">
+                  <div *ngIf="employeePharmacyRoleInformationForm.get('pharmacyModel').errors?.required">
+                    * required field
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </form>
+      <form #employeePharmacyAccessForm="ngForm" [formGroup]="employeePharmacyAccessInformationForm"
+        (keydown.enter)="$event.preventDefault()" class="full-height">
+        <h6 class="border border-primary p-2 mt-3 mb-4 bg-light text-white">Permissions </h6>
+
+        <!-- <div class="form-group row">
+            <div class="five-a-row" *ngFor="let  permission of pharmacyAccessPermissions;let i=index">
+              <input #checkboxes name="access" type="checkbox" value="{{permission.pharmaAccessId}}"
+                (change)="onPermissionSelect($event)" />&nbsp; {{permission.accessName}}
+            </div>
+          </div> -->
+
+        <!--   <div class="row">
+          <div class="col-12">
+            <div class="custom-control custom-checkbox mb-3">
+              <input name="access" type="checkbox" class="custom-control-input" id="">
+              <label id="" class="custom-control-label font-16px" for="">All</label>
+            </div>
+          </div>
+          <div class="col-12">
+            <div class="clearfix d-flex">
+              <div class="col-lg-6">
+                <div class="custom-control custom-checkbox mb-3">
+                  <input name="access" type="checkbox" class="custom-control-input" id="">
+                  <label id="" class="custom-control-label font-16px" for="">Masters</label>
+                </div>
+                <div class="clearfix d-flex">
+                  <div class="col-12">
+                    <div class="custom-control custom-checkbox mb-3">
+                      <input name="access" type="checkbox" class="custom-control-input" id="">
+                      <label id="" class="custom-control-label" for="">Masters Entry</label>
+                    </div>
+                    <div class="custom-control custom-checkbox mb-3">
+                      <input name="access" type="checkbox" class="custom-control-input" id="">
+                      <label id="" class="custom-control-label" for="">Update Supplier</label>
+                    </div>
+                    <div class="custom-control custom-checkbox mb-3">
+                      <input name="access" type="checkbox" class="custom-control-input" id="">
+                      <label id="" class="custom-control-label" for="">Employee Password Change</label>
+                    </div>
+                    <div class="custom-control custom-checkbox mb-3">
+                      <input name="access" type="checkbox" class="custom-control-input" id="">
+                      <label id="" class="custom-control-label" for="">Employee Leave Approval</label>
+                    </div>
+                    <div class="custom-control custom-checkbox mb-3">
+                      <input name="access" type="checkbox" class="custom-control-input" id="">
+                      <label id="" class="custom-control-label" for="">Update Employee Salary</label>
+                    </div>
+                  </div>
+                </div>
+                <div class="custom-control custom-checkbox mb-3">
+                  <input name="access" type="checkbox" class="custom-control-input" id="">
+                  <label id="" class="custom-control-label font-16px" for="">Sales</label>
+                </div>
+                <div class="clearfix d-flex">
+                  <div class="col-12">
+                    <div class="custom-control custom-checkbox mb-3">
+                      <input name="access" type="checkbox" class="custom-control-input" id="">
+                      <label id="" class="custom-control-label" for="">Sales Billing Submission</label>
+                    </div>
+                    <div class="custom-control custom-checkbox mb-3">
+                      <input name="access" type="checkbox" class="custom-control-input" id="">
+                      <label id="" class="custom-control-label" for="">Sales Billing Bonus Items Approval</label>
+                    </div>
+                    <div class="custom-control custom-checkbox mb-3">
+                      <input name="access" type="checkbox" class="custom-control-input" id="">
+                      <label id="" class="custom-control-label" for="">Sales Return Approval</label>
+                    </div>
+                  </div>
+                </div>
+                <div class="custom-control custom-checkbox mb-3">
+                  <input name="access" type="checkbox" class="custom-control-input" id="">
+                  <label id="" class="custom-control-label font-16px" for="">Scrap</label>
+                </div>
+                <div class="clearfix d-flex">
+                  <div class="col-12">
+                    <div class="custom-control custom-checkbox mb-3">
+                      <input name="access" type="checkbox" class="custom-control-input" id="">
+                      <label id="" class="custom-control-label" for="">Scrap Notes Submission</label>
+                    </div>
+                    <div class="custom-control custom-checkbox mb-3">
+                      <input name="access" type="checkbox" class="custom-control-input" id="">
+                      <label id="" class="custom-control-label" for="">Scrap Notes Approval</label>
+                    </div>
+                  </div>
+                </div>
+                <div class="custom-control custom-checkbox mb-3">
+                  <input name="access" type="checkbox" class="custom-control-input" id="">
+                  <label id="" class="custom-control-label font-16px" for="">Reports</label>
+                </div>
+                <div class="clearfix d-flex">
+                  <div class="col-12">
+                    <div class="custom-control custom-checkbox mb-3">
+                      <input name="access" type="checkbox" class="custom-control-input" id="">
+                      <label id="" class="custom-control-label" for="">All Reports</label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-lg-6">
+                <div class="custom-control custom-checkbox mb-3">
+                  <input name="access" type="checkbox" class="custom-control-input" id="">
+                  <label id="" class="custom-control-label font-16px" for="">Stock</label>
+                </div>
+                <div class="clearfix d-flex">
+                  <div class="col-12">
+                    <div class="custom-control custom-checkbox mb-3">
+                      <input name="access" type="checkbox" class="custom-control-input" id="">
+                      <label id="" class="custom-control-label" for="">Quotation Submission</label>
+                    </div>
+                    <div class="custom-control custom-checkbox mb-3">
+                      <input name="access" type="checkbox" class="custom-control-input" id="">
+                      <label id="" class="custom-control-label" for="">Quotation Approval</label>
+                    </div>
+                    <div class="custom-control custom-checkbox mb-3">
+                      <input name="access" type="checkbox" class="custom-control-input" id="">
+                      <label id="" class="custom-control-label" for="">Purchase Order Submission</label>
+                    </div>
+                    <div class="custom-control custom-checkbox mb-3">
+                      <input name="access" type="checkbox" class="custom-control-input" id="">
+                      <label id="" class="custom-control-label" for="">Purchase Order Approval</label>
+                    </div>
+                    <div class="custom-control custom-checkbox mb-3">
+                      <input name="access" type="checkbox" class="custom-control-input" id="">
+                      <label id="" class="custom-control-label" for="">Purchase Invoice Submission</label>
+                    </div>
+                    <div class="custom-control custom-checkbox mb-3">
+                      <input name="access" type="checkbox" class="custom-control-input" id="">
+                      <label id="" class="custom-control-label" for="">Purchase Invoice Approval</label>
+                    </div>
+                    <div class="custom-control custom-checkbox mb-3">
+                      <input name="access" type="checkbox" class="custom-control-input" id="">
+                      <label id="" class="custom-control-label" for="">Stock Entry</label>
+                    </div>
+                    <div class="custom-control custom-checkbox mb-3">
+                      <input name="access" type="checkbox" class="custom-control-input" id="">
+                      <label id="" class="custom-control-label" for="">Stock Entry Approval Access</label>
+                    </div>
+                    <div class="custom-control custom-checkbox mb-3">
+                      <input name="access" type="checkbox" class="custom-control-input" id="">
+                      <label id="" class="custom-control-label" for="">Purchase Return Entry</label>
+                    </div>
+                    <div class="custom-control custom-checkbox mb-3">
+                      <input name="access" type="checkbox" class="custom-control-input" id="">
+                      <label id="" class="custom-control-label" for="">Purchase Return Approval</label>
+                    </div>
+                  </div>
+                </div>
+                <div class="custom-control custom-checkbox mb-3">
+                  <input name="access" type="checkbox" class="custom-control-input" id="">
+                  <label id="" class="custom-control-label font-16px" for="">Finance</label>
+                </div>
+                <div class="clearfix d-flex">
+                  <div class="col-12">
+                    <div class="custom-control custom-checkbox mb-3">
+                      <input name="access" type="checkbox" class="custom-control-input" id="">
+                      <label id="" class="custom-control-label" for="">Account Payable</label>
+                    </div>
+                    <div class="custom-control custom-checkbox mb-3">
+                      <input name="access" type="checkbox" class="custom-control-input" id="">
+                      <label id="" class="custom-control-label" for="">Account Payable Approval</label>
+                    </div>
+                    <div class="custom-control custom-checkbox mb-3">
+                      <input name="access" type="checkbox" class="custom-control-input" id="">
+                      <label id="" class="custom-control-label" for="">Account Receivables</label>
+                    </div>
+                    <div class="custom-control custom-checkbox mb-3">
+                      <input name="access" type="checkbox" class="custom-control-input" id="">
+                      <label id="" class="custom-control-label" for="">Account Receivables Approval</label>
+                    </div>
+                    <div class="custom-control custom-checkbox mb-3">
+                      <input name="access" type="checkbox" class="custom-control-input" id="">
+                      <label id="" class="custom-control-label" for="">Credit Note</label>
+                    </div>
+                    <div class="custom-control custom-checkbox mb-3">
+                      <input name="access" type="checkbox" class="custom-control-input" id="">
+                      <label id="" class="custom-control-label" for="">Debit Note</label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div> -->
+
+        <div class="row">
+          <div class="col-12">
+            <div class="custom-control custom-checkbox mb-3">
+              <input name="allaccess" type="checkbox" (click)="selectAllAccessPermissions()"
+                class="custom-control-checkbox checked_all" id="allaccess" />
+              <label id="" class="custom-control-label font-16px" for="">All</label>
+            </div>
+          </div>
+          <div class="col-12">
+            <div class="clearfix d-flex">
+              <div class="col-lg-6">
+                <div class="custom-control custom-checkbox mb-3">
+                  <!-- <span class="caret-masters"></span> -->
+                  <img src="../../../../assets/images/multimedia.png" class="caret-masters" style="width: 12px;" />
+                  <input name="mastersaccess" formControlName="master" (click)="selectMasterAccessPermissions()"
+                    type="checkbox" class="custom-control-checkbox checkbox checkbox_master" id="mastersaccess">
+                  <label id="masters" class="custom-control-label font-16px" for="">Masters</label>
+                </div>
+
+                <div class="clearfix display-content-masters display-content-hide"
+                  style="display:none !important;padding-left: 26px;">
+                  <div class="col-12">
+                    <div class="custom-control custom-checkbox mb-3">
+                      <div *ngFor="let per of pharmacyAccessPermissions;let i = index">
+
+                        <div *ngIf="per.accessCd=='Master'">
+                          <input name="mastersentryaccess" type="checkbox"
+                            class="custom-control-checkbox checkbox checkbox_m" value={{i}}
+                            (click)="selectedPermission($event)">
+                          <label id="" class="custom-control-label" for="">{{per.accessName}}</label>
+                        </div>
+                      </div>
+                    </div>
+
+                  </div>
+                </div>
+
+                <div class="custom-control custom-checkbox mb-3">
+                  <!-- <span class="caret-sales"></span> -->
+                  <img src="../../../../assets/images/multimedia.png" class="caret-sales" style="width: 12px;" />
+                  <input name="salesaccess" type="checkbox" (click)="selectSalesAccessPermissions()"
+                    class="custom-control-checkbox checkbox checkbox_sales" id="salesaccess">
+                  <label id="" class="custom-control-label font-16px" for="">Sales</label>
+                </div>
+
+                <div class="clearfix display-content-sales display-content-hide"
+                  style="display:none !important;padding-left: 26px;">
+                  <div class="col-12">
+                    <div class="custom-control custom-checkbox mb-3">
+                      <div *ngFor="let per of pharmacyAccessPermissions;let i = index">
+                        <div *ngIf="per.accessCd=='Sales'">
+                          <input name="mastersentryaccess" type="checkbox"
+                            class="custom-control-checkbox checkbox checkbox_sl" value={{i}}
+                            (click)="selectedPermission($event)">
+                          <label id="" class="custom-control-label" for="">{{per.accessName}}</label>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+
+                <div class="custom-control custom-checkbox mb-3">
+                  <!-- <span class="caret-scrap"></span> -->
+                  <img src="../../../../assets/images/multimedia.png" class="caret-scrap" style="width: 12px;" />
+                  <input name="scrapaccess" type="checkbox" (click)="selectScrapAccessPermissions()"
+                    class="custom-control-checkbox checkbox checkbox_scrap" id="scrapaccess">
+                  <label id="" class="custom-control-label font-16px" for="">Scrap</label>
+                </div>
+
+                <div class="clearfix display-content-scrap display-content-hide"
+                  style="display:none !important;padding-left: 26px;">
+                  <div class="col-12">
+                    <div class="custom-control custom-checkbox mb-3">
+                      <div *ngFor="let per of pharmacyAccessPermissions;let i = index">
+                        <div *ngIf="per.accessCd=='Scrap'">
+                          <input name="mastersentryaccess" type="checkbox"
+                            class="custom-control-checkbox checkbox checkbox_sc" value={{i}}
+                            (click)="selectedPermission($event)">
+                          <label id="" class="custom-control-label" for="">{{per.accessName}}</label>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+
+                <div class="custom-control custom-checkbox mb-3">
+                  <!-- <span class="caret-stock"></span> -->
+                  <img src="../../../../assets/images/multimedia.png" class="caret-stock" style="width: 12px;" />
+                  <input name="stockaccess" type="checkbox" (click)="selectStockAccessPermissions()"
+                    class="custom-control-checkbox checkbox checkbox_stock" id="stockaccess">
+                  <label id="" class="custom-control-label font-16px" for="">Stock</label> </div>
+
+                <div class="clearfix display-content-stock display-content-hide"
+                  style="display:none !important;padding-left: 26px;">
+                  <div class="col-12">
+                    <div class="custom-control custom-checkbox mb-3">
+                      <div *ngFor="let per of pharmacyAccessPermissions;let i = index">
+                        <div *ngIf="per.accessCd=='Stock'">
+                          <input name="mastersentryaccess" type="checkbox"
+                            class="custom-control-checkbox checkbox checkbox_s" value={{i}}
+                            (click)="selectedPermission($event)">
+                          <label id="" class="custom-control-label" for="">{{per.accessName}}</label>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+
+
+                <div class="custom-control custom-checkbox mb-3">
+                  <!-- <span class="caret-finance"></span> -->
+                  <img src="../../../../assets/images/multimedia.png" class="caret-finance" style="width: 12px;" />
+                  <input name="financeaccess" type="checkbox" (click)="selectFinanceAccessPermissions()"
+                    class="custom-control-checkbox checkbox checkbox_finance" id="financeaccess">
+                  <label id="" class="custom-control-label font-16px" for="">Finance</label>
+                </div>
+
+                <div class="clearfix display-content-finance display-content-hide"
+                  style="display:none !important;padding-left: 26px;">
+                  <div class="col-12">
+                    <div class="custom-control custom-checkbox mb-3">
+                      <div *ngFor="let per of pharmacyAccessPermissions;let i = index">
+                        <div *ngIf="per.accessCd=='Finance'">
+                          <input name="mastersentryaccess" type="checkbox"
+                            class="custom-control-checkbox checkbox checkbox_f" value={{i}}
+                            (click)="selectedPermission($event)">
+                          <label id="" class="custom-control-label" for="">{{per.accessName}}</label>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="custom-control custom-checkbox mb-3">
+                  <!-- <span class="caret-charts"></span> -->
+                  <img src="../../../../assets/images/multimedia.png" class="caret-charts" style="width: 12px;" />
+                  <input name="reportsaccess" type="checkbox" (click)="selectChartsAccessPermissions()"
+                    class="custom-control-checkbox checkbox checkbox_charts" id="chartsaccess">
+                  <label id="" class="custom-control-label font-16px" for="">Charts</label>
+                </div>
+
+                <div class="clearfix display-content-charts display-content-hide"
+                  style="display:none !important;padding-left: 26px;">
+                  <div class="col-12">
+                    <div class="custom-control custom-checkbox mb-3">
+                      <div *ngFor="let per of pharmacyAccessPermissions;let i = index">
+                        <div *ngIf="per.accessCd=='Charts'">
+                          <input name="chartsaccess" type="checkbox"
+                            class="custom-control-checkbox checkbox checkbox_ch" value={{i}}
+                            (click)="selectedPermission($event)">
+                          <label id="" class="custom-control-label" for="">{{per.accessName}}</label>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+              <div class="col-lg-6">
+
+                <div class="custom-control custom-checkbox mb-3">
+                  <!-- <span class="caret-reports-masters"></span> -->
+                  <img src="../../../../assets/images/multimedia.png" class="caret-reports-masters"
+                    style="width: 12px;" />
+                  <input name="reportsaccess" type="checkbox" (click)="selectReportsAccessPermissions()"
+                    class="custom-control-checkbox checkbox checkbox_reports" id="reportsmastersaccess">
+                  <label id="" class="custom-control-label font-16px" for="">Reports-Masters</label>
+                </div>
+
+                <div class="clearfix display-content-reports-masters display-content-hide"
+                  style="display:none !important;padding-left: 26px;">
+                  <div class="col-12">
+                    <div class="custom-control custom-checkbox mb-3">
+                      <div *ngFor="let per of pharmacyAccessPermissions;let i = index">
+                        <div *ngIf="per.accessCd=='Reports-Master'">
+                          <input name="mastersentryaccess" type="checkbox"
+                            class="custom-control-checkbox checkbox checkbox_r" value={{i}}
+                            (click)="selectedPermission($event)">
+                          <label id="" class="custom-control-label" for="">{{per.accessName}}</label>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+
+                <div class="custom-control custom-checkbox mb-3">
+                  <!-- <span class="caret-reports-stock"></span> -->
+                  <img src="../../../../assets/images/multimedia.png" class="caret-reports-stock"
+                    style="width: 12px;" />
+                  <input name="reportsaccess" type="checkbox" (click)="selectReportsStockAccessPermissions()"
+                    class="custom-control-checkbox checkbox checkbox_reports_stock" id="reportsstockaccess">
+                  <label id="" class="custom-control-label font-16px" for="">Reports-Stock</label>
+                </div>
+
+                <div class="clearfix display-content-reports-stock display-content-hide"
+                  style="display:none !important;padding-left: 26px;">
+                  <div class="col-12">
+                    <div class="custom-control custom-checkbox mb-3">
+                      <div *ngFor="let per of pharmacyAccessPermissions;let i = index">
+                        <div *ngIf="per.accessCd=='Reports-Stock'">
+                          <input name="mastersentryaccess" type="checkbox"
+                            class="custom-control-checkbox checkbox checkbox_r_stock" value={{i}}
+                            (click)="selectedPermission($event)">
+                          <label id="" class="custom-control-label" for="">{{per.accessName}}</label>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="custom-control custom-checkbox mb-3">
+                  <!-- <span class="caret-reports-finance"></span> -->
+                  <img src="../../../../assets/images/multimedia.png" class="caret-reports-finance"
+                    style="width: 12px;" />
+                  <input name="financeaccess" type="checkbox" (click)="selectFinanceReportsAccessPermissions()"
+                    class="custom-control-checkbox checkbox checkbox_reports_finance" id="reportsfinanceaccess">
+                  <label id="" class="custom-control-label font-16px" for="">Reports-Finance</label>
+                </div>
+
+                <div class="clearfix display-content-reports-finance display-content-hide"
+                  style="display:none !important;padding-left: 26px;">
+                  <div class="col-12">
+                    <div class="custom-control custom-checkbox mb-3">
+                      <div *ngFor="let per of pharmacyAccessPermissions;let i = index">
+                        <div *ngIf="per.accessCd=='Reports-Finance'">
+                          <input name="mastersentryaccess" type="checkbox"
+                            class="custom-control-checkbox checkbox checkbox_r_finance" value={{i}}
+                            (click)="selectedPermission($event)">
+                          <label id="" class="custom-control-label" for="">{{per.accessName}}</label>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+
+                <div class="custom-control custom-checkbox mb-3">
+                  <!-- <span class="caret-reports-sales"></span> -->
+                  <img src="../../../../assets/images/multimedia.png" class="caret-reports-sales"
+                    style="width: 12px;" />
+                  <input name="financeaccess" type="checkbox" (click)="selectSalesReportsAccessPermissions()"
+                    class="custom-control-checkbox checkbox checkbox_reports_sales" id="reportssalesaccess">
+                  <label id="" class="custom-control-label font-16px" for="">Reports-Sales</label>
+                </div>
+
+                <div class="clearfix display-content-reports-sales display-content-hide"
+                  style="display:none !important;padding-left: 26px;">
+                  <div class="col-12">
+                    <div class="custom-control custom-checkbox mb-3">
+                      <div *ngFor="let per of pharmacyAccessPermissions;let i = index">
+                        <div *ngIf="per.accessCd=='Reports-Sales'">
+                          <input name="mastersentryaccess" type="checkbox"
+                            class="custom-control-checkbox checkbox checkbox_r_sales" value={{i}}
+                            (click)="selectedPermission($event)">
+                          <label id="" class="custom-control-label" for="">{{per.accessName}}</label>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+
+                <div class="custom-control custom-checkbox mb-3">
+                  <!-- <span class="caret-reports-purchase"></span>  -->
+                  <img src="../../../../assets/images/multimedia.png" class="caret-reports-purchase"
+                    style="width: 12px;" />
+                  <input name="financeaccess" type="checkbox" (click)="selectPurchaseReportsAccessPermissions()"
+                    class="custom-control-checkbox checkbox checkbox_reports_purchase" id="reportspurchaseaccess">
+                  <label id="" class="custom-control-label font-16px" for="">Reports-Purchase</label>
+                </div>
+
+                <div class="clearfix display-content-reports-purchase display-content-hide"
+                  style="display:none !important;padding-left: 26px;">
+                  <div class="col-12">
+                    <div class="custom-control custom-checkbox mb-3">
+                      <div *ngFor="let per of pharmacyAccessPermissions;let i = index">
+                        <div *ngIf="per.accessCd=='Reports-Purchase'">
+                          <input name="mastersentryaccess" type="checkbox"
+                            class="custom-control-checkbox checkbox checkbox_r_pur" value={{i}}
+                            (click)="selectedPermission($event)">
+                          <label id="" class="custom-control-label" for="">{{per.accessName}}</label>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="custom-control custom-checkbox mb-3">
+                  <!-- <span class="caret-reports-crm"></span> -->
+                  <img src="../../../../assets/images/multimedia.png" class="caret-reports-crm" style="width: 12px;" />
+                  <input name="crmaccess" type="checkbox" (click)="selectCRMReportsAccessPermissions()"
+                    class="custom-control-checkbox checkbox checkbox_reports_crm" id="reportscrmaccess">
+                  <label id="" class="custom-control-label font-16px" for="">Reports-CRM</label>
+                </div>
+
+                <div class="clearfix display-content-reports-crm display-content-hide"
+                  style="display:none !important;padding-left: 26px;">
+                  <div class="col-12">
+                    <div class="custom-control custom-checkbox mb-3">
+                      <div *ngFor="let per of pharmacyAccessPermissions;let i = index">
+                        <div *ngIf="per.accessCd=='Reports-CRM'">
+                          <input name="crmentryaccess" type="checkbox"
+                            class="custom-control-checkbox checkbox checkbox_r_crm" value={{i}}
+                            id={{per.pharmaAccessId}} (click)="selectedPermission($event)">
+                          <label id="" class="custom-control-label" for="">{{per.accessName}}</label>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+          </div>
+        </div>
+
+
+      </form>
+      <div class="row">
+        <div class="col mb-3 pt-3 text-center">
+          <button (click)="onEmployeeCredentialsInformationFormSubmit()" id="accessEmployeeSaveBtn"
+            [disabled]="employeeAccessFormDisability()" class="btn btn-primary px-4 toggleHide">Save</button>
+          <button type="button" id="accessEmployeeCancelBtn" class="btn btn-secondary px-4 ml-3" (click)="accessReset()"
+            value="Cancel">Cancel</button>
+        </div>
+      </div>
+
+    </form>
+
+  </div>
+
+</div>
+<ng4-loading-spinner [loadingText]="'Please wait...'" [timeout]="400000000"> </ng4-loading-spinner>

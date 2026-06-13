@@ -1,0 +1,325 @@
+/* You can add global styles to this file, and also import other style files */
+
+@import "custom";
+@import "~bootstrap/scss/bootstrap";
+@import "~ag-grid-community/dist/styles/ag-grid.css";
+@import "~ag-grid-community/dist/styles/ag-theme-balham.css";
+@import "~@ng-select/ng-select/themes/default.theme.css";
+@import '~ngx-toastr/toastr-bs4-alert';
+
+/* Bootstrap Customizations */
+.form-group.formgroup-margin {
+  margin-bottom: 0.3rem !important;
+}
+.btn {
+  .badge {
+    position: relative;
+    top: -6px;
+    left: -4px;
+    border-radius: 50%;
+    font-size: 11px;
+  }
+}
+
+.ng-option-label{ 
+  white-space: normal !important;
+}
+.highcharts-container{
+  width: 501px !important;
+  //height: 400px !important;
+  overflow: visible !important;
+  
+ }
+ .highcharts-scrolling{
+  width: 678px;
+  max-height: 300px !important;
+  overflow-y: scroll !important;
+}
+.custom-control-label::before {
+  border-color: $primary;
+}
+
+/* AG Grid Customization */
+
+
+
+@import "~ag-grid-community/dist/styles/ag-theme-fresh.css";
+.ag-theme-fresh {
+  font-weight: 400;
+  font-size: 12px;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+}
+ 
+ .ag-theme-fresh .ag-header {
+  background-color: #d6ffff !important;
+  background-image: none !important;
+  border-bottom: 1px solid darkgrey;
+  height: 35px;
+  background-color: #f5f7f7;
+  color: rgba(0, 0, 0, 0.54);
+  font-weight: 600 !important;
+  font-size: 12px !important;
+ // font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+  font-family:-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  border-bottom: 1px solid #BDC3C7;
+  min-height: 32px !important;
+    color: #10847e;
+    background-color: #d6ffff;
+}
+.ag-theme-fresh .ag-body-viewport {
+  background-color: #fff !important;
+}
+
+.ag-theme-balham {
+  .ag-header {
+    color: $primary;
+    background-color: #d6ffff;
+  }
+
+  .ag-row-selected {
+    background-color: $light-gray;
+  }
+
+  .out-of-stock-warning{
+    background-color:blue !important;
+  }
+  .stock-expired-warning{
+    background-color:red !important;
+  }
+  .low-item-stock-warning{
+    background-color:rgb(150, 255, 140) !important;
+  }
+
+  .expiry-stock-warning{
+    background-color:orange !important;
+  }
+
+  .alternative-medicine-warning{
+    background-color:rgb(150, 255, 140) !important;
+  }
+}
+
+/* NG Select Customization */
+
+.ng-select {
+  .ng-select-container {
+    background-color: $input-bg;
+    border: 1px solid $primary;
+
+  }
+
+  .ng-dropdown-panel {
+    border: 1px solid $primary;
+  }
+
+  &.ng-select-opened {
+    box-shadow: 0 0 0 0.2rem rgba(16, 132, 126, 0.25);
+
+    >.ng-select-container {
+      border: 1px solid $primary;
+    }
+  }
+}
+
+/* Layout & re-usable styles */
+
+html,
+body,
+.container-fluid,
+.container-fluid>.row:not(header) {
+  height: calc(100vh - 68.4px);
+}
+
+body {
+  &.login-screen {
+    background:url('assets/images/ihealthpharm-login-bg.jpg') 0 0 no-repeat;
+    background-size: cover;
+
+    header {
+      display: none;
+    }
+
+  }
+
+}
+
+app-stock,
+app-masters,
+app-sales,
+app-reports,
+app-finance,
+app-home {
+  width: 100%;
+
+  @media (min-width: 992px) {
+    display: flex;
+    flex-basis: 100%;
+  }
+}
+
+.transition {
+  transition: all .5s;
+}
+
+.side-menu-toggler {
+  display: none;
+  z-index: 10;
+  right: -30px;
+  top: 0;
+  font-size: 20px;
+  width: 30px;
+  height: 32px;
+  text-align: center;
+  background: $light;
+  cursor: pointer;
+  @media (min-width: 992px) {
+    display: block;
+  }
+}
+
+#top-options {
+
+  .nav-link,
+  .btn {
+    padding-top: 0.2rem;
+    padding-bottom: 0.2rem;
+  }
+}
+#top-menu {
+  .nav-item {
+    @extend .transition;
+
+    &.active,
+    &:hover {
+      background: $light;
+      @extend .transition;
+    }
+
+    .nav-link {
+      padding: 0.4rem .5rem;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+  }
+}
+
+.logo-wrap,
+.left-menu {
+  flex-basis: 100%;
+
+  @media (min-width: 992px) {
+    max-width: 250px;
+    min-width: 250px;
+    &.reduced-size {
+      max-width: 100px;
+      min-width: 100px;
+    }
+  }
+}
+
+.logo-wrap {
+    img {
+      max-width: 175px;
+    }
+    @media (min-width: 992px) {
+      img {
+        max-width: 155px;
+      }
+    }
+  &.reduced-size {
+    padding: 0 12px !important;
+    @media (min-width: 992px) {
+      img {
+        max-width: 70px;
+      }
+    }
+  }
+}
+
+.left-menu {
+  .card {
+    .btn {
+      border-radius: 0;
+      font-size: 15px;
+      position: relative;
+      background-color: rgba($primary, .25);
+
+      &.active {
+        background: $primary;
+      }
+
+      &.down-arrow {
+        &:after {
+          font-family: "Font Awesome 5 Free";
+          font-weight: 900;
+          position: absolute;
+          right: 19px;
+          top: 9px;
+          content: "\f078";
+          @extend .transition;
+        }
+      }
+
+      &:hover,
+      &:focus {
+        text-decoration: none;
+      }
+
+      &.collapsed {
+        &:after {
+          transform: rotate(-180deg);
+          @extend .transition;
+        }
+      }
+    }
+
+    ul {
+      li {
+        @extend .transition;
+
+        &.active,
+        &:hover {
+          background: $primary;
+          @extend .transition;
+        }
+
+        a {
+          padding: 8px 10px 8px 35px;
+          font-size: 15px;
+          color: $white;
+
+          &:hover {
+            text-decoration: none;
+          }
+        }
+      }
+    }
+  }
+}
+
+.bg-extra-light {
+  background: #5bebe41f;
+}
+
+.small-thumb {
+  max-width: 22px;
+  height: auto;
+}
+
+.top-nav,
+.font-15px {
+  font-size: 15px;
+}
+
+.font-16px {
+  font-size: 16px;
+}
+
+.no-left-border-radius {
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+}
+.no-right-border-radius {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}

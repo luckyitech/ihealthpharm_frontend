@@ -1,0 +1,144 @@
+<form #customerInsForm="ngForm" [formGroup]="customerInsuranceInformationForm" (keydown.enter)="$event.preventDefault()"
+  (ngSubmit)="onCustomerInsuranceSubmit()" class="full-height">
+
+  <h6 class="border border-primary p-2 mt-3 mb-4 bg-light text-white">Generic Details</h6>
+
+  <div class="row">
+    <div class="col-lg-4">
+      <div class="form-group row">
+        <label for="" class="col-sm-3 col-form-label pr-0 text-right" id="addCustomerLabelPolicy">Pol Code <span
+            class="text-danger">*</span></label>
+        <div class="col-sm-9">
+          <ng-select [(ngModel)]="policySelected" (change)="onInsuranceSelected($event)" placeholder="-- select --"
+            formControlName="policyCode" [items]="policies" bindLabel="policyCode" id="addCustomerInputPolicy">
+          </ng-select>
+          <div *ngIf="customerInsuranceInformationForm.get('policyCode')?.touched" class="error-msg-common text-danger">
+            <div *ngIf="customerInsuranceInformationForm.get('policyCode').errors?.required">
+              * required field
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="form-group row">
+        <label for="" class="col-sm-3 col-form-label pr-0 text-right" id="addCustomerLabelPolicyNumber">Customer Policy
+          No <span class="text-danger">*</span></label>
+        <div class="col-sm-9">
+          <input formControlName="customerPolicyNumber" type="text" class="form-control"
+            id="addCustomerInputPolicyNumber" placeholder="Policy Number">
+          <div *ngIf="customerInsuranceInformationForm.get('customerPolicyNumber')?.touched"
+            class="error-msg-common text-danger">
+            <div *ngIf="customerInsuranceInformationForm.get('customerPolicyNumber').errors?.required">
+              * required field
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="form-group row">
+        <label for="" class="col-sm-3 col-form-label pr-0 text-right" id="addCustomerLabelName">Name </label>
+        <div class="col-sm-9">
+          <ng-select [(ngModel)]="selectedCustomer" [ngModelOptions]="{standalone:true}" placeholder="-- select --"
+            [items]="customer" bindLabel="customerName" id="addCustomerInputName">
+          </ng-select>
+        </div>
+      </div>
+      <div class="form-group row">
+        <label for="" class="col-sm-3 col-form-label pr-0 text-right" id="addCustomerLabelStartDate">Start Date </label>
+        <div class="col-sm-9">
+          <input formControlName="policyStartDate" (ngModelChange)="modelChanged($event)" (change)="selectedStartDate($event)" type="date" class="form-control" id="addCustomerInputStartDate"
+            placeholder="">
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-4">
+
+      <div class="form-group row">
+        <label for="" class="col-sm-3 col-form-label pr-0 text-right" id="addCustomerLabelEndDate">End Date </label>
+        <div class="col-sm-9">
+          <input formControlName="policyEndDate" (ngModelChange)="modelChanged($event)" (change)="selectedStartDate($event)" type="date" class="form-control" id="addCustomerInputEndDate"
+            placeholder="">
+          <div class="error-msg-common text-danger" *ngIf="customerInsuranceInformationForm.get('policyEndDate').errors &&
+          customerInsuranceInformationForm.get('policyEndDate').dirty &&
+          customerInsuranceInformationForm.get('policyEndDate').errors.invalidDob">
+            not valid date
+          </div>
+        </div>
+      </div>
+      <div class="form-group row">
+        <label for="" class="col-sm-3 col-form-label pr-0 text-right" id="addCustomerLabelDuration">Duration In
+          Months</label>
+        <div class="col-sm-9">
+          <input formControlName="policyDurationInMonths" type="text" class="form-control" id="addCustomerInputDuration"
+            placeholder="In Months" disabled>
+        </div>
+      </div>
+      <div class="form-group row">
+        <label for="" class="col-sm-3 col-form-label pr-0 text-right" id="addCustomerLabelMedics">Medics (-) </label>
+        <div class="col-sm-9">
+          <input formControlName="medicinesNotCovered" type="text" class="form-control" id="addCustomerInputMedics"
+            placeholder="Medic not covered">
+        </div>
+      </div>
+
+      <div class="form-group row">
+        <div class="col-sm-10 justify-content-end d-flex pt-2">
+          <div class="d-inline mr-3">
+            <label  class="mb-0" id="addCustomerLabelStatus">Status</label>
+          </div>
+          <div class="custom-control d-inline custom-radio mr-3">
+            <input name="activeS" type="radio" value="Y" class="custom-control-input" formControlName="activeS" id="activate">
+            <label  class="custom-control-label" for="activate">Activate</label>
+          </div>
+          <div class="custom-control d-inline custom-radio">
+            <input name="activeS" type="radio" value="N" class="custom-control-input" formControlName="activeS" id="deactivate">
+            <label  class="custom-control-label" for="deactivate">De Activate</label>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-4">
+      <div class="form-group row">
+        <label for="" class="col-sm-3 col-form-label pr-0 text-right" id="addCustomerLabelContrib">Contr % </label>
+        <div class="col-sm-9">
+
+          <input formControlName="contributionPercentage" type="text" class="form-control" id="addCustomerInputContrib"
+            placeholder="Contribution Percentage">
+          <div *ngIf="customerInsuranceInformationForm.get('contributionPercentage')?.invalid"
+            class="error-msg-common text-danger">
+            <div
+              *ngIf="!customerInsuranceInformationForm.get('contributionPercentage').errors?.required && customerInsuranceInformationForm?.get('contributionPercentage')?.errors">
+              * not a valid input
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="form-group row">
+        <label for="" class="col-sm-3 col-form-label pr-0 text-right" id="addCustomerLabelAmount">Amt Limit </label>
+        <div class="col-sm-9">
+          <input formControlName="policyAmountLimit" type="text" class="form-control" id="addCustomerInputAmount"
+            placeholder="Amount Limit">
+          <div *ngIf="customerInsuranceInformationForm.get('policyAmountLimit')?.invalid"
+            class="error-msg-common text-danger">
+            <div
+              *ngIf="!customerInsuranceInformationForm.get('policyAmountLimit').errors?.required && customerInsuranceInformationForm?.get('policyAmountLimit')?.errors">
+              * not a valid input
+            </div>
+          </div>
+        </div>
+      </div>
+
+     
+    </div>
+  </div>
+
+  <div class="row pt-4">
+    <div class="col mb-3 pt-2 text-center">
+      <button type="submit" [disabled]="checkCustomerInsuranceFormDisability()" class="btn btn-primary px-4"
+        id="mu-adduser-save">Save</button>
+      <input type="button" class="btn btn-secondary px-4 ml-3" (click)="reset()" id="mu-adduser-cancel" value="Cancel">
+    </div>
+  </div>
+
+</form>
+<ng4-loading-spinner [loadingText]="'Please wait...'" [timeout]="400000000"> </ng4-loading-spinner>

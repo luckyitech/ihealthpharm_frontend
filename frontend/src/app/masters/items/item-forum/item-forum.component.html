@@ -1,0 +1,82 @@
+<form  [formGroup]="itemFormObj" (keydown.enter)="$event.preventDefault()" (ngSubmit)="onSubmit()" class="">
+  <h6 class="border border-primary p-2 mt-3 mb-4 bg-light text-white">Form Details</h6>
+
+  <div class="row">
+    <div class="col-lg-6">
+      <div class="form-group row">
+        <label id="itemForumLabelCode"for="" class="col-sm-3 col-form-label pr-0 text-right">Code <span class="text-danger">*</span></label>
+        <div class="col-sm-9">
+          <input type="text" class="form-control" id="itemForumCode" formControlName="formCode" placeholder="Form Code">
+          <div *ngIf="f.formCode?.touched" class="error-msg-common text-danger">
+            <div *ngIf="f.formCode.errors?.required">
+              Required Field
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-6">
+      <div class="form-group row">
+        <label id="itemForumLabelDescription" for="" class="col-sm-3 col-form-label pr-0 text-right">Description <span
+            class="text-danger">*</span></label>
+        <div class="col-sm-9">
+          <input type="text" class="form-control" id="itemForumDescription" formControlName="form" placeholder="Form Description">
+          <div *ngIf="f.form?.touched" class="error-msg-common text-danger">
+            <div *ngIf="f.form.errors?.required">
+              Required Field
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row mt-3">
+    <div class="col-lg-6 d-flex align-items-center justify-content-end">
+      <div class="form-group row">
+        <div class="col-sm-12 d-flex align-items-center">
+          <div class="d-inline mr-3">
+            <label id="itemForumLabelFormType" class="mb-0">Form Type</label>
+          </div>
+          <div class="custom-control d-inline custom-radio mr-3">
+            <input name="medicalOrNonMedical" type="radio" value="M" formControlName="medicalOrNonMedical" class="custom-control-input" id="med">
+            <label id="itemForumLabelMedical" class="custom-control-label" for="med">Medical</label>
+          </div>
+          <div class="custom-control d-inline custom-radio">
+            <input name="medicalOrNonMedical" type="radio" formControlName="medicalOrNonMedical" class="custom-control-input" id="non">
+            <label id="itemForumLabelNonMedical" class="custom-control-label" value="N" for="non">Non Medical</label>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-6 d-flex align-items-center justify-content-end">
+      <div class="form-group row">
+        <div class="col-sm-12 d-flex">
+          <div class="d-inline mr-3">
+            <label id="itemForumLabelStatus" class="mb-0">Status</label>
+          </div>
+          <div class="custom-control d-inline custom-radio mr-3">
+            <input name="activeS" type="radio" class="custom-control-input" value="Y" formControlName="activeS" id="yes">
+            <label id="itemForumLabelYes" class="custom-control-label" for="yes" >Activate</label>
+          </div>
+          <div class="custom-control d-inline custom-radio">
+            <input name="activeS" type="radio" class="custom-control-input" value="N" formControlName="activeS" id="no">
+            <label id="itemForumLabelNo" class="custom-control-label" for="no">De Activate</label>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col mb-3 pt-2 text-center">
+      <button (click)="onSubmit()" type="submit" class="btn btn-primary px-4" [disabled]="checkFormDisability()" 
+      id="mu-adduser-save">Save</button>
+      <input type="button" class="btn btn-secondary px-4 ml-3"  value="Cancel"
+      (click)="itemFormObj.reset();itemFormObj.controls.activeS.setValue('Y');
+      itemFormObj.controls.medicalOrNonMedical.setValue('M')">
+    </div>
+  </div>
+
+</form>
+<ng4-loading-spinner [loadingText]="'Please wait...'" [timeout]="400000000"> </ng4-loading-spinner>

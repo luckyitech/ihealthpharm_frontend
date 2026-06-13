@@ -1,0 +1,77 @@
+<ul class="nav nav-pills mb-3 border-bottom border-secondary" id="pills-tab" role="tablist">
+  <li class="nav-item">
+    <a class="nav-link active" id="" (click)="changeTab('app-cust-add')" data-toggle="pill" href="#pills-add" (change)="selectedTab = 'add-cust'" role="tab" aria-controls="pills-add"
+      aria-selected="true">Add Customer</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" id="" (click)="changeTab('app-cust-edit')" data-toggle="pill" href="#pills-edit" (change)="selectedTab = 'add-edit'" role="tab" aria-controls="pills-edit"
+      aria-selected="true">Edit Customer</a>
+  </li>
+</ul>
+<div class="tab-content" id="pills-tabContent">
+
+  <div class="tab-pane fade show active" id="pills-add" role="tabpanel" aria-labelledby="pills-add-tab">
+
+    <nav>
+      <div class="nav nav-tabs" id="nav-tab" role="tablist">
+        <a class="nav-item nav-link active" id="nav-customer-tab" data-toggle="tab" (click)="changeTab('app-cust-add')" href="#nav-customer-single"
+          role="tab" aria-controls="nav-customer-single" aria-selected="true">Customer</a>
+        <a class="nav-item nav-link" id="nav-membership-tab" data-toggle="tab" (click)="changeTab('app-mem-add')" href="#nav-membership" role="tab"
+          aria-controls="nav-membership" aria-selected="false">Membership</a>
+        <a class="nav-item nav-link" id="nav-insurance-tab" data-toggle="tab" (click)="changeTab('app-ins-add')" href="#nav-insurance" role="tab"
+          aria-controls="nav-insurance" aria-selected="false">Insurance</a>
+      </div>
+    </nav>
+
+    <div class="tab-content" id="nav-item">
+
+      <div *ngIf="selectedTab === 'app-cust-add' " class="tab-pane fade show active" id="nav-customer-single" role="tabpanel"
+        aria-labelledby="nav-customer-tab">
+        <app-customer-single></app-customer-single>
+      </div>
+      <div *ngIf="selectedTab === 'app-mem-add'" class="tab-pane fade" id="nav-membership" role="tabpanel" aria-labelledby="nav-membership-tab">
+        <app-customer-membership></app-customer-membership>
+      </div>
+      <div *ngIf="selectedTab === 'app-ins-add'" class="tab-pane fade" id="nav-insurance" role="tabpanel" aria-labelledby="nav-insurance-tab">
+        <app-customer-insurance></app-customer-insurance>
+      </div>
+
+    </div>
+
+  </div>
+
+  <div class="tab-pane fade show" id="pills-edit" role="tabpanel" aria-labelledby="pills-edit-tab">
+
+    <nav>
+      <div class="nav nav-tabs" id="nav-tab-edit" role="tablist">
+        <a class="nav-item nav-link active" id="nav-customer-tab-edit" (click)="changeTab('app-cust-edit')" data-toggle="tab"
+          href="#nav-customer-single-edit" role="tab" aria-controls="nav-customer-single-edit"
+          aria-selected="true">Customer</a>
+        <a class="nav-item nav-link" id="nav-membership-tab-edit" (click)="changeTab('app-mem-edit')" data-toggle="tab" href="#nav-membership-edit"
+          role="tab" aria-controls="nav-membership-edit" aria-selected="false">Membership</a>
+        <a class="nav-item nav-link" id="nav-insurance-tab-edit" (click)="changeTab('app-ins-edit')" data-toggle="tab" href="#nav-insurance-edit" role="tab"
+          aria-controls="nav-honor-edit" aria-selected="false">Insurance</a>
+      </div>
+    </nav>
+
+    <div class="tab-content" id="nav-item-edit">
+
+      <div  *ngIf="selectedTab === 'app-cust-edit'" class="tab-pane fade show active" id="nav-customer-single-edit" role="tabpanel"
+        aria-labelledby="nav-customer-tab-edit">
+        <app-customer-single-edit></app-customer-single-edit>
+      
+      </div>
+      <div  *ngIf="selectedTab === 'app-mem-edit'" class="tab-pane fade" id="nav-membership-edit" role="tabpanel" aria-labelledby="nav-membership-tab-edit">
+        <app-customer-membership-edit ></app-customer-membership-edit>
+       
+      </div>
+      <div  *ngIf="selectedTab === 'app-ins-edit'" class="tab-pane fade" id="nav-insurance-edit" role="tabpanel" aria-labelledby="nav-insurance-tab-edit">
+        <app-customer-insurance-edit ></app-customer-insurance-edit>
+      
+      </div>
+
+    </div>
+
+  </div>
+
+</div>

@@ -1,0 +1,384 @@
+<ul class="nav nav-pills mb-3 border-bottom border-secondary" id="pills-tab" role="tablist">
+  <li class="nav-item">
+    <a class="nav-link active" id="newStockLabel" data-toggle="pill" href="#pills-new" role="tab"
+      aria-controls="pills-home" aria-selected="true">New Stock</a>
+  </li>
+</ul>
+<div class="tab-content" id="pills-tabContent">
+
+  <div class="tab-pane fade show active" id="pills-new" role="tabpanel" aria-labelledby="pills-home-tab">
+
+    <form class="" #stockform="ngForm" [formGroup]="stockForm" (keydown.enter)="$event.preventDefault()"
+      (ngSubmit)="onSubmit()">
+
+      <h6 class="border border-primary p-2 mt-3 mb-4 bg-light text-white">New Stock Details</h6>
+
+      <div class="row">
+        <div class="col-lg-4">
+          <div class="form-group row">
+            <label for="" class="col-sm-4 col-form-label px-0 text-right" id="iosNumberLabel">IOS #</label>
+            <div class="col-sm-8">
+              <input type="text" class="form-control" id="iosNumber" placeholder="IOS #" formControlName="stockNumber"
+                disabled>
+            </div>
+          </div>
+
+          <div class="form-group row">
+            <label for="" class="col-sm-4 col-form-label px-0 text-right" id="newStockDateLabel">Stock Date
+              <span class="text-danger">*</span>
+            </label>
+            <div class="col-sm-8">
+              <input type="date" class="form-control" id="newStockDate" formControlName="stockDt">
+              <div *ngIf="stockForm.get('stockDt')?.touched" class="error-msg-common text-danger">
+                <div *ngIf="stockForm.get('stockDt').errors?.required">
+                  * required field
+                </div>
+              </div>
+            </div>
+          </div>
+
+
+          <div class="form-group row">
+            <label for="" class="col-sm-4 col-form-label px-0 text-right" id="newStockEntryTypeLabel">Entry Type
+              <span class="text-danger">*</span>
+            </label>
+            <div class="col-sm-8">
+              <ng-select [items]="entryTypes" placeholder="--Select--" id="newStockEntryType"
+                [(ngModel)]="selectedEntryType" formControlName="entryType">
+              </ng-select>
+              <div *ngIf="stockForm.get('entryType')?.touched" class="error-msg-common text-danger">
+                <div *ngIf="stockForm.get('entryType').errors?.required">
+                  * required field
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group row">
+            <label for="" class="col-sm-4 col-form-label px-0 text-right" id="newStockStatusLabel">Status</label>
+            <div class="col-sm-8">
+              <ng-select [items]="status" placeholder="--Select--" id="newStockStatus" [(ngModel)]="selectedStatus"
+                [ngModelOptions]="{standalone:true}">
+              </ng-select>
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="" class="col-sm-4 col-form-label px-0 text-right" id="newStockLabelPack">Pack <span
+                class="text-danger">*</span></label>
+            <div class="col-sm-8">
+              <input type="text" class="form-control" id="newStockPack" placeholder="Pack" formControlName="pack"
+                (change)="unitPurchansePriceCalc()" (change)="unitSalePriceCalc()" (change)="unitMRPCalc()">
+              <div *ngIf="stockForm.get('pack')?.touched" class="error-msg-common text-danger">
+                <div *ngIf="stockForm.get('pack').errors?.required">
+                  * required field
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group row">
+            <label for="" class="col-sm-4 col-form-label px-0 text-right" id="newStockLabelShelf">Shelf #
+              <span class="text-danger"> *</span>
+            </label>
+            <div class="col-sm-8">
+              <input type="text" class="form-control" id="newStockShelf" placeholder="Shelf Number"
+                formControlName="shelf">
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-5">
+          <div class="form-group row">
+            <label for="" class="col-sm-2 col-form-label px-0 text-right" id="newStockLabelInvoice">Invoice #</label>
+            <div class="col-sm-10">
+              <input type="text" class="form-control" id="newStockInvoice" placeholder="Invoice No"
+                formControlName="invoiceNo">
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="" class="col-sm-2 col-form-label px-0 text-right" id="newStockLabelSupplier">Supplier <span
+                class="text-danger">*</span></label>
+            <div class="col-sm-10">
+              <ng-select [items]="suppliers" bindLabel="name" id="newStockSupplier" placeholder="--Select--"
+                [(ngModel)]="selectedSupplier" formControlName="supplier" (search)="searchBySupplierName($event)">
+              </ng-select>
+              <div *ngIf="stockForm.get('supplier')?.touched" class="error-msg-common text-danger">
+                <div *ngIf="stockForm.get('supplier').errors?.required">
+                  * required field
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group row">
+            <label for="" class="col-sm-2 col-form-label px-0 text-right" id="newStockItemNameLabel">Name <span
+                class="text-danger">*</span></label>
+            <div class="col-sm-10">
+              <ng-select [items]="items" bindLabel="itemName" id="newStockItemName" placeholder="--Select--"
+                (search)="searchByItemCode($event)" (change)="OnItemSelected($event)" [(ngModel)]="selectedItem"
+                formControlName="item">
+              </ng-select>
+              <div *ngIf="stockForm.get('item')?.touched" class="error-msg-common text-danger">
+                <div *ngIf="stockForm.get('item').errors?.required">
+                  * required field
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          <div class="form-group row">
+            <label for="" class="col-sm-2 col-form-label px-0 text-right" id="newStockLabelItemCd">Item CD </label>
+            <div class="col-sm-10">
+
+              <ng-select [items]="items" bindLabel="itemCode" id="newStockItemCd" placeholder="--Select--"
+                (search)="searchByItemCode($event)" (change)="OnItemSelected($event)" [(ngModel)]="selectedItem"
+                formControlName="item">
+              </ng-select>
+
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="" class="col-sm-2 col-form-label px-0 text-right" id="newStockLabelRack">Rack #
+              <span class="text-danger"> *</span>
+            </label>
+            <div class="col-sm-10">
+              <input type="text" class="form-control" id="newStockRack" placeholder="Rack Number"
+                formControlName="rack">
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="" class="col-sm-2 col-form-label px-0 text-right" id="newStockLabelBarCode">QR/Barcode</label>
+            <div class="col-sm-10">
+              <input type="text" class="form-control" id="newStockBarCode" placeholder="Barcode Number"
+                formControlName="barcode" (keyup.enter)="onEnter()" (mouseup)="onMouseEnter()">
+            </div>
+          </div>
+
+        </div>
+        <div class="col-lg-3">
+          <div class="form-group row">
+            <label for="" class="col-sm-3 col-form-label px-0 text-right" id="newStockLabelBatch">Batch # <span
+                class="text-danger"> *</span></label>
+            <div class="col-sm-8">
+              <input type="text" class="form-control" id="newStockBatch" placeholder="Batch Number"
+                formControlName="batchNo">
+              <div *ngIf="stockForm.get('batchNo')?.touched" class="error-msg-common text-danger">
+                <div *ngIf="stockForm.get('batchNo').errors?.required">
+                  * required field
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="" class="col-sm-3 col-form-label px-0 text-right" id="newStockLabelQty">Qty <span
+                class="text-danger">*</span></label>
+            <div class="col-sm-8">
+              <input type="text" class="form-control" id="newStockQty" placeholder="Quantity"
+                formControlName="quantity">
+              <div *ngIf="stockForm.get('quantity')?.touched" class="error-msg-common text-danger">
+                <div *ngIf="stockForm.get('quantity').errors?.required">
+                  * required field
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="" class="col-sm-3 col-form-label px-0 text-right" id="newStockLabelBonus">Bonus
+            </label>
+            <div class="col-sm-8">
+              <input type="text" class="form-control" id="newStockBonus" placeholder="Bonus" formControlName="bonus">
+            </div>
+          </div>
+
+          <div class="form-group row">
+            <label for="" class="col-sm-3 col-form-label px-0 text-right" id="newStockLabelExpiry">Expiry <span
+                class="text-danger">*</span></label>
+            <div class="col-sm-8">
+              <input type="date" class="form-control" id="newStockExp" formControlName="expiryDt">
+              <div *ngIf="stockForm.get('expiryDt')?.touched" class="error-msg-common text-danger">
+                <div *ngIf="stockForm.get('expiryDt').errors?.required">
+                  * required field
+                </div>
+              </div>
+              <div class="error-msg-common text-danger" *ngIf="stockForm.get('expiryDt').errors &&
+              stockForm.get('expiryDt').dirty &&
+              stockForm.get('expiryDt').errors.invalidDob">
+                not valid date
+              </div>
+
+            </div>
+          </div>
+
+          <div class="form-group row">
+            <label for="" class="col-sm-3 col-form-label px-0 text-right" id="newStockStorageLabel">Storage</label>
+            <div class="col-sm-8">
+              <input type="text" class="form-control" id="newStockStorage" placeholder="Storage"
+                formControlName="storage">
+            </div>
+          </div>
+
+          <div class="form-group row" *ngIf="!editable">
+            <label for="" class="col-sm-3 col-form-label px-0 text-right" id="newStockStorageLabel">Margin%</label>
+            <div class="col-sm-8">
+              <input type="text" class="form-control" id="newStockStorage" placeholder="Margin%"
+                formControlName="margin" disabled>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <h6 class="border border-primary p-2 mt-3 mb-4 bg-light text-white">Price Details</h6>
+
+      <div class="row">
+        <div class="col-lg-4">
+          <div class="form-group row">
+            <label for="" class="col-sm-4 col-form-label px-0 text-right" id="newStockPPriceLabel">P Price <span
+                class="text-danger">*</span></label>
+            <div class="col-sm-8">
+              <input type="text" class="form-control" id="newStockPPrice" placeholder="Purchase Price"
+                (keyup)="valueCalculator($event)" formControlName="unitPurchaseRate" (keyup)="setPP()"
+                (change)="unitPurchansePriceCalc()">
+              <div *ngIf="stockForm.get('unitPurchaseRate')?.touched" class="error-msg-common text-danger">
+                <div *ngIf="stockForm.get('unitPurchaseRate').errors?.required">
+                  * required field
+                </div>
+              </div>
+              <div *ngIf="stockForm.get('unitPurchaseRate')?.invalid" class="error-msg-common text-danger">
+                <div
+                  *ngIf="!stockForm.get('unitPurchaseRate').errors?.required && stockForm?.get('unitPurchaseRate')?.errors">
+                  * not a valid input
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="" class="col-sm-4 col-form-label px-0 text-right" id="newStockPDiscLabel">P Disc %</label>
+            <div class="col-sm-8">
+              <input type="text" class="form-control" id="newStockPDisc" (keyup)="valueCalculator($event)"
+                placeholder="Purchase Discount" formControlName="purchaseDiscountPercentage">
+              <div *ngIf="stockForm.get('purchaseDiscountPercentage')?.invalid" class="error-msg-common text-danger">
+                <div
+                  *ngIf="!stockForm.get('purchaseDiscountPercentage').errors?.required && stockForm?.get('purchaseDiscountPercentage')?.errors">
+                  * not a valid input
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="" class="col-sm-4 col-form-label px-0 text-right" id="newStockPDiscAmtLabel">P Disc
+              Amount</label>
+            <div class="col-sm-8">
+              <input type="text" class="form-control" id="newStockPDiscAmt" placeholder="Purchase Discount"
+                formControlName="purchaseDiscountAmount"  disabled>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-4">
+          <div class="form-group row">
+            <label for="" class="col-sm-4 col-form-label px-0 text-right" id="newStockSPriceLabel">S Price <span
+                class="text-danger">*</span></label>
+            <div class="col-sm-8">
+              <input type="text" class="form-control" id="newStockSPrice" placeholder="Sale Price"
+                (keyup)="onCalculations($event)" formControlName="unitSaleRate" (change)="setSPVAT()" (change)="setSP()" (change)="unitSalePriceCalc()"
+                 [readonly]="!editable">
+              <div *ngIf="stockForm.get('unitSaleRate')?.touched" class="error-msg-common text-danger">
+                <div *ngIf="stockForm.get('unitSaleRate').errors?.required">
+                  * required field
+                </div>
+              </div>
+              <div *ngIf="stockForm.get('unitSaleRate')?.invalid" class="error-msg-common text-danger">
+                <div *ngIf="!stockForm.get('unitSaleRate').errors?.required && stockForm?.get('unitSaleRate')?.errors">
+                  * not a valid input
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="" class="col-sm-4 col-form-label px-0 text-right" id="newStockSDiscLabel">S Disc %</label>
+            <div class="col-sm-8">
+              <input type="text" class="form-control" id="editStockSDisc" placeholder="Sale Discount"
+                (keyup)="onCalculations($event)" formControlName="saleDiscountPercentage" disabled *ngIf="!editable">
+                <ng-select [items]="discounts"  id="" formControlName="saleDiscountPercentage"  [(ngModel)]="selectedDiscount"
+                (change)="onCalculations($event)" placeholder="--Select--" *ngIf="editable">
+                </ng-select>
+              <div *ngIf="stockForm.get('saleDiscountPercentage')?.invalid" class="error-msg-common text-danger">
+                <div
+                  *ngIf="!stockForm.get('saleDiscountPercentage').errors?.required && stockForm?.get('saleDiscountPercentage')?.errors">
+                  * not a valid input
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="" class="col-sm-4 col-form-label px-0 text-right" id="newStockSDiscAmtLabel">S Disc
+              Amount</label>
+            <div class="col-sm-8">
+              <input type="text" class="form-control" id="newStockSDiscAmt" placeholder="Sale Discount"
+                formControlName="saleDiscountAmount" disabled>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-4">
+
+          <div class="form-group row">
+            <label for="" class="col-sm-4 col-form-label px-0 text-right" id="newStockMRPLabel">MRP</label>
+            <div class="col-sm-8">
+              <input type="text" class="form-control" id="newStockMRP" placeholder="MRP" formControlName="mrp"
+                (keyup)="setMRP()" (change)="unitMRPCalc()">
+              <div *ngIf="stockForm.get('mrp')?.invalid" class="error-msg-common text-danger">
+                <div *ngIf="!stockForm.get('mrp').errors?.required && stockForm?.get('mrp')?.errors">
+                  * not a valid input
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="" class="col-sm-4 col-form-label px-0 text-right" id="newStockTaxLabel">Tax <span
+                class="text-danger">*</span></label>
+            <div class="col-sm-8">
+              <ng-select [items]="taxArray" placeholder="--Select--" id="newStockTax" bindLabel="categoryCode"
+                [(ngModel)]="selectedTax" formControlName="taxCategoryModel" (change)="setVat()" (change)="setSPVAT()">
+              </ng-select>
+              <div *ngIf="stockForm.get('taxCategoryModel')?.touched" class="error-msg-common text-danger">
+                <div *ngIf="stockForm.get('taxCategoryModel').errors?.required">
+                  * required field
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="" class="col-sm-4 col-form-label px-0 text-right" id="newStockLabelRemarks">Remarks</label>
+            <div class="col-sm-8">
+              <input type="text" class="form-control" id="newStockRemarks" placeholder="Remarks"
+                formControlName="remarks">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col mb-3 pt-2 text-center">
+          <input type="button" class="btn btn-primary px-4" id="newStockAddGridBtn" value="Add to the Grid"
+            (click)="addToGrid()" [disabled]="checkAddToGriddisablility()">
+        </div>
+      </div>
+
+      <div class="row" *ngIf="showGrid">
+        <div class="col-12 py-3">
+          <ag-grid-angular style="width: 100%; height: 200px;" class="ag-theme-balham" id="newStockAddGrid"
+            [gridOptions]="stockGridOptions">
+          </ag-grid-angular>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col mb-3 pt-2 text-center">
+          <button class="btn btn-primary px-4" [disabled]="checkSaveDisability()">Save</button>
+          <input type="button" (click)="reset()" class="btn btn-secondary px-4 ml-3" value="Cancel">
+        </div>
+      </div>
+    </form>
+  </div>
+
+</div>
+<ng4-loading-spinner [loadingText]="'Please wait...'" [timeout]="400000000"> </ng4-loading-spinner>

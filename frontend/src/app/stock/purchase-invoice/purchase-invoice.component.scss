@@ -1,0 +1,17 @@
+@media (min-width: 576px) {
+    .modal-dialog {
+        max-width: 725px;
+    }
+}
+.min-height-83 {
+    min-height: 83px;
+}
+
+label[disabled="disabled"]{
+    background-color:#e9ecef
+}
+.modal {
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+

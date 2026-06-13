@@ -1,0 +1,343 @@
+<form #transactionForm="ngForm" [formGroup]="transactionInformationForm" class="full-height ">
+
+    <h6 class="border border-primary p-2 mt-3 mb-4 bg-light text-white"> New Transaction</h6>
+
+    <div class="row">
+        <div class="col-lg-4">
+            <div class="form-group row">
+                <label for="" class="col-sm-3 col-form-label pr-0 text-right" id="referenceLabelId">Transaction
+                    Ref No
+                    </label>
+                <div class="col-sm-9">
+                    <input formControlName="transactionRef" type="text" class="form-control" [(ngModel)]="refNo"
+                        id="referenceId" disabled placeholder="">
+                   
+                </div>
+            </div>
+
+
+            <div class="form-group row">
+                <label for="" class="col-sm-3 col-form-label pr-0 text-right" id="">Date
+                    </label>
+                <div class="col-sm-9">
+                    <input type="text" formControlName="transactionDate" class="form-control"
+                        id="transactionDate" placeholder="" disabled>
+                  
+                </div>
+            </div>
+            <div class="form-group row">
+                <label for="" class="col-sm-3 col-form-label pr-0 text-right" id="fromAccountIdLabel">Party
+                    <span class="text-danger">*</span></label>
+                <div class="col-sm-9">
+                    <ng-select placeholder="-- select --" [items]="accountDetails" bindLabel="accountName"
+                        [(ngModel)]="selectedFromParty" formControlName="party"
+                        (change)="onPartyAccountSelected($event)" (clear)="onPartyClear()">
+                    </ng-select>
+                    <div *ngIf="transactionInformationForm.get('party')?.touched"
+                        class="error-msg-common text-danger">
+                        <div *ngIf="transactionInformationForm.get('party').errors?.required">
+                            * required field
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="form-group row">
+                <label for="" class="col-sm-3 col-form-label pr-0 text-right" id="ToAccountIdLabel">Counter Party
+                    <span class="text-danger">*</span></label>
+                <div class="col-sm-9">
+                    <ng-select placeholder="-- select --" [items]="counterPartyAccountNames" bindLabel="accountName"
+                        [(ngModel)]="selectedToAccount" formControlName="counterParty"
+                        (change)="onToAccountSelected($event)" (clear)="onCounterPartyClear()">
+                    </ng-select>
+                    <div *ngIf="transactionInformationForm.get('counterParty')?.touched"
+                        class="error-msg-common text-danger">
+                        <div *ngIf="transactionInformationForm.get('counterParty').errors?.required">
+                            * required field
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+
+
+        <div class="col-lg-4">
+            <div class="form-group row">
+                <label for="" class="col-sm-3 col-form-label pr-0 text-right" id="balanceLabelId">Balance
+                    <span class="text-danger">*</span></label>
+                <div class="col-sm-9">
+                    <input formControlName="balance" type="text" class="form-control" id="balanceId"
+                        placeholder="Available Balance" disabled>
+                    <div *ngIf="transactionInformationForm.get('balance')?.touched"
+                        class="error-msg-common text-danger">
+                        <div *ngIf="transactionInformationForm.get('balance').errors?.required">
+                            * required field
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label for="" class="col-sm-3 col-form-label pr-0 text-right" id="amountLabelId">Amount
+                    <span class="text-danger">*</span></label>
+                <div class="col-sm-9">
+                    <input formControlName="amount" type="text" class="form-control" id="amountId"
+                        placeholder="Enter Amount">
+                    <div *ngIf="transactionInformationForm.get('amount')?.touched"
+                        class="error-msg-common text-danger">
+                        <div *ngIf="transactionInformationForm.get('amount').errors?.required">
+                            * required field
+                        </div>
+                    </div>
+                    <div *ngIf="transactionInformationForm.get('amount')?.invalid"
+                        class="error-msg-common text-danger">
+                        <div
+                            *ngIf="!transactionInformationForm.get('amount').errors?.required && transactionInformationForm?.get('amount')?.errors">
+                            * not a valid input
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group row">
+                <div class="col-lg-12  radio-transaction-type">
+                    <div class="d-inline mr-3">
+                        <label id="addtransactiontype" class="mb-0">Transaction Type</label>
+                    </div>
+                    <div class="d-inline custom-control custom-radio mr-3" >
+                        <input class="custom-control-input" [(ngModel)]="selectedType" type="radio"
+                            id="radioCreditType" value="Credit" formControlName="transactionType"
+                            (change)="onTypeChanged($event)" name="transactionType">
+                        <label class="custom-control-label" id="addCredittype" for="radioCreditType">Credit
+                        </label>
+                    </div>
+                    <div class="d-inline custom-control custom-radio" >
+                        <input class="custom-control-input" [(ngModel)]="selectedType" type="radio"
+                            id="radioDebitType" value="Debit" formControlName="transactionType"
+                            (change)="onTypeChanged($event)" name="transactionType">
+                        <label class="custom-control-label" id="addDebitType" for="radioDebitType">Debit
+                        </label>
+                    </div>
+        
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <label for="" class="col-sm-3 col-form-label pr-0 text-right" id="modeLabel">Mode
+                    <span class="text-danger">*</span></label>
+                <div class="col-sm-9">
+                    <ng-select placeholder="-- select --" [items]="modes" bindLabel="name"
+                        [(ngModel)]="selectedMode" formControlName="mode" (change)="onModeSelected($event)">
+                    </ng-select>
+                    <div *ngIf="transactionInformationForm.get('mode')?.touched"
+                        class="error-msg-common text-danger">
+                        <div *ngIf="transactionInformationForm.get('mode').errors?.required">
+                            * required field
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group row" *ngIf="displayCardNO">
+                <label for="" class="col-sm-3 col-form-label pr-0 text-right" id="balanceLabelId">Card No
+                    <span class="text-danger">*</span></label>
+                <div class="col-sm-9">
+                    <input formControlName="cardNo" type="text" class="form-control" id="balanceId"
+                        placeholder="Enter Card No">
+                    <div *ngIf="transactionInformationForm.get('cardNo')?.touched"
+                        class="error-msg-common text-danger">
+                        <div *ngIf="transactionInformationForm.get('cardNo').errors?.required">
+                            * required field
+                        </div>
+                    </div>
+                    <div *ngIf="transactionInformationForm.get('cardNo')?.invalid"
+                    class="error-msg-common text-danger">
+                    <div
+                        *ngIf="!transactionInformationForm.get('cardNo').errors?.required && transactionInformationForm?.get('cardNo')?.errors">
+                        * not a valid input
+                    </div>
+                </div>
+                </div>
+            </div>
+
+           <!-- <div class="form-group row" *ngIf="displayAccountNO">
+                <label for="" class="col-sm-3 col-form-label pr-0 text-right" id="balanceLabelId">Account No
+                    <span class="text-danger">*</span></label>
+                <div class="col-sm-9">
+                    <input formControlName="chequeNo" type="text" class="form-control" id="balanceId"
+                        placeholder="">
+                    <div *ngIf="transactionInformationForm.get('chequeNo')?.touched"
+                        class="error-msg-common text-danger">
+                        <div *ngIf="transactionInformationForm.get('chequeNo').errors?.required">
+                            * required field
+                        </div>
+                    </div>
+                </div>
+            </div> -->
+            <div class="form-group row" *ngIf="displayChequeNO">
+                <label for="" class="col-sm-3 col-form-label pr-0 text-right" id="balanceLabelId">Cheque No
+                    <span class="text-danger">*</span></label>
+                <div class="col-sm-9">
+                    <input formControlName="chequeNo" type="text" class="form-control" id="balanceId"
+                        placeholder="Enter Cheque No">
+                    <div *ngIf="transactionInformationForm.get('chequeNo')?.touched"
+                        class="error-msg-common text-danger">
+                        <div *ngIf="transactionInformationForm.get('chequeNo').errors?.required">
+                            * required field
+                        </div>
+                    </div>
+                    <div *ngIf="transactionInformationForm.get('chequeNo')?.invalid"
+                        class="error-msg-common text-danger">
+                        <div
+                            *ngIf="!transactionInformationForm.get('chequeNo').errors?.required && transactionInformationForm?.get('chequeNo')?.errors">
+                            * not a valid input
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group row" *ngIf="displaytxnId">
+                <label for="" class="col-sm-3 col-form-label pr-0 text-right" id="transactionLabelId">Txn Id
+                    <span class="text-danger">*</span></label>
+                <div class="col-sm-9">
+                    <input formControlName="transactionId" type="text" class="form-control" id="transaction"
+                        placeholder="Enter Transaction Id" (keyup)="onSearchTransactionId($event)">
+                    <div *ngIf="transactionInformationForm.get('transactionId')?.touched"
+                        class="error-msg-common text-danger">
+                        <div *ngIf="transactionInformationForm.get('transactionId').errors?.required">
+                            * required field
+                        </div>
+                    </div>
+           
+                    <div *ngIf="transactionInformationForm.get('transactionId')?.invalid"
+                    class="error-msg-common text-danger">
+                    <div
+                        *ngIf="!transactionInformationForm.get('transactionId').errors?.required && transactionInformationForm?.get('transactionId')?.errors">
+                        * not a valid input
+                    </div>
+                </div>
+                <div *ngIf="showTxnId"  class="error-msg-common text-danger">
+                    TransactionId already exists
+                    <!-- <div
+                        *ngIf="!transactionInformationForm.get('transactionId').errors?.required && transactionInformationForm?.get('transactionId')?.errors">
+                       
+                    </div> -->
+                
+                </div>
+                </div>
+            </div>
+            <div class="form-group row" *ngIf="displayPhoneNumber">
+                <label for="" id="addLabelPhone" class="col-sm-3 col-form-label pr-0 text-right">Phone <span class="text-danger">*</span></label>
+                <div class="col-sm-9">
+        
+                  <input type="text" class="form-control" id="addPhone" formControlName="phoneNumber" placeholder="Phone">
+        
+                  <div *ngIf="transactionInformationForm.get('phoneNumber')?.touched" class="error-msg-common text-danger">
+                    <div *ngIf="transactionInformationForm.get('phoneNumber').errors?.required">
+                      * required field
+                    </div>
+                  </div>
+                  <div *ngIf="transactionInformationForm.get('phoneNumber')?.invalid" class="error-msg-common text-danger">
+                    <div
+                      *ngIf="!transactionInformationForm.get('phoneNumber').errors?.required && transactionInformationForm?.get('phoneNumber')?.errors">
+                      * not a valid input
+                    </div>
+                  </div>
+                </div>
+              </div>
+            <div class="form-group row">
+                <label for="" class="col-sm-3 col-form-label pr-0 text-right" id="addReasonLabel">Reason <span
+                    class="text-danger">*</span></label>
+                <div class="col-sm-9">
+                  <textarea  type="text" id="addReason" formControlName="reason" class="form-control"></textarea>
+                  <div *ngIf="transactionInformationForm.get('reason')?.touched" class="error-msg-common text-danger">
+                    <div *ngIf="transactionInformationForm.get('reason').errors?.required">
+                     * required field
+                    </div>
+                  </div>
+                  <div *ngIf="transactionInformationForm.get('reason')?.invalid"
+                    class="error-msg-common text-danger">
+                    <div
+                        *ngIf="!transactionInformationForm.get('reason').errors?.required && transactionInformationForm?.get('reason')?.errors">
+                        * not a valid input
+                    </div>
+                </div>
+                </div>
+              </div>
+            <!-- <div class="form-group row">
+        <div class="col-lg-12  radio-Item-Supplier">
+            <div class="d-inline mr-3">
+                <label id="addtransactiontype" class="mb-0">Transaction Type</label>
+              </div>
+            <div class="d-inline custom-control custom-radio mr-3">
+                <input [ngModelOptions]="{standalone: true}"
+                    class="custom-control-input" [(ngModel)]="type" type="radio" id="radioItemSuppliers"
+                    name="type" value="Y">
+                <label class="custom-control-label" id="addItemSupplierLabelItemSupplier"
+                    for="radioItemSuppliers">Credit </label>
+            </div>
+            <div class="d-inline custom-control custom-radio">
+                <input  [ngModelOptions]="{standalone: true}"
+                    class="custom-control-input" [(ngModel)]="type" type="radio" id="radioSupplierItems"
+                    name="type" value="N">
+                <label class="custom-control-label" id="addItemSupplierLabelSupplierItem"
+                    for="radioSupplierItems">Debit </label>
+            </div>
+
+        </div>
+    </div> -->
+          <!--   <div class="form-group row">
+                <div class="col-lg-12  radio-transaction-type">
+                    <div class="d-inline mr-3">
+                        <label id="addtransactiontype" class="mb-0">Transaction Type</label>
+                    </div>
+                    <div class="d-inline custom-control custom-radio mr-3" *ngIf="selectedMode==Deposit">
+                        <input class="custom-control-input" [(ngModel)]="selectedType" type="radio"
+                            id="radioCreditType" value="Credit" formControlName="transactionType"
+                            (change)="onTypeChanged($event)" name="transactionType">
+                        <label class="custom-control-label" id="addCredittype" for="radioCreditType">Credit
+                        </label>
+                    </div>
+                    <div class="d-inline custom-control custom-radio" *ngIf="!(selectedMode==Deposit)">
+                        <input class="custom-control-input" [(ngModel)]="selectedType" type="radio"
+                            id="radioDebitType" value="Debit" formControlName="transactionType"
+                            (change)="onTypeChanged($event)" name="transactionType">
+                        <label class="custom-control-label" id="addDebitType" for="radioDebitType">Debit
+                        </label>
+                    </div>
+
+                </div>
+            </div> -->
+<!-- -------------------------------------------------------------------------------- -->
+
+<!-- --------------------------------------------------------------------------------------------- -->
+            <!--     <div class="form-group row">
+        <div class="col-sm-12 justify-content-end d-flex pt-2">
+          <div class="d-inline mr-3">
+            <label id="addtransactiontype" class="mb-0">Transaction Type</label>
+          </div>
+          <div class="custom-control d-inline custom-radio mr-3">
+            <input  type="radio" name="credit"class="custom-control-input checkradiotrue" formControlName="credit"
+              value="credit" id="credit">
+            <label id="addTransactionTypeCredit" class="custom-control-label" >Credit</label>
+          </div>
+          <div class="custom-control d-inline custom-radio">
+            <input  type="radio" name="debit" class="custom-control-input checkradiofalse" formControlName="debit"
+            value="debit" id="debit">
+            <label id="addTransactionTypeDebit" class="custom-control-label" >Debit</label>
+          </div>
+        </div>
+      </div> -->
+        </div>
+
+    </div>
+    <div class="row pt-4">
+        <div class="col mb-3 pt-2 text-center">
+            <button (click)="onTransactionSubmit()" class="btn btn-primary px-4"
+                [disabled]="checkFormDisability() || txnButtonSubmitDisable" id="mu-adduser-save">Save</button>
+            <input type="button" class="btn btn-secondary px-4 ml-3" (click)="reset()" id="mu-adduser-cancel"
+                value="Cancel">
+        </div>
+    </div>
+</form>
+<ng4-loading-spinner [loadingText]="'Please wait...'" [timeout]="400000000"> </ng4-loading-spinner>

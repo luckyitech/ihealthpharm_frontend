@@ -1,0 +1,25 @@
+export class StockModel {
+  stockId;
+  stockNumber;
+  item;
+  pharmacy;
+  supplier;
+  quantity;
+  unitSaleRate;
+  mrp;
+  margin;
+  marginAmount;
+  remarks;
+  saleDiscountAmount;
+  saleDiscountPercentage;
+  auditId;
+  batchNo;
+  expiryDt;
+  manufactureDt;
+  purchaseDiscountAmount;
+  purchaseDiscountPercentage;
+  unitPurchaseRate;
+  rack;
+  self;
+  barcode;
+}

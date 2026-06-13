@@ -1,0 +1,74 @@
+<div class="col left-menu p-0 border-right-lg bg-light">
+  <div class="accordion" id="left-accordion-menu">
+    <div class="card bg-light">
+      <div class="card-header p-0">
+        <h2 class="mb-0 border-bottom border-white" [routerLink]="['/finance/creditnote']">
+          <button class="btn btn-link btn-block text-left py-2 px-3 text-white no-childern" type="button">
+            <fa-icon [icon]="faBookOpen" class="mr-2"></fa-icon><span>Credit Note</span>
+          </button>
+        </h2>
+      </div>
+      <div class="card-header p-0">
+        <h2 class="mb-0 border-bottom border-white" [routerLink]="['/finance/debitnote']">
+          <button class="btn btn-link btn-block text-left py-2 px-3 text-white no-childern" type="button">
+            <fa-icon [icon]="faStickyNote" class="mr-2"></fa-icon><span>Debit Note</span>
+          </button>
+        </h2>
+      </div>
+      <div class="card-header p-0">
+        <h2 class="mb-0 border-bottom border-white" [routerLink]="['/finance/payments']">
+          <button class="btn btn-link btn-block text-left py-2 px-3 text-white no-childern" type="button">
+            <fa-icon [icon]="faMoneyBillAlt" class="mr-2"></fa-icon><span>Account Payables</span>
+          </button>
+        </h2>
+      </div>
+      <div class="card-header p-0">
+        <h2 class="mb-0 border-bottom border-white" [routerLink]="['/finance/receipts']">
+          <button class="btn btn-link btn-block text-left py-2 px-3 text-white no-childern" type="button">
+            <fa-icon [icon]="faReceipt" class="mr-2"></fa-icon><span>Account Receivables</span>
+          </button>
+        </h2>
+      </div>
+      <!--<div class="card-header p-0">
+        <h2 class="mb-0 border-bottom border-white" [routerLink]="['/finance/pettycash']">
+          <button class="btn btn-link btn-block text-left py-2 px-3 text-white no-childern" type="button">
+            <fa-icon [icon]="faReceipt" class="mr-2"></fa-icon><span>Petty Cash</span>
+          </button>
+        </h2>
+      </div>-->
+      <div class="card-header p-0">
+        <h2 class="mb-0 border-bottom border-white" [routerLink]="['/finance/chartofaccounts']">
+          <button class="btn btn-link btn-block text-left py-2 px-3 text-white no-childern" type="button">
+            <fa-icon [icon]="faReceipt" class="mr-2"></fa-icon><span>Chart Of Accounts</span>
+          </button>
+        </h2>
+      </div>
+      <div class="card-header p-0">
+        <h2 class="mb-0 border-bottom border-white" [routerLink]="['/finance/tillbalance']">
+          <button class="btn btn-link btn-block text-left py-2 px-3 text-white no-childern" type="button">
+            <fa-icon [icon]="faReceipt" class="mr-2"></fa-icon><span>Till Balance</span>
+          </button>
+        </h2>
+      </div>
+      <div class="card-header p-0">
+        <h2 class="mb-0 border-bottom border-white" [routerLink]="['/finance/bank-transactions']">
+          <button class="btn btn-link btn-block text-left py-2 px-3 text-white no-childern" type="button">
+            <fa-icon [icon]="faReceipt" class="mr-2"></fa-icon><span>Bank Transactions</span>
+          </button>
+        </h2>
+      </div>
+      <div class="card-header p-0">
+        <h2 class="mb-0 border-bottom border-white" [routerLink]="['/finance/expenses']">
+          <button class="btn btn-link btn-block text-left py-2 px-3 text-white no-childern" type="button">
+            <fa-icon [icon]="faBookOpen" class="mr-2"></fa-icon><span>Expenses</span>
+          </button>
+        </h2>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="col-lg right-content bg-extra-light p-0">
+  <div class="p-4">
+    <router-outlet></router-outlet>
+  </div>
+</div>

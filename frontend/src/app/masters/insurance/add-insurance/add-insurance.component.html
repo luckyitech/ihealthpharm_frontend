@@ -1,0 +1,379 @@
+<form #insuranceForm="ngForm" [formGroup]="insuranceInformationForm" (keydown.enter)="$event.preventDefault()"
+  (ngSubmit)="onSubmit()" class="full-height">
+
+  <h6 class="border border-primary p-2 mt-3 mb-4 bg-light text-white">Generic Details</h6>
+
+  <div class="row">
+    <div class="col-lg-4">
+
+      <div class="form-group row">
+        <label for="" class="col-sm-3 col-form-label pr-0 text-right" id="addInsuranceLabelCompanyCode">Comp Cd <span
+            class="text-danger">*</span></label>
+        <div class="col-sm-9">
+          <input type="text" class="form-control" id="addInsurnceCompanyCode" formControlName="companyName"
+            placeholder="Company Code">
+          <div *ngIf="insuranceInformationForm.get('companyName')?.touched" class="error-msg-common text-danger">
+            <div *ngIf="insuranceInformationForm.get('companyName').errors?.required">
+              * required field
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-4">
+      <div class="form-group row">
+        <label for="" class="col-sm-3 col-form-label pr-0 text-right" id="addInsuranceLabelPolicyCode">Pol Code <span
+            class="text-danger">*</span></label>
+        <div class="col-sm-9">
+          <input type="text" class="form-control" id="addInsurncePolicyCode" formControlName="policyCode"
+            placeholder="Policy Code">
+          <div *ngIf="insuranceInformationForm.get('policyCode')?.touched" class="error-msg-common text-danger">
+            <div *ngIf="insuranceInformationForm.get('policyCode').errors?.required">
+              * required field
+            </div>
+          </div>
+          <div *ngIf="insuranceInformationForm.get('policyCode').invalid"
+            class="error-msg-common text-danger">
+            <div
+              *ngIf="!insuranceInformationForm.get('policyCode').errors?.required && insuranceInformationForm.get('policyCode')?.errors">
+              * not a valid input
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-4">
+      <div class="form-group row">
+        <label for="" class="col-sm-3 col-form-label pr-0 text-right" id="addInsuranceLabelPolicyDescription">Pol Desc
+          <span class="text-danger">*</span>
+        </label>
+        <div class="col-sm-9">
+          <input type="text" id="addInsurncePolicyDescription" class="form-control" formControlName="policyDescription"
+            placeholder="Policy Description">
+          <div *ngIf="insuranceInformationForm.get('policyDescription')?.touched" class="error-msg-common text-danger">
+            <div *ngIf="insuranceInformationForm.get('policyDescription').errors?.required">
+              * required field
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h6 class="border border-primary p-2 mt-3 mb-4 bg-light text-white">Policy Details</h6>
+
+  <div class="row">
+    <div class="col-lg-4">
+      <div class="form-group row">
+        <label for="" class="col-sm-3 col-form-label pr-0 text-right" id="addInsuranceLabelStartDate">Start Date <span
+            class="text-danger">*</span></label>
+        <div class="col-sm-9">
+          <input type="date" id="addInsurnceStartDate" (change)="selectedStartDate($event)" class="form-control"
+            formControlName="policyStartDate" (ngModelChange)="modelChanged($event)" />
+          <div *ngIf="insuranceInformationForm.get('policyStartDate')?.touched" class="error-msg-common text-danger">
+            <div *ngIf="insuranceInformationForm.get('policyStartDate').errors?.required">
+              * required field
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="form-group row">
+        <label for="" class="col-sm-3 col-form-label pr-0 text-right" id="addInsuranceLabelEndDate">End Date <span
+            class="text-danger">*</span></label>
+        <div class="col-sm-9">
+          <input type="date" id="addInsurnceEndDate" (change)="selectedStartDate($event)" class="form-control"
+            formControlName="policyEndDate"  (ngModelChange)="modelChanged($event)" />
+          <div *ngIf="insuranceInformationForm.get('policyEndDate')?.touched" class="error-msg-common text-danger">
+            <div *ngIf="insuranceInformationForm.get('policyEndDate').errors?.required">
+              * required field
+            </div>
+          </div>
+          <div class="error-msg-common text-danger"
+          *ngIf="insuranceInformationForm.get('policyEndDate').errors &&
+          insuranceInformationForm.get('policyEndDate').dirty &&
+          insuranceInformationForm.get('policyEndDate').errors.invalidDob">
+                not valid date
+         </div>
+        </div>
+      </div>
+      <div class="form-group row">
+        <label for="" class="col-sm-3 col-form-label pr-0 text-right" id="addInsuranceLabelDuration">Duration In Months
+        </label>
+        <div class="col-sm-9">
+          <input type="text" disabled id="addInsurnceDuration" class="form-control" formControlName="policyDurationInMonths"
+            placeholder="Duration">
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-4">
+      <div class="form-group row">
+        <label class="col-sm-3 col-form-label pr-0 text-right" id="addInsuranceLabelLimit">Limit <span
+            class="text-danger">*</span></label>
+        <div class="col-sm-9">
+          <input type="text" class="form-control"  id="addInsurnceLimit" formControlName="policyAmountLimit"
+            placeholder="Limit" />
+          <div *ngIf="insuranceInformationForm.get('policyAmountLimit')?.touched" class="error-msg-common text-danger">
+            <div *ngIf="insuranceInformationForm.get('policyAmountLimit').errors?.required">
+              * required field
+            </div>
+          </div>
+          <div *ngIf="insuranceInformationForm.get('policyAmountLimit')?.invalid"
+          class="error-msg-common text-danger">
+          <div *ngIf="!insuranceInformationForm.get('policyAmountLimit').errors?.required && insuranceInformationForm?.get('policyAmountLimit')?.errors">
+            * not a valid input
+          </div>
+        </div>
+        </div>
+      </div>
+      <div class="form-group row">
+        <label class="col-sm-3 col-form-label pr-0 text-right" id="addInsuranceLabelMedic">Medic (-)
+        </label>
+        <div class="col-sm-9">
+          <input type="text" class="form-control" id="addInsurnceMedic" 
+            placeholder="Medic not covered">
+        </div>
+      </div>
+      <div class="form-group row">
+        <label for="" class="col-sm-3 col-form-label pr-0 text-right" id="addInsuranceLabelT&C">T&C</label>
+        <div class="col-sm-9">
+          <input type="text" class="form-control" id="addInsurnceT&C" formControlName="termsAndConditions"
+            placeholder="T&C">
+        </div>
+      </div>
+    </div>
+
+
+    <!--d-flex justify-content-center align-items-center  -->
+    <div class="col-lg-4 ">
+      <div class="form-group row">
+        <label for="" class="col-sm-3 col-form-label pr-0 text-right" id="addInsuranceLabelT&A">T&A </label>
+        <div class="col-sm-9">
+
+          <input type="file" class="form-control-file" (change)="onInsuranceLogoChange($event)" id="mu-adduser-logo"
+            formControlName="termsAndConditionsFile"
+            accept="image/*,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document" />
+        </div>
+      </div>
+      <div class="form-group row">
+        <label class="col-sm-3 col-form-label pr-0 text-right" id="addInsuranceLabelContr%">Contr %
+        </label>
+        <div class="col-sm-9">
+          <input type="text" class="form-control" id="addInsurnceContr%" formControlName="contributionPercentage"
+            placeholder="Contribution Percentage">
+            <div *ngIf="insuranceInformationForm.get('contributionPercentage')?.invalid" class="error-msg-common text-danger">
+                <div
+                  *ngIf="!insuranceInformationForm.get('contributionPercentage').errors?.required && insuranceInformationForm?.get('contributionPercentage')?.errors">
+                  * not a valid input
+                </div>
+              </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <h6 class="border border-primary p-2 mt-3 mb-4 bg-light text-white">Contact Details</h6>
+
+  <div class="row">
+    <div class="col-lg-4">
+      <div class="form-group row">
+        <label for="" class="col-sm-3 col-form-label pr-0 text-right" id="addInsuranceLabelAddressOne">Address 1 <span
+            class="text-danger">*</span></label>
+        <div class="col-sm-9">
+          <input type="text" class="form-control" id="addInsurnceAddressOne" formControlName="addressLine1"
+            placeholder="Address 1">
+          <div *ngIf="insuranceInformationForm.get('addressLine1')?.touched" class="error-msg-common text-danger">
+            <div *ngIf="insuranceInformationForm.get('addressLine1').errors?.required">
+              * required field
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="form-group row">
+        <label for="" class="col-sm-3 col-form-label pr-0 text-right" id="addInsuranceLabelAddressTwo">Address 2
+        </label>
+        <div class="col-sm-9">
+          <input type="text" class="form-control" id="addInsurnceAddressTwo" formControlName="addressLine2"
+            placeholder="Address 2">
+        </div>
+      </div>
+      <div class="form-group row">
+        <label for="" class="col-sm-3 col-form-label pr-0 text-right" id="addInsuranceLabelCountry">Country <span
+            class="text-danger">*</span></label>
+        <div class="col-sm-9">
+          <ng-select (change)="onCountrySelected($event)" id="addInsurnceCountry" placeholder="-- Select --"
+            [(ngModel)]="selectedCountry" formControlName="country" [items]="countries"
+            bindLabel="countryName">
+          </ng-select>
+          <div *ngIf="insuranceInformationForm.get('country')?.touched" class="error-msg-common text-danger">
+            <div *ngIf="insuranceInformationForm.get('country').errors?.required">
+              * required field
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-4">
+      <div class="form-group row">
+        <label for="" class="col-sm-3 col-form-label pr-0 text-right" id="addInsuranceLabelState">State / Province<span
+            class="text-danger">*</span></label>
+        <div class="col-sm-9">
+          <ng-select [items]="states" id="addInsurnceState" placeholder="-- Select --" [(ngModel)]="selectedState"
+          formControlName="state" bindLabel="provinceName">
+          </ng-select>
+          <div *ngIf="insuranceInformationForm.get('state')?.touched" class="error-msg-common text-danger">
+            <div *ngIf="insuranceInformationForm.get('state').errors?.required">
+              * required field
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="form-group row">
+        <label for="" class="col-sm-3 col-form-label pr-0 text-right" id="addInsuranceLabelCity">City </label>
+        <div class="col-sm-9">
+          <input type="text" class="form-control" id="addInsurnceCity" formControlName="cityName" placeholder="City">
+        </div>
+      </div>
+      <div class="form-group row">
+        <label for="" class="col-sm-3 col-form-label pr-0 text-right" id="addInsuranceLabelPinCode">Pin Code <span
+            class="text-danger">*</span></label>
+        <div class="col-sm-9">
+          <input type="text" class="form-control" id="addInsurncePinCode" formControlName="zipCode"
+            placeholder="Pin Code">
+          <div *ngIf="insuranceInformationForm.get('zipCode')?.touched" class="error-msg-common text-danger">
+            <div *ngIf="insuranceInformationForm.get('zipCode').errors?.required">
+              * required field
+            </div>
+          </div>
+          <div *ngIf="insuranceInformationForm.get('zipCode')?.invalid" class="error-msg-common text-danger">
+            <div
+              *ngIf="!insuranceInformationForm.get('zipCode').errors?.required && insuranceInformationForm?.get('zipCode')?.errors">
+              * not a valid input
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-4">
+      <div class="form-group row">
+        <label for="" class="col-sm-3 col-form-label pr-0 text-right" id="addInsuranceLabelPhone">Phone <span
+            class="text-danger">*</span></label>
+        <div class="col-sm-9">
+          <input type="text" class="form-control" id="addInsurncePhone" formControlName="contactNumber"
+            placeholder="Phone Number">
+          <div *ngIf="insuranceInformationForm.get('contactNumber')?.touched" class="error-msg-common text-danger">
+            <div *ngIf="insuranceInformationForm.get('contactNumber').errors?.required">
+              * required field
+            </div>
+          </div>
+          <div *ngIf="insuranceInformationForm.get('contactNumber')?.invalid" class="error-msg-common text-danger">
+            <div
+              *ngIf="!insuranceInformationForm.get('contactNumber').errors?.required && insuranceInformationForm?.get('contactNumber')?.errors">
+              * not a valid input
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="form-group row">
+        <label for="" class="col-sm-3 col-form-label pr-0 text-right" id="addInsuranceLabelEmail">Email </label>
+        <div class="col-sm-9">
+          <input type="text" class="form-control" id="addInsurnceEmail" formControlName="emailId" placeholder="Email">
+
+          <div
+            *ngIf="insuranceInformationForm.get('emailId')?.invalid && insuranceInformationForm.get('emailId')?.touched"
+            class="error-msg-common text-danger">
+            <div
+              *ngIf="!insuranceInformationForm.get('emailId').errors?.required && insuranceInformationForm?.get('emailId')?.errors">
+              * not a valid input
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h6 class="border border-primary p-2 mt-3 mb-4 bg-light text-white" id="addInsuranceContactPerson">Contact Person
+    Details</h6>
+
+  <div class="row">
+    <div class="col-lg-4">
+      <div class="form-group row">
+        <label for="" class="col-sm-3 col-form-label pr-0 text-right" id="addInsuranceLabelContactPerson">First Name
+          <span class="text-danger">*</span></label>
+        <div class="col-sm-9">
+          <input type="text" class="form-control" id="addInsurnceContactPersonFirstName"
+            formControlName="contactPersonFirstName" placeholder="First Name">
+          <div *ngIf="insuranceInformationForm.get('contactPersonFirstName')?.touched"
+            class="error-msg-common text-danger">
+            <div *ngIf="insuranceInformationForm.get('contactPersonFirstName').errors?.required">
+              * required field
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="form-group row">
+        <label for="" class="col-sm-3 col-form-label pr-0 text-right" id="addInsuranceLabelLastName">Last Name <span
+            class="text-danger">*</span></label>
+        <div class="col-sm-9">
+          <input type="text" class="form-control" id="addInsurnceContactPersonLastName"
+            formControlName="conatctPersonLastName" placeholder="Last Name">
+          <div *ngIf="insuranceInformationForm.get('conatctPersonLastName')?.touched"
+            class="error-msg-common text-danger">
+            <div *ngIf="insuranceInformationForm.get('conatctPersonLastName').errors?.required">
+              * required field
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-4">
+      <div class="form-group row">
+        <label for="" class="col-sm-3 col-form-label pr-0 text-right" id="addInsuranceLabelContPersonPhone">Phone
+        </label>
+        <div class="col-sm-9">
+          <input type="text" id="addInsuranceContPersonPhone" class="form-control"
+            formControlName="contactPersonPhoneNumber" placeholder="Phone Number">
+            <div
+            *ngIf="insuranceInformationForm.get('contactPersonPhoneNumber')?.invalid && insuranceInformationForm.get('contactPersonPhoneNumber')?.touched"
+            class="error-msg-common text-danger">
+            <div
+              *ngIf="!insuranceInformationForm.get('contactPersonPhoneNumber').errors?.required && insuranceInformationForm?.get('contactPersonPhoneNumber')?.errors">
+              * not a valid input
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-4">
+      <div class="form-group row">
+        <label for="" class="col-sm-3 col-form-label pr-0 text-right" id="addInsuranceLabelContPersonEmail">Email
+        </label>
+        <div class="col-sm-9">
+          <input type="text" class="form-control" id="addInsurnceContPersonEmail" formControlName="contactPersonEmailId"
+            placeholder="Email">
+          <div
+            *ngIf="insuranceInformationForm.get('contactPersonEmailId')?.invalid && insuranceInformationForm.get('contactPersonEmailId')?.touched"
+            class="error-msg-common text-danger">
+            <div
+              *ngIf="!insuranceInformationForm.get('contactPersonEmailId').errors?.required && insuranceInformationForm?.get('contactPersonEmailId')?.errors">
+              * not a valid input
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col mb-3 pt-2 text-center">
+      <button class="btn btn-primary px-4" type="submit" [disabled]="checkFormDisability()">Save</button>
+      <input type="button" class="btn btn-secondary px-4 ml-3" id="mu-adduser-cancel"
+      (click)="insuranceInformationForm.reset();insuranceInformationForm.controls.activeS.setValue('Y')" 
+      value="Cancel">  
+    </div>
+  </div>
+
+</form>
+<ng4-loading-spinner [loadingText]="'Please wait...'" [timeout]="400000000"> </ng4-loading-spinner>

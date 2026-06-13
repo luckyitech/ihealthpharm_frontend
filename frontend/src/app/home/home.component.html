@@ -1,0 +1,35 @@
+<div class="col left-menu p-0 border-right-lg bg-light">
+  <div class="accordion" id="left-accordion-menu">
+    <div class="card bg-light">
+      <div class="card-header p-0">
+        <h2 class="mb-0 border-bottom border-white">
+          <button *ngIf="showSalesByDates" class="btn btn-link btn-block text-left py-2 px-3 text-white no-childern" type="button" 
+          [routerLink]="['/home/dashboard2']">
+            <fa-icon [icon]="faChartPie" class="mr-2" ></fa-icon><span>SalesByDates</span>
+          </button>
+        </h2>
+      </div>
+      <div class="card-header p-0">
+        <h2 class="mb-0 border-bottom border-white">
+          <button *ngIf="showSalesByPerson" class="btn btn-link btn-block text-left py-2 px-3 text-white no-childern" type="button" 
+          [routerLink]="['/home/salesByPerson']">
+            <fa-icon [icon]="faChartPie" class="mr-2" ></fa-icon><span>SalesByPerson</span>
+          </button>
+        </h2>
+      </div>
+      <div class="card-header p-0">
+        <h2 class="mb-0 border-bottom border-white">
+          <button *ngIf="showSalesByHour" class="btn btn-link btn-block text-left py-2 px-3 text-white no-childern" type="button" 
+          [routerLink]="['/home/salesByHourAndPerson']">
+            <fa-icon [icon]="faChartPie" class="mr-2" ></fa-icon><span>SalesByHour</span>
+          </button>
+        </h2>
+      </div>
+    </div>
+  </div>
+</div>
+<div  class="col-lg right-content bg-extra-light p-0">
+  <div class="p-4">
+    <router-outlet></router-outlet>
+  </div>
+</div>

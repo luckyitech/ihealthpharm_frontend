@@ -1,0 +1,213 @@
+<h6 class="border border-primary p-2 mt-3 mb-4 bg-light text-white">Approval Details</h6>
+<div class="row">
+  <div class="col-lg-4">
+    <form class="form-inline">
+      <input class="form-control no-right-border-radius" type="text" placeholder="Search here.." aria-label="Search"
+        (keyup)="OnQTNApprovedSearch($event)">
+      <button class="btn btn-primary no-left-border-radius">Search</button>
+    </form>
+  </div>
+  <div class="col-lg-4">
+    <div class="col-sm-9">
+      <ng-select [items]="suppliersListUnderQuotation" bindLabel="name" placeholder="Select Supplier"
+        [(ngModel)]="selectedSupplier" [ngModelOptions]="{standalone: true}" 
+        (change)="onSupplierChange($event)" >
+      </ng-select>
+    </div>
+
+  </div>
+
+  <div class="col-lg-4">
+    <button class="btn btn-primary mr-2" (click)="onPrint()">Print Pdf</button>
+    <button class="btn btn-primary ml-2" (click)="onPrintExcel()">Generate Excel</button>
+
+  </div>
+</div>
+
+<div class="row">
+  <div class="col py-3">
+    <!-- (cellClicked)='onCellClicked($event)' -->
+    <ag-grid-angular id="approve" *ngIf="showApprovedGrid" style="width: 100%; height: 620px;" class="ag-theme-balham"
+      [gridOptions]="approvedGridOptions" [getRowNodeId]="getRowNodeId" [rowData]="rowData"
+      [rowSelection]="rowSelection" (cellClicked)='onCellClicked($event)' (gridReady)="onGridReady($event)"
+      (selectionChanged)="onSelectionChanged($event)">
+    </ag-grid-angular>
+  </div>
+</div>
+
+
+<div class="row">
+  <div class="col-12 text-right">
+    <button [disabled]="approvedGridOptions?.api?.getSelectedRows()?.length === 0" class="btn btn-primary mr-2"
+      (click)="send()">Send Quotation By Mail</button>
+    <!-- <button [disabled]="approvedGridOptions?.api?.getSelectedRows()?.length === 0" class="btn btn-primary"
+      (click)="download()">Print</button> -->
+    <!-- <input type="file" (change)="onChange($event)" #inputFile class="btn btn-primary col-sm-2"> -->
+    
+    <button class="btn btn-primary" onclick="document.getElementById('getFile').click()">Select Excel Attachment</button>
+    <input type='file' id="getFile" (change)="onChange($event)" #inputFile style="display:none">
+    <span>{{excelFile?excelFile.name:''}}</span>
+    <div *ngIf="isExcelFile === false" class="error-msg-common text-danger">
+      This is not an Excel file
+    </div>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-sm-3"></div>
+  <div class="col-sm-6">
+    <div class="row grid-area">
+      <div class="col py-3">
+        <ag-grid-angular id="email" style="width: 100%; height: 200px;" class="ag-theme-balham"
+          [gridOptions]="emailGridOptions" [getRowNodeId]="getRowNodeId" [rowData]="emialGridData"
+          [rowSelection]="rowSelection" (selectionChanged)="onSelectionChanged2($event)">
+        </ag-grid-angular>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-12 text-center">
+        <!--  [disabled]="emailGridOptions?.api?.getSelectedRows()?.length === 0" -->
+        <button class="btn btn-primary mr-2" (click)="sendingEmails()">Send</button>
+        <!-- [disabled]="emailGridOptions?.api?.getSelectedRows()?.length === 0" -->
+        <button class="btn btn-secondary" (click)="cancelEmails()">Cancel</button>
+      </div>
+    </div>
+  </div>
+  <div class="col-sm-3"></div>
+</div>
+
+<div class="modal fade" id="approvedModal" tabindex="-1" role="dialog" aria-labelledby="pendingLabel">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Quotation Details</h4>
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+      </div>
+      <div class="modal-body">
+
+        <!-- <ul class="nav nav-pills mb-3 border-bottom border-secondary" id="pills-tab" role="tablist">
+          <li class="nav-item">
+            <a class="nav-link active" id="pills-home-tab" data-toggle="pill" href="#pills-home" role="tab"
+              aria-controls="pills-home" aria-selected="true">New Quotation</a>
+          </li>
+        </ul> -->
+        <div class="tab-content" id="pills-tabContent">
+          <div class="tab-pane fade show active" id="pills-home" role="tabpanel" aria-labelledby="pills-home-tab">
+
+            <form class="">
+              <h6 class="border border-primary p-2 mt-3 mb-4 bg-light text-white">Quotation Details</h6>
+
+              <div class="row">
+                <div class="col-lg-4">
+                  <div class="form-group row">
+                    <label id="requestQuotLabelNumber" for=""
+                      class="col-sm-3 col-form-label pr-0 text-right">Number</label>
+                    <div class="col-sm-9">
+                      <input type="text" disabled class="form-control" id="requestQuotationNumber"
+                        placeholder="Quotation Number">
+                    </div>
+                  </div>
+                  <div class="form-group row">
+                    <label id="requestQuotLabelRequested" for=""
+                      class="col-sm-3 col-form-label pr-0 text-right">Requested</label>
+                    <div class="col-sm-9">
+                      <input type="text" class="form-control" id="requestQuotationRequested" placeholder="Created By"
+                        value="" disabled>
+                    </div>
+                  </div>
+                  <div class="form-group row">
+                    <label id="requestQuotLabelCreated" for=""
+                      class="col-sm-3 col-form-label pr-0 text-right">Created</label>
+                    <div class="col-sm-9">
+                      <input type="text" class="form-control" id="requestQuotationCreated" placeholder="Created By"
+                        value="" disabled>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-lg-4">
+                  <div class="form-group row">
+                    <label id="requestQuotLabelDated" for=""
+                      class="col-sm-3 col-form-label pr-0 text-right">Date</label>
+                    <div class="col-sm-9">
+                      <input disabled type="date" class="form-control" id="requestQuotationDated"
+                        placeholder="Quotation Date">
+                    </div>
+                  </div>
+                  <div class="form-group row">
+                    <label id="requestQuotLabelExpiry" for=""
+                      class="col-sm-3 col-form-label pr-0 text-right">Expiry</label>
+                    <div class="col-sm-9">
+                      <input disabled type="date" class="form-control" id="requestQuotationExpiry"
+                        placeholder="Quotation Expiry Date">
+                    </div>
+                  </div>
+                </div>
+                <div class="col-lg-4">
+                  <!-- <div class="form-group row">
+                    <label id="requestQuotLabelAdd" for="" class="col-sm-3 col-form-label pr-0 text-right">Add New</label>
+                    <div class="col-sm-9 ">
+                      <button class="btn btn-info mr-2">Item-Supplier</button>
+                      <button class="btn btn-info">Supplier-Item</button>
+                    </div>
+                  </div> -->
+                  <div class="form-group row">
+                    <label id="requestQuotLabelDesc" for="" class="col-sm-3 col-form-label pr-0 text-right">Desc</label>
+                    <div class="col-sm-9">
+                      <textarea class="form-control min-height-83" id="requestQuotationDesc"
+                        placeholder="Quotation Description" disabled></textarea>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <h6 class="border border-primary p-2 mt-3 mb-4 bg-light text-white">Item Details</h6>
+
+              <!-- <div class="row">
+                <div class="col-12 text-right">
+                  <button class="btn btn-primary mr-2">Edit</button>
+                  <button class="btn btn-primary">Delete</button>
+                </div>
+              </div> -->
+
+              <div class="row">
+                <div class="col py-3">
+                  <ag-grid-angular id="quotGrid" style="width: 100%; height: 200px;" class="ag-theme-balham"
+                    [gridOptions]="quotationGridOptions" [getRowNodeId]="getRowNodeId" [rowData]="approvedQtnRowData"
+                    [rowSelection]="rowSelection" [getRowNodeId]="getRowNodeId" [suppressRowClickSelection]="true">
+                  </ag-grid-angular>
+                </div>
+              </div>
+              
+              <div class="row">
+                <div class="col-4"></div>
+                <div class="col-4">
+                  <div class="form-group row">
+                    <label for="" class="col-12 col-form-label pr-0 text-center">Remarks </label>
+                    <div class="col-12">
+                      <textarea class="form-control min-height-83" id="remarks" 
+                        placeholder="Remarks"></textarea>
+                    </div>
+        
+                  </div>
+                </div>
+              </div>
+              <!-- <div class="row">
+                <div class="col mb-3 pt-2 text-center">
+                  <button (click)="approval()" class="btn btn-primary px-4 submit-for-approval">Submit For
+                    Approval</button>
+                  <button (click)="later()" class="btn btn-secondary px-4 ml-3 submit-later">Submit Later</button>
+                </div>
+              </div> -->
+
+            </form>
+
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<ng4-loading-spinner [loadingText]="'Please wait...'" [timeout]="400000000"> </ng4-loading-spinner>

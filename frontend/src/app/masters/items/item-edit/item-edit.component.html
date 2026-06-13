@@ -1,0 +1,459 @@
+<div class="row pt-6" id="search">
+  <div class="col">
+    <form class="form-inline">
+      <input class="form-control no-right-border-radius" [(ngModel)]="searchKey" [ngModelOptions]="{standalone:true}"
+        type="text" placeholder="Search here.." aria-label="Search">
+      <!-- <div class="col-sm-12"> -->
+      <ng-select class="col-sm-4" style="padding-right: 0px;padding-left: 0px;" [items]="itemsSearchKeyArray"
+        bindLabel="name" placeholder="-- Select --" [(ngModel)]="selectedItem" [ngModelOptions]="{standalone:true}"
+        id="newStockBatch#">
+      </ng-select>
+      <!--  </div> -->
+      <button id="editItembtnSearch" (click)="searchItems()"
+        class="btn btn-primary no-left-border-radius">Search</button>
+    </form>
+  </div>
+  <div class="col text-right">
+    <button class="btn btn-primary px-4 edit-btn" [disabled]="itemGridOptions?.api?.getSelectedRows()?.length === 0"
+      id="common-grid-itembutton" (click)="editGrid()">Edit</button>
+  </div>
+</div>
+
+
+<div class="row grid-area">
+  <div class="col py-3">
+    <ag-grid-angular style="width: 100%; height: 620px;" class="ag-theme-balham" [rowData]="rowData"
+      [columnDefs]="columnDefs" *ngIf="showGrid" id="item-grid" [gridOptions]="itemGridOptions" [pagination]="true"
+      [cacheOverflowSize]="cacheOverflowSize" [maxConcurrentDatasourceRequests]="maxConcurrentDatasourceRequests"
+      [paginationPageSize]="paginationSize" (gridReady)="onGridReady($event)"
+      (paginationChanged)="onPaginationChanged($event)">
+    </ag-grid-angular>
+  </div>
+
+</div>
+
+
+<div id="item-Information" style="display: none;">
+
+  <form #hospitalForm="ngForm" [formGroup]="itemForm" (keydown.enter)="$event.preventDefault()" class="full-height">
+    <h6 class="border border-primary p-2 mt-3 mb-4 bg-light text-white">Item Details</h6>
+
+    <div class="form-group row">
+      <div class="col-sm-6 d-flex align-items-center">
+        <div class="d-inline mr-3">
+          <label id="addItemLabelItemType" class="mb-0">Item Type</label>
+        </div>
+        <div class="custom-control d-inline custom-radio mr-3">
+          <input name="medicalOrNonMedical" type="radio" class="custom-control-input" value="M"
+            formControlName="medicalOrNonMedical" id="medical" (change)="onMedicalSelected($event)">
+          <label id="addItemLabelMedical" class="custom-control-label" for="medical">Medical</label>
+        </div>
+        <div class="custom-control d-inline custom-radio">
+          <input name="medicalOrNonMedical" type="radio" class="custom-control-input" value="N"
+            formControlName="medicalOrNonMedical" id="non-medical" (change)="onNonMedicalSelected($event)">
+          <label id="addItemLabelNonMedical" class="custom-control-label" for="non-medical">Non Medical</label>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-lg-4">
+        <div class="form-group row">
+          <label id="addItemLabelName" for="" class="col-sm-3 col-form-label pr-0 text-right">Name <span
+              class="text-danger">*</span></label>
+          <div class="col-sm-9">
+            <input id="addItemName" type="text" class="form-control" formControlName="itemName" placeholder="Item Name">
+            <div *ngIf="itemForm.get('itemName')?.touched" class="error-msg-common text-danger">
+              <div *ngIf="itemForm.get('itemName')?.errors?.required">
+                * required field
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="form-group row">
+          <label id="addItemLabelCode" for="" class="col-sm-3 col-form-label pr-0 text-right">Code </label>
+          <div class="col-sm-9">
+            <input id="addItemCode" type="text" class="form-control" formControlName="itemCode" placeholder="Item Code">
+          </div>
+        </div>
+        <div class="form-group row">
+          <label id="addItemLabelDescription" for="" class="col-sm-3 col-form-label pr-0 text-right">Desc <span
+              class="text-danger">*</span></label>
+          <div class="col-sm-9">
+            <input id="addIitemDescription" type="text" class="form-control" formControlName="itemDescription"
+              placeholder="Item Description">
+            <div *ngIf="itemForm.get('itemDescription')?.touched" class="error-msg-common text-danger">
+              <div *ngIf="itemForm.get('itemDescription')?.errors?.required">
+                * required field
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-4">
+        <div class="form-group row">
+          <label id="addItemLabelGroupCode" for="" class="col-sm-3 col-form-label pr-0 text-right">Group Code<span
+              class="text-danger">*</span>
+          </label>
+          <div class="col-sm-9">
+            <ng-select id="addItemGroupCode" [items]="itemGroups" bindLabel="groupName" [(ngModel)]="itemGroup"
+              formControlName="itemGroup" placeholder="-- Select --" (change)="onGroupCodeChanged($event)">
+            </ng-select>
+            <div *ngIf="itemForm.get('itemGroup')?.touched" class="error-msg-common text-danger">
+              <div *ngIf="itemForm.get('itemGroup')?.errors?.required">
+                * required field
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="form-group row">
+          <label id="addItemLabelGenericCode" for="" class="col-sm-3 col-form-label pr-0 text-right">Generic Code
+            
+          </label>
+          <div class="col-sm-9">
+            <ng-select id="addItemGenericCode" [items]="itemGenericNames" bindLabel="genericName"
+              formControlName="itemGenericName" placeholder="-- Select --" [(ngModel)]="itemGenericName"
+              (change)="onGenericCodeChanged($event)">
+            </ng-select>
+            <div *ngIf="genericNotAvailableMsg" class="error-msg-common text-danger">{{genericNotAvailableMsg}}</div>
+            <!-- <div *ngIf="itemForm.get('itemGenericName')?.touched" class="error-msg-common text-danger">
+              <div *ngIf="itemForm.get('itemGenericName')?.errors?.required">
+                * required field
+              </div>
+            </div> -->
+          </div>
+        </div>
+        <div class="form-group row">
+          <label id="addItemLabelCategory" for="" class="col-sm-3 col-form-label pr-0 text-right">Category
+          </label>
+          <div class="col-sm-9">
+            <ng-select id="addItemCategory" [items]="itemCategories" bindLabel="categoryName" placeholder="-- Select --"
+              (change)="onItemCategoryChanged($event)" [ngModelOptions]="{standalone: true}"
+              [(ngModel)]="selectedCategory">
+            </ng-select>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-4">
+        <div class="form-group row">
+          <label id="addItemLabelSpecialization" for="" class="col-sm-3 col-form-label pr-0 text-right">Specialization
+          </label>
+          <div class="col-sm-9">
+            <ng-select id="addItemSpecialization" [items]="specializations" bindLabel="specializationName"
+              placeholder="-- Select --" [ngModelOptions]="{standalone: true}" [(ngModel)]="selectedSpecialization"
+              (change)="onSpecilizationChanged($event)">
+            </ng-select>
+          </div>
+        </div>
+        <div class="form-group row">
+          <label id="addItemLabelManufacturer" for="" class="col-sm-3 col-form-label pr-0 text-right">Manufacturer <span
+              class="text-danger">*</span>
+          </label>
+          <div class="col-sm-9">
+            <ng-select id="addItemManufacturer" [items]="manufacturerlist" bindLabel="name" placeholder="-- Select --"
+              (change)="onManufacturerChanged($event)" [(ngModel)]="selectedManufacturer"
+              (search)="manufacturerSearch($event)" [ngModelOptions]="{standalone: true}">
+            </ng-select>
+          </div>
+        </div>
+
+        <div class="form-group row">
+          <label id="addItemLabelFormCode" for="" class="col-sm-3 col-form-label pr-0 text-right">Form Code
+            <span class="text-danger">*</span>
+          </label>
+          <div class="col-sm-9">
+            <ng-select id="addItemFormCode" [items]="itemForms" bindLabel="formCode" placeholder="-- Select --"
+              [(ngModel)]="selectedFormCode" (change)="onFormCodeChanged($event)" formControlName="itemForm">
+
+              <ng-template ng-label-tmp let-item="item">
+
+                {{ item.formCode }}
+              </ng-template>
+              <ng-template ng-option-tmp let-item="item" let-index="index">
+
+                {{ item.formCode }} -
+                {{ item.form }}
+              </ng-template>
+            </ng-select>
+            <div *ngIf="itemForm.get('itemForm')?.touched" class="error-msg-common text-danger">
+              <div *ngIf="itemForm.get('itemForm')?.errors?.required">
+                * required field
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <h6 class="border border-primary p-2 mt-3 mb-4 bg-light text-white">Item Details 2</h6>
+
+    <div class="row">
+      <div class="col-lg-4">
+        <div class="form-group row">
+          <label id="addItemLabelSpecification" for="" class="col-sm-3 col-form-label pr-0 text-right">Specification
+          </label>
+          <div class="col-sm-9">
+            <input id="addItemSpecification" type="text" class="form-control" formControlName="specification"
+              placeholder="Specification">
+          </div>
+        </div>
+        <div class="form-group row">
+          <label id="addItemLabelTemperature" for="" class="col-sm-3 col-form-label pr-0 text-right">Temperature
+          </label>
+          <div class="col-sm-9">
+            <input id="addItemTemperature" type="text" class="form-control" formControlName="temperature"
+              placeholder="Temperature">
+          </div>
+        </div>
+        <div class="form-group row">
+          <label id="itemLabelUsage" for="" class="col-sm-3 col-form-label pr-0 text-right">Usage </label>
+          <div class="col-sm-9">
+            <input id="itemUsage" type="text" class="form-control" formControlName="itemUsage" placeholder="Usage">
+          </div>
+        </div>
+        <div class="form-group row">
+          <label id="" for="" class="col-sm-3 col-form-label pr-0 text-right">Rack No</label>
+          <div class="col-sm-9">
+            <input id="" type="text" class="form-control" formControlName="rackNumber" placeholder="Rack Number">
+          </div>
+        </div>
+        <div class="form-group row">
+          <label id="" for="" class="col-sm-3 col-form-label pr-0 text-right">Shelf No</label>
+          <div class="col-sm-9">
+            <input id="" type="text" class="form-control" formControlName="shelfNumber" placeholder="Shelf Number">
+          </div>
+        </div>
+
+        <div class="form-group row">
+          <label id="" for="" class="col-sm-3 col-form-label pr-0 text-right">Latin Code
+          </label>
+          <div class="col-sm-9">
+            <ng-select id="" [items]="latinCodes" bindLabel="latinCodeAndDesc" placeholder="-- Select --"
+              (change)="onLatinCodeChanged($event)" [(ngModel)]="selectedLatinCode"
+              [ngModelOptions]="{standalone: true}">
+            </ng-select>
+          </div>
+        </div>
+        <div class="form-group row">
+          <label id="" for="" class="col-sm-3 col-form-label pr-0 text-right">Storage
+          </label>
+          <div class="col-sm-9">
+            <ng-select id="" [items]="storages" bindLabel="name" (change)="onStorageChanged($event)"
+              formControlName="storage" placeholder="-- Select --" [(ngModel)]="storage">
+            </ng-select>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-4">
+        <div class="form-group row">
+          <label id="itemLabelDosage" for="" class="col-sm-3 col-form-label pr-0 text-right">Dosage </label>
+          <div class="col-sm-9">
+            <input id="itemDosage" type="text" class="form-control" formControlName="drugDose" placeholder="Dosage">
+          </div>
+        </div>
+
+
+
+        <div class="form-group row">
+          <label id="addItemLabelPurchaseUOM" for="" class="col-sm-3 col-form-label pr-0 text-right">Purch UOM<span
+              class="text-danger">*</span>
+          </label>
+          <div class="col-sm-9">
+            <ng-select id="addItemPurchaseUOM" [items]="purchaseUOMS" bindLabel="measurementDesc"
+              formControlName="purchaseUnitMeasurementId" [(ngModel)]="purchaseUnitMeasurementId"
+              (change)="onPurchaseUOMChanged($event)" placeholder="-- Select --">
+            </ng-select>
+            <div *ngIf="itemForm.get('purchaseUnitMeasurementId')?.touched" class="error-msg-common text-danger">
+              <div *ngIf="itemForm.get('purchaseUnitMeasurementId')?.errors?.required">
+                * required field
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="form-group row">
+          <label id="addItemLabelIssueUOM" for="" class="col-sm-3 col-form-label pr-0 text-right">Issue UOM<span
+              class="text-danger">*</span>
+          </label>
+          <div class="col-sm-9">
+            <ng-select id="addItemIssueUOM" [items]="issueUOMS" bindLabel="measurementDesc"
+              [(ngModel)]="issueUnitOfMeasurementId" (change)="onIssueUOMChanged($event)"
+              formControlName="issueUnitOfMeasurementId" placeholder="-- Select --">
+            </ng-select>
+            <div *ngIf="itemForm.get('issueUnitOfMeasurementId')?.touched" class="error-msg-common text-danger">
+              <div *ngIf="itemForm.get('issueUnitOfMeasurementId')?.errors?.required">
+                * required field
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="form-group row">
+          <label id="" for="" class="col-sm-3 col-form-label pr-0 text-right">ReOrder Lvl</label>
+          <div class="col-sm-9">
+            <input id="" type="text" class="form-control" formControlName="reOrderLevel" placeholder="ReOrder Level">
+            <div *ngIf="itemForm.get('reOrderLevel')?.invalid" class="error-msg-common text-danger">
+              <div *ngIf="!itemForm.get('reOrderLevel').errors?.required && itemForm?.get('reOrderLevel')?.errors">
+                * not a valid input
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="form-group row">
+          <label id="" for="" class="col-sm-3 col-form-label pr-0 text-right">ReOrder Qty</label>
+          <div class="col-sm-9">
+            <input id="" type="text" class="form-control" formControlName="reOrderQuantity" placeholder="ReOrder Qty">
+            <div *ngIf="itemForm.get('reOrderQuantity')?.invalid" class="error-msg-common text-danger">
+              <div
+                *ngIf="!itemForm.get('reOrderQuantity').errors?.required && itemForm?.get('reOrderQuantity')?.errors">
+                * not a valid input
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="form-group row">
+          <label id="" for="" class="col-sm-3 col-form-label pr-0 text-right">Alert Msg
+          </label>
+          <div class="col-sm-9">
+            <ng-select id="" [items]="Alert" bindLabel="alertMessage" (change)="onAlertChanged($event)"
+              formControlName="alertMessage" placeholder="-- Select --" [(ngModel)]="alertMessage">
+            </ng-select>
+          </div>
+        </div>
+        <div class="form-group row">
+          <label for="" class="col-sm-3 col-form-label pr-0 text-right" id="">Tax <span
+              class="text-danger">*</span></label>
+          <div class="col-sm-9">
+            <ng-select [items]="taxArray" placeholder="--Select--" id="" bindLabel="categoryCode"
+              [(ngModel)]="selectedTax" formControlName="tax">
+            </ng-select>
+            <div *ngIf="itemForm.get('tax')?.touched" class="error-msg-common text-danger">
+              <div *ngIf="itemForm.get('tax').errors?.required">
+                * required field
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- <div class="form-group row">
+          <label id="" for="" class="col-sm-3 col-form-label pr-0 text-right">Storage
+          </label>
+          <div class="col-sm-9">
+            <ng-select id="" [items]="storages" bindLabel="name"
+            (change)="onStorageChanged($event)"
+            formControlName="storage"
+              placeholder="-- Select --" [(ngModel)]="storage">
+            </ng-select>
+          </div>
+        </div> -->
+      </div>
+      <div class="col-lg-4 ">
+        <div class="form-group row">
+          <label id="itemLabelPack" for="" class="col-sm-3 col-form-label pr-0 text-right">Pack<span
+              class="text-danger">*</span></label>
+          <div class="col-sm-9">
+            <input id="itemPack" type="text" class="form-control" formControlName="pack" placeholder="Pack">
+            <div *ngIf="itemForm.get('pack')?.touched" class="error-msg-common text-danger">
+              <div *ngIf="itemForm.get('pack')?.errors?.required">
+                * required field
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="form-group row">
+          <div class="col-sm-12 d-flex">
+            <div class="d-inline mr-3">
+              <label id="addItemLabelStatus" class="mb-0">Status</label>
+            </div>
+            <div class="custom-control d-inline custom-radio mr-3">
+              <input name="activeS" type="radio" class="custom-control-input" value="Y" formControlName="activeS"
+                id="activate">
+              <label id="addItemLabelActivate" class="custom-control-label" for="activate">Activate</label>
+            </div>
+            <div class="custom-control d-inline custom-radio">
+              <input name="activeS" type="radio" class="custom-control-input" value="N" formControlName="activeS"
+                id="deActivate">
+              <label id="addItemLabelDeActivate" class="custom-control-label" for="deActivate">De Activate</label>
+            </div>
+          </div>
+        </div>
+        <div class="form-group row">
+          <label id="itemLabelBarcode" for="" class="col-sm-3 col-form-label pr-0 text-right">QR/Barcode
+           </label>
+          <div class="col-sm-9">
+            <input id="itemBarcode" type="text" class="form-control" formControlName="barcode" placeholder="Barcode">
+            <!-- <div *ngIf="itemForm.get('barcode')?.touched" class="error-msg-common text-danger">
+              <div *ngIf="itemForm.get('barcode')?.errors?.required">
+                * required field
+              </div>
+            </div> -->
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-8">
+
+        <div class="form-group row">
+          <label id="" for="" class="col-sm-2 col-form-label pr-0 text-right">Sch Code
+          </label>
+          <div class="col-sm-10">
+            <ng-select id="" [items]="scheduleCodes" bindLabel="scheduleCategDesc" placeholder="-- Select --"
+              [ngModelOptions]="{standalone: true}" [(ngModel)]="selectedScheduleCode"
+              (change)="onScheduleCodeChanged($event)">
+            </ng-select>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <h6 class="border border-primary p-2 mt-3 mb-4 bg-light text-white">Alternative Item Details</h6>
+
+    <div class="row">
+      <div class="col-lg-4">
+        <div class="form-group row">
+          <label id="itemLabelUnmappedItem" for="" class="col-sm-3 col-form-label pr-0 text-right">Item </label>
+          <div class="col-sm-9">
+            <ng-select id="itemUnMappeditem" [items]="unMappedItems" multiple="true" bindLabel="itemName"
+              [ngModelOptions]="{standalone: true}" [(ngModel)]="selectedAlternateDrugs" placeholder="-- Select --"
+              (change)="onUnMappedCheckedItems($event)" (keyup)="alternativeItemSearch($event)">
+            </ng-select>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <div class="row">
+      <div class="col mb-3 pt-2 text-center">
+        <input type="button" data-toggle="modal" data-target="#configupdate" [disabled]="checkFormDisability()"
+          class="btn btn-primary px-4 saved-item btn-save-text" value="Update">
+        <input type="button" class="btn btn-secondary px-4 ml-3" value="Cancel" (click)="reset()" id="cancelled-edit">
+      </div>
+    </div>
+
+  </form>
+
+</div>
+
+<div class="modal" id="configupdate" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+
+      <!-- Modal Header -->
+      <div class="modal-header">
+        <h4 class="modal-title">Update Configuration</h4>
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+      </div>
+
+      <!-- Modal body -->
+      <div class="modal-body">
+        <h3>Please Stop Sales This Change Will Update Stock Prices</h3>
+      </div>
+
+      <!-- Modal footer -->
+      <div class="modal-footer">
+        <button (click)="onSubmit()" type="submit" class="btn btn-primary px-4 saved-item btn-save-text"
+          data-dismiss="modal">Update</button>
+        <button type="button" class="btn btn-primary px-4 text-center save-button" data-dismiss="modal">Close</button>
+      </div>
+
+    </div>
+  </div>
+</div>
+<ng4-loading-spinner [loadingText]="'Please wait...'" [timeout]="400000000"> </ng4-loading-spinner>

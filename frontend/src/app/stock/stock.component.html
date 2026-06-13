@@ -1,0 +1,122 @@
+<div class="col left-menu p-0 border-right-lg bg-light">
+  <div class="accordion left-accordion-menu" id="left-accordion-menu">
+    <div class="card bg-light">
+      <div class="card-header p-0" id="menu-item">
+        <h2 class="mb-0 border-bottom border-white">
+          <button class="btn btn-link btn-block text-left py-2 px-3 text-white down-arrow collapsed" type="button"
+            data-toggle="collapse" data-target="#left-accordion-menu-1" aria-expanded="false"
+            aria-controls="left-accordion-menu-1">
+            <fa-icon [icon]="faEnvelopeOpenText" class="mr-2"></fa-icon><span>Quotations</span>
+          </button>
+        </h2>
+      </div>
+      <div id="left-accordion-menu-1" class="collapse" aria-labelledby="menu-item" data-parent="#left-accordion-menu">
+        <div class="card-body p-0 border-bottom border-white">
+          <ul class="p-0 m-0">
+
+
+            <li><a href="" class="d-block" [routerLink]="['/stock/autoquotations']">
+                <fa-icon [icon]="faExternalLinkAlt" class="mr-2"></fa-icon><span>Auto Quotation</span>
+              </a></li>
+            <li><a href="" class="d-block" [routerLink]="['/stock/requestnewquotations']">
+                <fa-icon [icon]="faExternalLinkAlt" class="mr-2"></fa-icon><span>Request New Quotation</span>
+              </a></li>
+            <li><a href="" class="d-block" [routerLink]="['/stock/pendingrequestquotations']">
+                <fa-icon [icon]="faEdit" class="mr-2"></fa-icon><span>Pending Request Quotation</span>
+              </a></li>
+            <li><a href="" class="d-block" [routerLink]="['/stock/outstandingquotations']">
+                <fa-icon [icon]="faSignOutAlt" class="mr-2"></fa-icon><span>Outstanding Quotations</span>
+              </a></li>
+            <li><a href="" class="d-block" [routerLink]="['/stock/supplierquotations']">
+                <fa-icon [icon]="faShippingFast" class="mr-2"></fa-icon><span>Supplier Quotations</span>
+              </a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="card-header p-0" id="menu-item-2">
+        <h2 class="mb-0 border-bottom border-white">
+          <button class="btn btn-link btn-block text-left py-2 px-3 text-white down-arrow collapsed" type="button"
+            data-toggle="collapse" data-target="#left-accordion-menu-2" aria-expanded="false"
+            aria-controls="left-accordion-menu-2">
+            <fa-icon [icon]="faShoppingBasket" class="mr-2"></fa-icon><span>Purchase Order</span>
+          </button>
+        </h2>
+      </div>
+      <div id="left-accordion-menu-2" class="collapse" aria-labelledby="menu-item" data-parent="#left-accordion-menu-2">
+        <div class="card-body p-0 border-bottom border-white">
+          <ul class="p-0 m-0">
+            <li><a href="" class="d-block" [routerLink]="['/stock/newpurchaseorder']">
+                <fa-icon [icon]="faExternalLinkAlt" class="mr-2"></fa-icon><span>New Purchase Order</span>
+              </a></li>
+            <li><a href="" class="d-block" [routerLink]="['/stock/pendingpurchaseorder']">
+                <fa-icon [icon]="faEdit" class="mr-2"></fa-icon><span>Pending Purchase Order</span>
+              </a></li>
+            <li><a href="" class="d-block" [routerLink]="['/stock/outstandingpurchaseorder']">
+                <fa-icon [icon]="faSignOutAlt" class="mr-2"></fa-icon><span>Outstanding Purchase Order</span>
+              </a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="card-header p-0" id="menu-item-3">
+        <h2 class="mb-0 border-bottom border-white">
+          <button class="btn btn-link btn-block text-left py-2 px-3 text-white down-arrow collapsed" type="button"
+            data-toggle="collapse" data-target="#left-accordion-menu-3" aria-expanded="false"
+            aria-controls="left-accordion-menu-2">
+            <fa-icon [icon]="faShoppingBasket" class="mr-2"></fa-icon><span>Purchase Invoice</span>
+          </button>
+        </h2>
+      </div>
+
+      <div id="left-accordion-menu-3" class="collapse" aria-labelledby="menu-item" data-parent="#left-accordion-menu-3">
+        <div class="card-body p-0 border-bottom border-white">
+          <ul class="p-0 m-0">
+            <li><a href="" class="d-block" [routerLink]="['/stock/purchaseorderinvoice']">
+                <fa-icon [icon]="faExternalLinkAlt" class="mr-2"></fa-icon><span>New Purchase Invoice</span>
+              </a></li>
+            <li><a href="" class="d-block" [routerLink]="['/stock/pendingpurchaseinvoice']">
+                <fa-icon [icon]="faEdit" class="mr-2"></fa-icon><span>Pending Purchase Invoice</span>
+              </a></li>
+            <li><a href="" class="d-block" [routerLink]="['/stock/outstandingpurchaseinoice']">
+                <fa-icon [icon]="faSignOutAlt" class="mr-2"></fa-icon><span>Outstanding Purchase Invoice</span>
+              </a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="card-header p-0">
+        <h2 class="mb-0 border-bottom border-white" [routerLink]="['/stock/newstock']">
+          <button class="btn btn-link btn-block text-left py-2 px-3 text-white no-childern" type="button">
+            <fa-icon [icon]="faStream" class="mr-2"></fa-icon><span>New Stock</span>
+          </button>
+        </h2>
+      </div>
+      <div class="card-header p-0">
+        <h2 class="mb-0 border-bottom border-white" [routerLink]="['/stock/editstock']">
+          <button class="btn btn-link btn-block text-left py-2 px-3 text-white no-childern" type="button">
+            <fa-icon [icon]="faStream" class="mr-2"></fa-icon><span>Edit Stock</span>
+          </button>
+        </h2>
+      </div>
+      <div class="card-header p-0" *ngIf="showStockTake">
+        <h2 class="mb-0 border-bottom border-white" [routerLink]="['/stock/stockadjustment']">
+          <button class="btn btn-link btn-block text-left py-2 px-3 text-white no-childern" type="button">
+            <fa-icon [icon]="faCashRegister" class="mr-2"></fa-icon><span>Stock Take</span>
+          </button>
+        </h2>
+      </div>
+      <div class="card-header p-0">
+        <h2 class="mb-0 border-bottom border-white" [routerLink]="['/stock/purchasereturns']">
+          <button class="btn btn-link btn-block text-left py-2 px-3 text-white no-childern" type="button">
+            <fa-icon [icon]="faUndo" class="mr-2"></fa-icon><span>Purchase Returns</span>
+          </button>
+        </h2>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="col-lg right-content bg-extra-light p-0">
+  <div class="p-4">
+    <router-outlet></router-outlet>
+
+  </div>
+</div>

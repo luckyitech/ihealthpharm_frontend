@@ -1,0 +1,165 @@
+<form #membershipForm="ngForm" [formGroup]="membershipInformationForm" (keydown.enter)="$event.preventDefault()"
+  (ngSubmit)="onSubmit()" class="full-height">
+
+  <h6 class="border border-primary p-2 mt-3 mb-4 bg-light text-white">Generic Details</h6>
+
+  <div class="row">
+    <div class="col-lg-4">
+      <div class="form-group row">
+        <label id="addMembershipLabelCard"for="" class="col-sm-3 col-form-label pr-0 text-right">Mem. Card <span
+            class="text-danger">*</span></label>
+        <div class="col-sm-9">
+          <input type="text" class="form-control" id="addMembershipCard" placeholder="Membership Card Name" formControlName="membershipCardName" >
+          <div *ngIf="membershipInformationForm.get('membershipCardName')?.touched"
+          class="error-msg-common text-danger">
+          <div *ngIf="membershipInformationForm.get('membershipCardName').errors?.required">
+            * required field
+          </div>
+        </div>
+        </div>
+      </div>
+     
+    </div>
+    <div class="col-lg-4">
+      <div class="form-group row">
+        <div class="col-sm-12 justify-content-end d-flex pt-2">
+          <div class="d-inline mr-3">
+            <label id="addMemberShipLabelStatus" class="mb-0">Status</label>
+          </div>
+          <div class="custom-control d-inline custom-radio mr-3">
+            <input name="activeS" type="radio" value="Y" class="custom-control-input" formControlName="activeS" id="activate">
+            <label id="addMemberShipLabelActivate" class="custom-control-label" for="activate">Activate</label>
+          </div>
+          <div class="custom-control d-inline custom-radio">
+            <input name="activeS" type="radio" value="N" class="custom-control-input" formControlName="activeS" id="deactivate">
+            <label id="addMemberShipLabelDeActivate" class="custom-control-label" for="deactivate">De Activate</label>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h6 class="border border-primary p-2 mt-3 mb-4 bg-light text-white">Membership Details</h6>
+
+  <div class="row">
+    <div class="col-lg-4">
+      <div class="form-group row">
+        <label id="addMembershipLabelStartDate" for="" class="col-sm-3 col-form-label pr-0 text-right">Start Date<span
+          class="text-danger">*</span></label>
+        <div class="col-sm-9">
+            <input type="date" id="addMembershipStartDate" (change)="selectedStartDate($event)"  class="form-control"
+             formControlName="membershipStartDate" (ngModelChange)="modelChanged($event)"/>
+            <div *ngIf="membershipInformationForm.get('membershipStartDate')?.touched"
+            class="error-msg-common text-danger">
+            <div *ngIf="membershipInformationForm.get('membershipStartDate').errors?.required">
+              * required field
+            </div>
+          </div>
+          </div>
+      </div>
+
+      <div class="form-group row">
+        <label id="addMembershipLabelEndDate" for="" class="col-sm-3 col-form-label pr-0 text-right">End Date<span
+          class="text-danger">*</span></label>
+        <div class="col-sm-9">
+          <input id="addMembershipEndDate" type="date" (change)="selectedStartDate($event)" 
+          class="form-control" id="" placeholder="" formControlName="membershipEndDate"
+          (ngModelChange)="modelChanged($event)">
+          <div *ngIf="membershipInformationForm.get('membershipEndDate')?.touched"
+          class="error-msg-common text-danger">
+          <div *ngIf="membershipInformationForm.get('membershipEndDate').errors?.required">
+            * required field
+          </div>
+        </div>
+        <div class="error-msg-common text-danger"
+        *ngIf="membershipInformationForm.get('membershipEndDate').errors &&
+        membershipInformationForm.get('membershipEndDate').dirty &&
+        membershipInformationForm.get('membershipEndDate').errors.invalidDob">
+              not valid date
+       </div>
+        </div>
+      </div>
+      <div class="form-group row">
+        <label id="addMembershipLabelDuration" for="" class="col-sm-3 col-form-label pr-0 text-right">Duration In Months</label>
+        <div class="col-sm-9">
+          <input type="text" disabled class="form-control" id="addMembershipDuration" placeholder="Duration" formControlName="membershipDurationInMonths">
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-4">
+      <div class="form-group row">
+        <label id="addMembershipLabelBonus" for="" class="col-sm-3 col-form-label pr-0 text-right">Bonus %</label>
+        <div class="col-sm-9">
+          <input type="text" class="form-control" id="addMembershipBonus" placeholder="Bonus %" 
+          formControlName="membershipBonusPercentage">
+          <div *ngIf="membershipInformationForm.get('membershipBonusPercentage')?.invalid" class="error-msg-common text-danger">
+              <div
+                *ngIf="!membershipInformationForm.get('membershipBonusPercentage').errors?.required && membershipInformationForm?.get('membershipBonusPercentage')?.errors">
+                * not a valid input
+              </div>
+            </div>
+        </div>
+      </div>
+      <div class="form-group row">
+        <label id="addMembershipLabelDisc" for="" class="col-sm-3 col-form-label pr-0 text-right">Disc %</label>
+        <div class="col-sm-9">
+          <input type="text" class="form-control" id="addMembershipDisc" placeholder="Discount %" 
+          formControlName="membershipDiscountPercentage" >
+          <div *ngIf="membershipInformationForm.get('membershipDiscountPercentage')?.invalid" class="error-msg-common text-danger">
+              <div
+                *ngIf="!membershipInformationForm.get('membershipDiscountPercentage').errors?.required && membershipInformationForm?.get('membershipDiscountPercentage')?.errors">
+                * not a valid input
+              </div>
+            </div>
+        </div>
+      </div>
+
+      <div class="form-group row">
+        <label id="addMembershipLabelAmount" for="" class="col-sm-3 col-form-label pr-0 text-right">Amount</label>
+        <div class="col-sm-9">
+          <input type="text" class="form-control" id="addMembershipAmount" placeholder="Credit Amount" formControlName="membershipCreditAmount">
+          <div *ngIf="membershipInformationForm.get('membershipCreditAmount')?.invalid"
+          class="error-msg-common text-danger">
+          <div *ngIf="!membershipInformationForm.get('membershipCreditAmount').errors?.required && membershipInformationForm?.get('membershipCreditAmount')?.errors">
+            * not a valid input
+          </div>
+        </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-4">
+
+      <div class="form-group row">
+        <label id="addMembershipLabelDays" for="" class="col-sm-3 col-form-label pr-0 text-right">Days</label>
+        <div class="col-sm-9">
+          <input type="text" class="form-control" id="addMembershipDays" placeholder="Credit Days" formControlName="membershipCreditDays">
+          <div *ngIf="membershipInformationForm.get('membershipCreditDays')?.invalid" class="error-msg-common text-danger">
+              <div
+                *ngIf="!membershipInformationForm.get('membershipCreditDays').errors?.required && membershipInformationForm?.get('membershipCreditDays')?.errors">
+                * not a valid input
+              </div>
+            </div>
+        </div>
+      </div>
+      <div class="form-group row">
+        <label id="addMembershipLabelOffers" for="" class="col-sm-3 col-form-label pr-0 text-right">Offers</label>
+        <div class="col-sm-9">
+          <input type="text" class="form-control" id="addMembershipOffers" placeholder="Offers" formControlName="offers">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row pt-4">
+    <div class="col mb-3 pt-2 text-center">
+      <button type="submit" [disabled]="checkFormDisability()" class="btn btn-primary px-4" >Save</button>
+      <input type="button" class="btn btn-secondary px-4 ml-3"
+      (click)="membershipInformationForm.reset();membershipInformationForm.controls.activeS.setValue('Y');"
+       id="mu-adduser-cancel"
+      value="Cancel">
+    
+    </div>
+  </div>
+
+</form>
+<ng4-loading-spinner [loadingText]="'Please wait...'" [timeout]="400000000"> </ng4-loading-spinner>

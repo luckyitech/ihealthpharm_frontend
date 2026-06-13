@@ -1,0 +1,27 @@
+.card {
+  margin: auto;
+  width: 350px;
+  background-color: #e8feff;
+  .card-header {
+    img {
+        max-width: 210px;
+    }
+  }
+}
+/*I Add css Ram */
+.justify-content-center {
+  position: absolute;
+}
+.card{
+  position: relative;
+    left: -426px;
+}
+@media screen and (max-width: 768px) {
+ 
+    
+    .card{
+      position: relative;
+      left: -173px;
+    }
+  
+}

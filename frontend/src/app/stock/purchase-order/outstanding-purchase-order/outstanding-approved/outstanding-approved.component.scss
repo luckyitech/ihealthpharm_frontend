@@ -1,0 +1,28 @@
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  #email {
+      visibility: hidden;
+  }
+  #approvePurchase, #approvePurchase * {
+    visibility: visible;
+  }
+  #approvePurchase {
+    position: absolute;
+    left: 0;
+    top: 0;
+  }
+  button {
+      visibility: hidden;
+  }
+  input {
+      visibility: hidden;
+  }
+
+  @media (min-width: 992px){
+  .modal-lg, .modal-xl {
+      max-width: 1000px;
+  }
+  }
+}

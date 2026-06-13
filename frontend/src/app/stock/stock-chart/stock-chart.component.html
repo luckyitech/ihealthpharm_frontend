@@ -1,0 +1,13 @@
+
+<div id="chartsId">
+  <div class="row">
+    <div *ngIf="showSuppliersMarginPerChart" style="margin-left:10px">
+      <highcharts-chart [Highcharts]="highcharts" [options]="charts" style=" ">
+      </highcharts-chart>
+    </div>
+    <div *ngIf="showSuppliersRevenueChart" style="margin-left:40px">
+      <highcharts-chart [Highcharts]="highcharts" [options]="chartOptions2" style="">
+      </highcharts-chart>
+    </div>
+  </div>
+</div>

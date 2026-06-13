@@ -1,0 +1,184 @@
+<h6 class="border border-primary p-2 mt-3 mb-4 bg-light text-white">Pending Approval Details</h6>
+<div class="row">
+  <div class="col-sm-10">
+    <form class="form-inline">
+      <input  class="form-control no-right-border-radius" type="text"
+        placeholder="Search here.." aria-label="Search" (keyup)="onQuotationSearch($event)">
+      <button class="btn btn-primary no-left-border-radius">Search</button>
+    </form>
+  </div>
+  <div class="col-sm-2" style="padding-left:100px">
+    <button class="btn btn-primary" (click)="onPrint()">Print</button>
+  </div>
+</div>
+
+<div class="row grid-area">
+  <div class="col py-3">
+    <ag-grid-angular id="approvedGrid" style="width: 100%; height: 600px;" class="ag-theme-balham"
+      [gridOptions]="aapprovedGridOptions" (selectionChanged)="onSelectionChanged($event)" [getRowNodeId]="getRowNodeId" [rowData]="rowData"
+      (gridReady)="onGridReady($event)" (cellClicked)='onCellClicked($event)' [rowSelection]="rowSelection">
+    </ag-grid-angular>
+  </div>
+</div>
+
+<div class="row grid-area">
+  <div class="col mb-3 pt-2 text-center">
+    <button class="btn btn-primary px-4 return-btn" [disabled]="aapprovedGridOptions?.api?.getSelectedRows()?.length === 0"
+      (click)="onQuotationApprove('approve')" >Approve</button>
+    <button [disabled]="aapprovedGridOptions?.api?.getSelectedRows()?.length === 0 || reason.length == 0"
+      (click)="onQuotationApprove('reject')" class="btn btn-secondary px-4 ml-3 return-btn">Reject</button>
+  </div>
+</div>
+
+<div class="row grid-area">
+  <div class="col-4"></div>
+  <div class="col-4 margin-auto">
+    <div class="form-group row">
+      <label for="" class="col-12 col-form-label pr-0 text-center" id="pendingRequestLabelapprReason">Reason for Rejection <span
+          class="text-danger">*</span></label>
+      <div class="col-12">
+        <textarea [(ngModel)]="reason" class="form-control min-height-83" id="pendingRequestapprReason"
+          placeholder="Reason for rejection.."></textarea>
+      </div>
+    </div>
+  </div>
+  <div class="col-4"></div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="pendingModal" tabindex="-1" role="dialog" aria-labelledby="pendingLabel">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 class="modal-title">Quotation Details</h4>
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+      </div>
+      <div class="modal-body">
+
+        <!-- <ul class="nav nav-pills mb-3 border-bottom border-secondary" id="pills-tab" role="tablist">
+          <li class="nav-item">
+            <a class="nav-link active" id="pills-home-tab" data-toggle="pill" href="#pills-home" role="tab"
+              aria-controls="pills-home" aria-selected="true">New Quotation</a>
+          </li>
+        </ul> -->
+        <div class="tab-content" id="pills-tabContent">
+          <div class="tab-pane fade show active" id="pills-home" role="tabpanel" aria-labelledby="pills-home-tab">
+
+            <form class="">
+              <h6 class="border border-primary p-2 mt-3 mb-4 bg-light text-white">Quotation Details</h6>
+
+              <div class="row">
+                <div class="col-lg-4">
+                  <div class="form-group row">
+                    <label id="requestQuotLabelNumber" for=""
+                      class="col-sm-3 col-form-label pr-0 text-right">Number</label>
+                    <div class="col-sm-9">
+                      <input type="text" disabled class="form-control" id="requestQuotNumber"
+                        placeholder="Quotation Number">
+                    </div>
+                  </div>
+                  <div class="form-group row">
+                    <label id="requestQuotLabelRequested" for=""
+                      class="col-sm-3 col-form-label pr-0 text-right">Requested</label>
+                    <div class="col-sm-9">
+                      <input type="text" class="form-control" id="requestQuotRequested" placeholder="Created By"
+                        value="" disabled>
+                    </div>
+                  </div>
+                  <div class="form-group row">
+                    <label id="requestQuotLabelCreated" for=""
+                      class="col-sm-3 col-form-label pr-0 text-right">Created</label>
+                    <div class="col-sm-9">
+                      <input type="text" class="form-control" id="requestQuotCreated" placeholder="Created By" value=""
+                        disabled>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-lg-4">
+                  <div class="form-group row">
+                    <label id="requestQuotLabelDated" for=""
+                      class="col-sm-3 col-form-label pr-0 text-right">Date</label>
+                    <div class="col-sm-9">
+                      <input disabled type="date" class="form-control" id="requestQuotDated"
+                        placeholder="Quotation Date">
+                    </div>
+                  </div>
+                  <div class="form-group row">
+                    <label id="requestQuotLabelExpiry" for=""
+                      class="col-sm-3 col-form-label pr-0 text-right">Expiry</label>
+                    <div class="col-sm-9">
+                      <input disabled type="date" class="form-control" id="requestQuotExpiry"
+                        placeholder="Quotation Expiry Date">
+                    </div>
+                  </div>
+                </div>
+                <div class="col-lg-4">
+                  <!-- <div class="form-group row">
+                    <label id="requestQuotLabelAdd" for="" class="col-sm-3 col-form-label pr-0 text-right">Add New</label>
+                    <div class="col-sm-9 ">
+                      <button class="btn btn-info mr-2">Item-Supplier</button>
+                      <button class="btn btn-info">Supplier-Item</button>
+                    </div>
+                  </div> -->
+                  <div class="form-group row">
+                    <label id="requestQuotLabelDesc" for="" class="col-sm-3 col-form-label pr-0 text-right">Desc</label>
+                    <div class="col-sm-9">
+                      <textarea class="form-control min-height-83" id="requestQuotDesc"
+                        placeholder="Quotation Description" disabled></textarea>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <h6 class="border border-primary p-2 mt-3 mb-4 bg-light text-white">Item Details</h6>
+
+              <!-- <div class="row">
+                <div class="col-12 text-right">
+                  <button class="btn btn-primary mr-2">Edit</button>
+                  <button class="btn btn-primary">Delete</button>
+                </div>
+              </div> -->
+
+              <div class="row">
+                <div class="col py-3">
+                  <ag-grid-angular id="quotGrid" style="width: 100%; height: 200px;" class="ag-theme-balham"
+                    [gridOptions]="quotationGridOptions" [getRowNodeId]="getRowNodeId" [rowData]="quotationsRowData"
+                    [rowSelection]="rowSelection" [getRowNodeId]="getRowNodeId" [suppressRowClickSelection]="true">
+                  </ag-grid-angular>
+                </div>
+              </div>
+
+
+              <div class="row">
+                <div class="col-4"></div>
+                <div class="col-4">
+                  <div class="form-group row">
+                    <label for="" class="col-12 col-form-label pr-0 text-center">Remarks </label>
+                    <div class="col-12">
+                      <textarea class="form-control min-height-83" id="remarks" 
+                        placeholder="Remarks"></textarea>
+                    </div>
+        
+                  </div>
+                </div>
+              </div>
+
+              <!-- <div class="row">
+                <div class="col mb-3 pt-2 text-center">
+                  <button (click)="approval()" class="btn btn-primary px-4 submit-for-approval">Submit For
+                    Approval</button>
+                  <button (click)="later()" class="btn btn-secondary px-4 ml-3 submit-later">Submit Later</button>
+                </div>
+              </div> -->
+
+            </form>
+
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+</div>
+<ng4-loading-spinner [loadingText]="'Please wait...'" [timeout]="400000000"> </ng4-loading-spinner>

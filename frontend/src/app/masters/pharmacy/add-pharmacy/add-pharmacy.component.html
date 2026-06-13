@@ -1,0 +1,338 @@
+<form #pharmacyForm="ngForm" [formGroup]="pharmacyInformationForm" (keydown.enter)="$event.preventDefault()"
+  (ngSubmit)="onSubmit()">
+  
+  <h6 class="border border-primary p-2 mt-3 mb-4 bg-light text-white">Generic Details</h6>
+  <div class="row">
+    <div class="col-lg-4">
+      <div class="form-group row">
+        <label id="addPharmacyLabelMainPharm" for="" class="col-sm-3 col-form-label pr-0 text-right">Main Pharm 
+         <span class="text-danger">*</span>
+        </label>
+        <div class="col-sm-9">
+          <ng-select id="addPharmacyMainPharm" [items]="pharmacy" [(ngModel)]="pharmacySelected"
+            bindLabel="pharmacyName" formControlName="mainPharmacyId"  
+            placeholder="Select Main Pharmacy">
+          </ng-select>
+          <div *ngIf="pharmacyInformationForm.get('mainPharmacyId')?.touched" class="error-msg-common text-danger">
+            <div *ngIf="pharmacyInformationForm.get('mainPharmacyId').errors?.required">
+              * required field
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="form-group row">
+        <label id="addPharmacyLabelPharmacyName" for="" class="col-sm-3 col-form-label pr-0 text-right">Pharmacy <span
+            class="text-danger">*</span></label>
+        <div class="col-sm-9">
+          <input type="text" class="form-control" id="addPharmacyName" formControlName="pharmacyName"
+            placeholder="Pharmacy Name">
+          <div *ngIf="pharmacyInformationForm.get('pharmacyName')?.touched" class="error-msg-common text-danger">
+            <div *ngIf="pharmacyInformationForm.get('pharmacyName').errors?.required">
+              * required field
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="form-group row">
+        <label id="addPharmacyLabelTaxId" for="" class="col-sm-3 col-form-label pr-0 text-right">Tax ID
+          <span class="text-danger">*</span>
+        </label>
+        <div class="col-sm-9">
+          <input type="text" class="form-control" id="addPharmacyTaxId" formControlName="taxId" placeholder="Tax ID">
+          <div *ngIf="pharmacyInformationForm.get('taxId')?.touched" class="error-msg-common text-danger">
+            <div *ngIf="pharmacyInformationForm.get('taxId').errors?.required">
+              * required field
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-4">
+      <div class="form-group row">
+        <label id="addPharmacyLabelPhone" for="" class="col-sm-3 col-form-label pr-0 text-right">Phone <span
+            class="text-danger">*</span></label>
+        <div class="col-sm-9">
+          <input type="text" class="form-control" id="addPharmacyPhone" formControlName="phoneNumber"
+            placeholder="Phone Number">
+            
+            <div *ngIf="pharmacyInformationForm.get('phoneNumber')?.touched"
+            class="error-msg-common text-danger">
+            <div *ngIf="pharmacyInformationForm.get('phoneNumber').errors?.required">
+              * required field
+            </div>
+          </div>
+          <div *ngIf="pharmacyInformationForm.get('phoneNumber')?.invalid"
+            class="error-msg-common text-danger">
+            <div
+              *ngIf="!pharmacyInformationForm.get('phoneNumber').errors?.required && pharmacyInformationForm?.get('phoneNumber')?.errors">
+              * not a valid input
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="form-group row">
+        <label id="addPharmacyLabelEmail" for="" class="col-sm-3 col-form-label pr-0 text-right">Email <span
+            class="text-danger">*</span> </label>
+        <div class="col-sm-9">
+          <input type="text" class="form-control" id="addPharmacyEmail" formControlName="emailId" placeholder="Email" />
+          <div *ngIf="pharmacyInformationForm.get('emailId')?.touched" class="error-msg-common text-danger">
+            <div *ngIf="pharmacyInformationForm.get('emailId').errors?.required">
+              * required field
+            </div>
+          </div>
+          <div *ngIf="pharmacyInformationForm.get('emailId')?.invalid"
+          class="error-msg-common text-danger">
+          <div
+            *ngIf="!pharmacyInformationForm.get('emailId').errors?.required && pharmacyInformationForm?.get('emailId')?.errors">
+            * not a valid input
+          </div>
+        </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-4">
+      <div class="form-group row">
+        <label id="addPharmacyLabelLogo" for="" class="col-sm-3 col-form-label pr-0 text-right">Logo </label>
+        <div class="col-sm-9">
+          <input #myInput type="file" (change)="onPharmacyLogoChange($event)" id="mu-adduser-logo"
+            accept="image/x-png,image/gif,image/jpeg" />
+          <img *ngIf="pharmacyImagePath?.length > 0" [src]="pharmacyImagePath" height="42" width="42">
+        </div>
+      </div>
+      <div class="form-group row">
+        <label id="addPharmacyLabelWebsite" for="" class="col-sm-3 col-form-label pr-0 text-right">Website </label>
+        <div class="col-sm-9">
+          <input type="text" class="form-control" id="addPharmacyWebsite" formControlName="websiteUrl"
+            placeholder="Website">
+            <div *ngIf="pharmacyInformationForm.get('websiteUrl')?.invalid" class="error-msg-common text-danger">
+                <div
+                  *ngIf="!pharmacyInformationForm.get('websiteUrl').errors?.required && pharmacyInformationForm?.get('website')?.errors">
+                  * not a valid input
+                </div>
+              </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h6 class="border border-primary p-2 mt-3 mb-4 bg-light text-white">Contact Person Details</h6>
+
+  <div class="row">
+    <div class="col-lg-4">
+      <div class="form-group row">
+        <label id="addPharmacyLabelFirstName" for="" class="col-sm-3 col-form-label pr-0 text-right">First Name <span
+            class="text-danger">*</span></label>
+        <div class="col-sm-9">
+          <input type="text" class="form-control" id="addPharmacyFirstName" formControlName="autherizedPersonFirstName"
+            placeholder="First Name">
+            <div *ngIf="pharmacyInformationForm.get('autherizedPersonFirstName')?.touched" class="error-msg-common text-danger">
+              <div *ngIf="pharmacyInformationForm.get('autherizedPersonFirstName').errors?.required">
+                * required field
+              </div>
+            </div>
+          
+        </div>
+      </div>
+      <div class="form-group row">
+        <label id="addPharmacyLabelMiddleName" for="" class="col-sm-3 col-form-label pr-0 text-right">Mid Name </label>
+        <div class="col-sm-9">
+          <input type="text" class="form-control" id="addPharmacyMiddleName"
+            formControlName="autherizedPersonMiddleName" placeholder="Middle Name">
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-4">
+      <div class="form-group row">
+        <label id="addPharmacyLabelLastName" for="" class="col-sm-3 col-form-label pr-0 text-right">Last Name <span
+            class="text-danger">*</span></label>
+        <div class="col-sm-9">
+          <input type="text" class="form-control" id="addPharmacyLastName" formControlName="autherizedPersonLastName"
+            placeholder="Last Name">
+          <div *ngIf="pharmacyInformationForm.get('autherizedPersonLastName')?.touched"
+            class="error-msg-common text-danger">
+            <div *ngIf="pharmacyInformationForm.get('autherizedPersonLastName').errors?.required">
+              * required field
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="form-group row">
+        <label id="addPharmacyLabelAuthPersonEmail" for="" class="col-sm-3 col-form-label pr-0 text-right">Email
+        </label>
+        <div class="col-sm-9">
+          <input type="text" class="form-control" id="addPharmacyAuthPersonEmail" placeholder="Email"
+            formControlName="authPersonEmail">
+          <div
+            *ngIf="pharmacyInformationForm.get('authPersonEmail')?.invalid && pharmacyInformationForm.get('authPersonEmail')?.touched"
+            class="error-msg-common text-danger">
+            <div
+              *ngIf="!pharmacyInformationForm.get('authPersonEmail').errors?.required && pharmacyInformationForm?.get('authPersonEmail')?.errors">
+              * not a valid input
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-4">
+      <div class="form-group row">
+        <label id="addPharmacyLabelAuthPersonPhone" for="" class="col-sm-3 col-form-label pr-0 text-right">Phone <span
+            class="text-danger">*</span></label>
+        <div class="col-sm-9">
+          <input type="text" class="form-control" id="addPharmacyAuthPersonPhone"
+            formControlName="autherizedPersonNumber" placeholder="Phone Number">
+          <div *ngIf="pharmacyInformationForm.get('autherizedPersonNumber')?.touched"
+            class="error-msg-common text-danger">
+            <div *ngIf="pharmacyInformationForm.get('autherizedPersonNumber').errors?.required">
+              * required field
+            </div>
+          </div>
+          <div *ngIf="pharmacyInformationForm.get('autherizedPersonNumber')?.invalid"
+          class="error-msg-common text-danger">
+          <div
+            *ngIf="!pharmacyInformationForm.get('autherizedPersonNumber').errors?.required && pharmacyInformationForm?.get('autherizedPersonNumber')?.errors">
+            * not a valid input
+          </div>
+        </div>
+        </div>
+      </div>
+      <div class="form-group row">
+        <label id="addPharmacyLabelFax" for="" class="col-sm-3 col-form-label pr-0 text-right">FAX </label>
+        <div class="col-sm-9">
+          <input type="text" class="form-control" id="addPharmacyFax" formControlName="fax" placeholder="FAX">
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <h6 class="border border-primary p-2 mt-3 mb-4 bg-light text-white">Address</h6>
+
+  <div class="row">
+    <div class="col-lg-4">
+      <div class="form-group row">
+        <label id="addPharmacyLabelAddressOne" for="" class="col-sm-3 col-form-label pr-0 text-right">Address 1 <span
+            class="text-danger">*</span></label>
+        <div class="col-sm-9">
+          <input type="text" class="form-control" id="addPharmacyAddressOne" formControlName="addressLine1"
+            placeholder="Address 1">
+          <div *ngIf="pharmacyInformationForm.get('addressLine1')?.touched" class="error-msg-common text-danger">
+            <div *ngIf="pharmacyInformationForm.get('addressLine1').errors?.required">
+              * required field
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="form-group row">
+        <label id="addPharmacyLabelAddressTwo" for="" class="col-sm-3 col-form-label pr-0 text-right">Address 2 </label>
+        <div class="col-sm-9">
+          <input type="text" class="form-control" id="addPharmacyAddressTwo" formControlName="addressLine2"
+            placeholder="Address 2">
+        </div>
+      </div>
+      <div class="form-group row">
+        <label id="addPharmacyLabelCity" for="" class="col-sm-3 col-form-label pr-0 text-right">City </label>
+        <div class="col-sm-9">
+          <input type="text" class="form-control" id="addPharmacyCity" formControlName="cityName" placeholder="City">
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-4">
+      <div class="form-group row">
+        <label id="addPharmacyLabelCountry" for="" class="col-sm-3 col-form-label pr-0 text-right">Country <span
+            class="text-danger">*</span></label>
+        <div class="col-sm-9">
+          <ng-select id="addPharmacyCountry" (change)="onCountrySelected($event)" [items]="countries"
+            placeholder="Select Country." [(ngModel)]="country" formControlName="country"
+            bindLabel="countryName" >
+          </ng-select>
+          <div *ngIf="pharmacyInformationForm.get('country')?.touched" class="error-msg-common text-danger">
+            <div *ngIf="pharmacyInformationForm.get('country').errors?.required">
+              * required field
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="form-group row">
+        <label id="addPharmacyLabelState" for="" class="col-sm-3 col-form-label pr-0 text-right">State / Province <span
+            class="text-danger">*</span></label>
+        <div class="col-sm-9">
+          <ng-select id="addPharmacyState" [items]="states" (change)="onStateSelected($event)"
+            [(ngModel)]="selectedState" formControlName="state" bindLabel="provinceName"
+            placeholder="Select State." >
+          </ng-select>
+          <div *ngIf="pharmacyInformationForm.get('state')?.touched" class="error-msg-common text-danger">
+            <div *ngIf="pharmacyInformationForm.get('state').errors?.required">
+              * required field
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="form-group row">
+        <label id="addPharmacyLabelPinCode" for="" class="col-sm-3 col-form-label pr-0 text-right">Pin Code <span
+            class="text-danger">*</span></label>
+        <div class="col-sm-9">
+          <input type="text" class="form-control" id="addPharmacyPinCode" formControlName="zipCode"
+            placeholder="Pin Code">
+          <div *ngIf="pharmacyInformationForm.get('zipCode')?.touched" class="error-msg-common text-danger">
+            <div *ngIf="pharmacyInformationForm.get('zipCode').errors?.required">
+              * required field
+            </div>
+          </div>
+          <div *ngIf="pharmacyInformationForm.get('zipCode')?.invalid" class="error-msg-common text-danger">
+            <div
+              *ngIf="!pharmacyInformationForm.get('zipCode').errors?.required && pharmacyInformationForm?.get('zipCode')?.errors">
+              * not a valid input
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-4">
+      <div class="form-group row">
+        <div class="col-sm-12 justify-content-end d-flex pt-2">
+          <div class="d-inline mr-3">
+            <label id="addPharmacyLabelStatus" class="mb-0">Status</label>
+          </div>
+          <div class="custom-control d-inline custom-radio mr-3">
+            <input name="activeS" type="radio" value="Y" class="custom-control-input" formControlName="activeS"
+              id="activate">
+            <label id="addPharmacyLabelActivate" class="custom-control-label" for="activate">Activate</label>
+          </div>
+          <div class="custom-control d-inline custom-radio">
+            <input name="activeS" type="radio" value="N" class="custom-control-input" formControlName="activeS"
+              id="deactivate">
+            <label id="addPharmacyLabelDeActivate" class="custom-control-label" for="deactivate">De Activate</label>
+          </div>
+        </div>
+      </div>
+      <div class="form-group row">
+        <div class="col-sm-12 justify-content-end d-flex">
+          <div class="d-inline mr-3">
+            <label id="addPharmacyLabelPOApproval" class="mb-0">PO Approval</label>
+          </div>
+          <div class="custom-control d-inline custom-radio mr-3">
+            <input name="purchaseOrderApproval" type="radio" class="custom-control-input" value="Y"
+              formControlName="purchaseOrderApproval" id="yes">
+            <label id="addPharmacyLabelYes" class="custom-control-label" for="yes">Yes</label>
+          </div>
+          <div class="custom-control d-inline custom-radio">
+            <input name="purchaseOrderApproval" type="radio" class="custom-control-input" value="N"
+              formControlName="purchaseOrderApproval" id="no">
+            <label id="addPharmacyLabelNo" class="custom-control-label" for="no">No</label>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col mb-3 pt-2 text-center">
+      <button type="submit" [disabled]="checkFormDisability()" id="mu-adduser-save"
+        class="btn btn-primary px-4">Save</button>
+      <input type="button" class="btn btn-secondary px-4 ml-3" id="mu-adduser-cancel" (click)="reset();pharmacyInformationForm.controls.activeS.setValue('Y');
+      pharmacyInformationForm.controls.purchaseOrderApproval.setValue('Y')" value="Cancel">
+    </div>
+  </div>
+
+</form>
+<ng4-loading-spinner [loadingText]="'Please wait...'" [timeout]="400000000"> </ng4-loading-spinner>

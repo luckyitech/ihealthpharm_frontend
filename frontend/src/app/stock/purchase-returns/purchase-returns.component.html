@@ -1,0 +1,424 @@
+<ul class="nav nav-pills mb-3 border-bottom border-secondary" id="pills-tab" role="tablist">
+  <li class="nav-item">
+    <a class="nav-link active" id="purchaseReturnsLink" data-toggle="pill" href="#pills-new" role="tab" aria-controls="pills-home"
+      aria-selected="true">Purchase Returns</a>
+  </li>
+</ul>
+<div class="tab-content" id="pills-tabContent">
+
+  <div class="tab-pane fade show active" id="pills-new" role="tabpanel" aria-labelledby="pills-home-tab">
+
+    <form #prForm="ngForm" [formGroup]="purchaseReturnsForm" (keydown.enter)="$event.preventDefault()" (ngSubmit)="onSubmit()"
+      class="full-height">
+      <h6 class="border border-primary p-2 mt-3 mb-4 bg-light text-white">Purchase Return Details</h6>
+
+      <div *ngIf="showPRFlag" class="row">
+        <div class="col-lg-4">
+          <div class="form-group row">
+            <label id="purchaseReturnsLabelPR" class="col-sm-3 col-form-label pr-0 text-right">PR #</label>
+            <div class="col-sm-9">
+              <!-- <input type="text" name="prNumber" class="form-control" id="purchaseReturnsPR" [disabled]="true" placeholder="PR Number"> -->
+              <input type="text" class="form-control" id="prNumber" placeholder="PR Number" [(ngModel)]="purchaseReturnNo" formControlName="purchaseReturnNo"
+                disabled>
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="" id="purchaseReturnsLabelDate" class="col-sm-3 col-form-label pr-0 text-right">Date</label>
+            <div class="col-sm-9">
+              <input type="date" class="form-control" id="purchaseReturnsDate" formControlName="prDate" name="prDate" disabled>
+              <!-- <input type="date" [ngModel]="today | date:'yyyy-MM-dd'" name="dt" class="form-control" id="purchaseReturnsDate" [disabled]="true"> -->
+            </div>
+          </div>
+          <div class="form-group">
+            <div class="col-sm-12 justify-content-end d-flex pt-2 px-0">
+           <!--    <div class="d-inline mr-3">
+                <label id="" class="mb-0">Debit Note</label>
+              </div> -->
+             <!--  <div class="custom-control d-inline custom-radio mr-3">
+                <input name="debit-note" type="radio" value="Y" class="custom-control-input" id="auto" (change)="debitNote($event)">
+                <label id="" class="custom-control-label" for="auto">Auto</label>
+              </div> -->
+          <!--     <div class="custom-control d-inline custom-radio">
+                <input name="debit-note" type="radio" value="N" class="custom-control-input" id="manual">
+                <label id="" class="custom-control-label" for="manual">Manual</label>
+              </div> -->
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-4">
+          <div class="form-group row">
+            <label for="" id="purchaseReturnsLabelInvoiceNo" class="col-sm-3 col-form-label pr-0 text-right">Inv #
+                <span class="text-danger">*</span>
+            </label>
+            <div class="col-sm-9">
+              <input type="text" class="form-control" id="" placeholder="Invoice Number" [(ngModel)]="invoiceId" formControlName="invoiceId" (keyup)="fetchInvoiceDetails($event.target.value)">
+              <div *ngIf="purchaseReturnsForm.get('invoiceId')?.touched" class="error-msg-common text-danger">
+                  <div *ngIf="purchaseReturnsForm.get('invoiceId').errors?.required">
+                    * required field
+                  </div>
+                </div>
+                <div *ngIf="purchaseReturnsForm.get('invoiceId')?.invalid" class="error-msg-common text-danger">
+                  <div
+                    *ngIf="!purchaseReturnsForm.get('invoiceId').errors?.required && purchaseReturnsForm?.get('invoiceId')?.errors">
+                    * not a valid invoice no
+                  </div>
+                </div>
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="" id="purchaseReturnsLabelDateTwo" class="col-sm-3 col-form-label pr-0 text-right">Date</label>
+            <div class="col-sm-9">
+              <input type="date" class="form-control" id="purchaseReturnDateInv" formControlName="invoiceDt" name="invoiceDt">
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="" id="purchaseReturnsLabelStatus" class="col-sm-3 col-form-label pr-0 text-right">Status</label>
+            <div class="col-sm-9">
+              <ng-select [items]="prStatus" bindLabel="prStatus" name="status" placeholder="-- Select --" formControlName="selectPRStatus"
+                [(ngModel)]="selectPRStatus">
+              </ng-select>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-4">
+          <div class="form-group row">
+            <label for="" id="purchaseReturnsLabelGRN" class="col-sm-3 col-form-label pr-0 text-right">GRN #</label>
+            <div class="col-sm-9">
+              <input disabled type="text" class="form-control" name="grnNo" [(ngModel)]="grnNumber" formControlName="grnNumber" id="purchaseReturnsGRN" placeholder="GRN Number">
+              
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="" id="purchaseReturnsLabelDateThree" class="col-sm-3 col-form-label pr-0 text-right">Date</label>
+            <div class="col-sm-9">
+              <!-- <input type="date" class="form-control" id="purchaseReturnsDateThree" placeholder=""> -->
+              <!-- <input type="date" [ngModel]="today | date:'yyyy-MM-dd'" name="dt2" class="form-control" id="purchaseReturnsDateThree" [disabled]="true"> -->
+              <input type="date" class="form-control" id="purchaseReturnDateGRN" formControlName="grnDate" name="grnDate" disabled>
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="" id="purchaseReturnsLabelType" class="col-sm-3 col-form-label pr-0 text-right">Type</label>
+            <div class="col-sm-9">
+              <!-- <ng-select [items]="testing" id="purchaseReturnsType" bindLabel="test " [loading]="Loading"
+                data-toggle="modal" data-target="#itemSearchModal"> -->
+
+              <ng-select [items]="prTypes" bindLabel="prTyp" name="type" placeholder="-- Select --"
+               [(ngModel)]="selectPRType" formControlName="selectPRType">
+              </ng-select>
+
+              <!-- </ng-select> -->
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <h6 class="border border-primary p-2 mt-3 mb-4 bg-light text-white">Supplier Returns Details</h6>
+
+      <div class="row">
+        <div class="col-lg-4">
+          <div class="form-group row">
+            <label for="" id="purchaseReturnsLabelDistributor" class="col-sm-3 col-form-label pr-0 text-right">Supplier
+              <span class="text-danger">*</span>
+            </label>
+            <div class="col-sm-9">
+              <ng-select [items]="suppliers" bindLabel="name" placeholder="Select Supplier" [(ngModel)]="selectedSupplier"
+                [ngModelOptions]="{standalone: true}" (change)="onSupplierChange($event)" id="purchaseInvoiceSupplier" disabled>
+              </ng-select>
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="" id="purchaseReturnsLabelDLNo" class="col-sm-3 col-form-label pr-0 text-right">SL No</label>
+            <div class="col-sm-9">
+              <label disabled="disabled" type="text" class="form-control" id="purchaseInvoiceDlNo" placeholder="DL Number">{{selectedSupplier?.dlNo}}</label>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-8">
+          <div class="form-group row">
+            <div class="col-12">
+              <label disabled="disabled" type="text" class="form-control" id="purchaseInvoiceLabelName" placeholder="">{{selectedSupplier?.name}}</label>
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="" id="purchaseReturnsLabelAddress" class="col-sm-3 col-form-label pr-0 text-right">Address</label>
+            <div class="col-sm-9">
+              <label disabled="disabled" type="text" class="form-control" id="purchaseInvoiceLabelAddOne" placeholder="Address">{{selectedSupplier?.addressLine1}}</label>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <h6 class="border border-primary p-2 mt-3 mb-4 bg-light text-white">Item Details</h6>
+
+      <div class="row">
+        <div class="col-lg-3">
+          <div class="form-group row">
+            <label for="" id="purchaseReturnsLabelItemCode" class="col-sm-3 col-form-label pr-0 text-right">Name</label>
+            <div class="col-sm-9">
+              <ng-select [items]="invoiceItems" bindLabel="itemsModel.itemName" placeholder="-- Item Name --" [(ngModel)]="selectedItem"
+                [ngModelOptions]="{standalone: true}" (change)="onItemCodeChange($event)" id="purchaseReturnsItemCode">
+              </ng-select>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-3">
+          <div class="form-group row">
+            <label for="" id="purchaseReturnsLabelPurQty" class="col-sm-3 col-form-label pr-0 text-right">Inv Qty</label>
+            <div class="col-sm-9 ">
+              <!-- <input type="text" class="form-control" id="purchaseReturnsPurQty" placeholder="Purchase Quantity"> -->
+              <label disabled="disabled" type="text" class="form-control" id="purchaseReturnsPurQty" placeholder="Purchase Quantity">{{selectedItem?.orderQuantity}}</label>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-3">
+          <div class="form-group row">
+            <label for="" id="purchaseReturnsLabelStockQty" class="col-sm-3 col-form-label pr-0 text-right">Stock Qty</label>
+            <div class="col-sm-9 ">
+              <!-- <input type="text" class="form-control" id="purchaseReturnsPurQty" placeholder="Purchase Quantity"> -->
+              <label disabled="disabled" type="text" class="form-control" id="purchaseReturnsStockQty" placeholder="Stock Quantity">{{originalStockQty}}</label>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-3">
+          <div class="form-group row">
+            <label for="" id="purchaseReturnsLabelRetQty" class="col-sm-3 col-form-label pr-0 text-right">Qty
+            <span class="text-danger">*</span></label>
+            <div class="col-sm-9 ">
+              <input type="text" class="form-control" id="purchaseReturnsRetQty" placeholder="Return Quantity" formControlName="returnQty">
+              <!-- <div *ngIf="purchaseReturnsForm.get('returnQty')?.touched" class="error-msg-common text-danger">
+                  <div *ngIf="purchaseReturnsForm.get('returnQty').errors?.required">
+                    * required field
+                  </div>
+                </div> -->
+                  <div *ngIf="purchaseReturnsForm?.get('returnQty')?.errors && !purchaseReturnsForm.get('returnQty').errors?.required" class="error-msg-common text-danger" > 
+                    * Retrun qty should not be greater than order qty
+                  </div>
+            </div>
+          </div>
+        </div>
+   
+      </div>
+      <div class="row" >
+        <div class="col-lg-3">
+          <div class="form-group row">
+            <label for="" id="purchaseReturnsLabelDistributor" class="col-sm-3 col-form-label pr-0 text-right">Type
+            <span class="text-danger">*</span></label>
+            <div class="col-sm-9">
+                <!-- <ng-select [items]="prTypes" bindLabel="prTyp" name="type" placeholder="-- Select --"
+                [(ngModel)]="selectPRType" formControlName="selectPRType">
+               </ng-select> -->
+
+              <ng-select [items]="itemTypes" name="itemTyp" bindLabel="prTyp" formControlName="returnType" [(ngModel)]="returnType" placeholder="Return Type">
+              </ng-select>
+              <!-- <div *ngIf="purchaseReturnsForm.get('returnType')?.touched" class="error-msg-common text-danger">
+                  <div *ngIf="purchaseReturnsForm.get('returnType')?.errors?.required">
+                    * required field
+                  </div>
+                </div> -->
+                
+              <!-- <ng-select [items]="prTypes.data" bindLabel="prTyp" name="type" placeholder="-- Select --" [(ngModel)]="selectPRType" (change)="recieveSelected($event)">
+              </ng-select> -->
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-3" *ngIf="bonusDiv">
+          <div class="form-group row">
+            <label for="" id="purchaseReturnsLabelBonus" class="col-sm-3 col-form-label pr-0 text-right">Bonus</label>
+            <div class="col-sm-9">
+              <label disabled="disabled" type="text" class="form-control" id="purchaseReturnsBnsQty" placeholder="Purchase Quantity">{{selectedItem?.bonus}}</label>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-3" *ngIf="bonusDiv">
+          <div class="form-group row">
+            <label for="" id="purchaseReturnsLabelBnsQty" class="col-sm-3 col-form-label pr-0 text-right">Bonus Qty
+            </label>
+            <div class="col-sm-9 ">
+              <input type="text" class="form-control" id="purchaseReturnsBnsQty" placeholder="Return Quantity" formControlName="bonusQty">
+              <div *ngIf="purchaseReturnsForm?.get('bonusQty')?.errors && !purchaseReturnsForm.get('bonusQty').errors?.required" class="error-msg-common text-danger" > 
+                * Bonus qty should not be greater than original bonus qty
+              </div>
+            </div>
+          </div>
+        </div>
+        
+
+
+      </div>
+
+      <div class="row">
+        <div class="col text-center">
+          <button class="btn btn-primary" (click)="addSelected()" [disabled]="!addItems()">
+            Add to the grid
+          </button>
+        </div>
+      </div>
+
+      <div class="row text-right pb-2">
+        <div class="col">
+          <button class="btn btn-secondary" (click)="onRemoveSelected()">Delete</button>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-12 pb-4">
+          <ag-grid-angular style="width: 100%; height: 200px;" class="ag-theme-balham" [rowData]="rowData" [columnDefs]="columnDefs"
+            (gridReady)="onGridReady($event)" [gridOptions]="purchaseReturnsGridOptions">
+          </ag-grid-angular>
+        </div>
+      </div>
+
+      <div class="row py-3">
+        <div class="col-lg-4">
+          <div class="form-group row">
+            <label for="" id="purchaseReturnsLabelItems" class="col-sm-3 col-form-label pr-0 text-right">Items</label>
+            <div class="col-sm-9">
+              <input disabled type="text" class="form-control" name="itemCount" [(ngModel)]="itemsCount" formControlName="itemsCount" id="purchaseReturnsItems"
+                placeholder="Total Items Returned">
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="" id="purchaseReturnsLabelQty" class="col-sm-3 col-form-label pr-0 text-right">Qty
+              <span class="text-danger">*</span>
+            </label>
+            <div class="col-sm-9">
+              <input disabled type="text" class="form-control" name="totlQuantity" [(ngModel)]="totalQuantity" formControlName="totalQuantity" id="purchaseReturnsQty"
+                placeholder="Total Quantity Returned">
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-4">
+          <div class="form-group row">
+            <label for="" id="purchaseReturnsLabelBonus" class="col-sm-3 col-form-label pr-0 text-right">Bonus</label>
+            <div class="col-sm-9">
+              <input type="text" class="form-control" name="bonudQty" id="purchaseReturnsBonus" [(ngModel)]="bonusQuantity" formControlName="bonusQuantity" placeholder="Bonus Quantity">
+            </div>
+          </div>
+          <div class="form-group row">
+            <label for="" id="purchaseReturnsLabelCharges" class="col-sm-3 col-form-label pr-0 text-right">Charges</label>
+            <div class="col-sm-9">
+              <input type="text" class="form-control" name="serviceCharge" formControlName="serviceCharges" id="purchaseReturnsCharges" placeholder="Service Charges"
+                (focusout)="updateTotalPrice($event.target.value, $event.target.id)">
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-4">
+          <div class="form-group row">
+            <label for="" id="purchaseReturnsLabelRoundOff" class="col-sm-3 col-form-label pr-0 text-right">Round Off
+            </label>
+            <div class="col-sm-9">
+              <input type="text" class="form-control" name="roundOff" formControlName="roundOff" id="purchaseReturnsRoundOff" placeholder="Round Off"
+                (focusout)="updateTotalPrice($event.target.value, $event.target.id)">
+            </div>
+          </div>
+          <div class="form-group">
+            <div class="col-sm-12 text-center">
+              <h5 class="mb-0 pt-2"> Total Amount: {{totalAmount}}</h5>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+
+      <div class="row">
+        <!-- <div class="col mb-3 pt-2 text-center">
+        <button [disabled]="checkFormDisability()" (click)="savePurchaseReturns()" class="btn btn-primary px-4">Save</button>
+        <button class="btn btn-secondary px-4 ml-3">Cancel</button>
+      </div> -->
+        <div class="col mb-3 pt-2 text-center">
+          <button class="btn btn-primary px-4" [disabled]="formDisable" (click)="savePurchaseReturns()">Save</button>
+          <input type="button" class="btn btn-secondary px-4 ml-3" (click)="onReset()" value="Cancel">
+        </div>
+      </div>
+    </form>
+  </div>
+
+</div>
+
+<!-- Modal 
+<div class="modal fade" id="itemSearchModal" tabindex="-1" role="dialog" aria-labelledby="itemSearchModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-body">
+
+        <div class="row">
+          <div class="col-sm-6">
+            <div class="form-group row">
+              <label for="" id="purchaseReturnsLabelFrom" class="col-sm-3 col-form-label pr-0 text-right">From <span
+                  class="text-danger">*</span></label>
+              <div class="col-sm-9">
+                <input type="date" class="form-control" id="purchaseReturnsFrom" placeholder="">
+              </div>
+            </div>
+          </div>
+          <div class="col-sm-6">
+            <div class="form-group row">
+              <label for="" id="purchaseReturnsLabelTo" class="col-sm-1 col-form-label px-0 text-right">To <span
+                  class="text-danger">*</span></label>
+              <div class="col-sm-11">
+                <input type="date" class="form-control" id="purchaseReturnsTo" placeholder="">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-sm-6">
+            <div class="form-group row">
+              <label for="" id="purchaseReturnsLabelDesc" class="col-sm-3 col-form-label pr-0 text-right">Cd/Desc <span
+                  class="text-danger">*</span></label>
+              <div class="col-sm-9">
+                <input type="text" class="form-control" id="purchaseReturnsDesc" placeholder="Search">
+              </div>
+            </div>
+          </div>
+          <div class="col-sm-6">
+            <div class="form-group row">
+              <div class="col-sm-6">
+                <ng-select id="purchaseReturnsSelectPresc" [items]="testing" bindLabel="test" [loading]="Loading">
+                </ng-select>
+              </div>
+              <div class="col-sm-6">
+                <input type="text" class="form-control" id="purchaseReturnsPresc" placeholder="DOLO 2.0mg"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-sm-12 text-center pb-3">
+          <button type="button" id="purchaseReturnsShowBtn" class="btn btn-primary px-4 mr-2">Show</button>
+          <button type="button" id="purchaseReturnsBackBtn" class="btn btn-secondary px-4">Back</button>
+        </div>
+
+        <div class="form-group row">
+          <div class="col-sm-12">
+            <ag-grid-angular style="width: 100%; height: 200px;" class="ag-theme-balham" [rowData]="rowData"
+              [columnDefs]="columnDefs">
+            </ag-grid-angular>
+          </div>
+          <div class="col-sm-12 pt-2">
+            <div class="form-group">
+              <div class="col-sm-12 justify-content-end d-flex">
+                <div class="custom-control d-inline custom-checkbox">
+                  <input name="from" type="checkbox" value="N" class="custom-control-input" id="cust">
+                  <label id="purchaseReturnsLabelSelectAll" class="custom-control-label" for="cust">Select All</label>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col mb-3 pt-2 text-center">
+              <button  (click)="savePurchaseReturns()" class="btn btn-primary px-4">Save</button>
+              <button (click)="onCancel()" class="btn btn-secondary px-4 ml-3">Cancel</button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+</div>-->
+<ng4-loading-spinner [loadingText]="'Please wait...'" [timeout]="400000000"> </ng4-loading-spinner>

@@ -1,0 +1,363 @@
+<form #myForm="ngForm" [formGroup]="itemSupplierInformationForm" class="full-height">
+    <!--  (ngSubmit)="onSubmit(model)" -->
+    <div class="tab-content" id="pills-tabContent">
+
+        <div class="tab-pane fade show active" id="pills-add" role="tabpanel" aria-labelledby="pills-add-tab">
+
+            <div class="row pb-4">
+                <div class="col-lg-12  radio-Item-Supplier">
+                    <div class="d-inline custom-control custom-radio mr-3">
+                        <input (change)="onTypeChanged($event)" [ngModelOptions]="{standalone: true}"
+                            class="custom-control-input" [(ngModel)]="type" type="radio" id="radioItemSuppliers"
+                            name="type" value="Y">
+                        <label id="editItemSupplierLabelItemSupplier" class="custom-control-label"
+                            for="radioItemSuppliers">Item-Supplier </label>
+
+                    </div>
+                    <div class="d-inline custom-control custom-radio">
+                        <input (change)="onTypeChanged($event)" [ngModelOptions]="{standalone: true}"
+                            class="custom-control-input" [(ngModel)]="type" type="radio" id="radioSupplierItems"
+                            name="type" value="N">
+                        <label id="editItemSupplierLabelSupplierItem" class="custom-control-label"
+                            for="radioSupplierItems">Supplier-Item </label>
+
+                    </div>
+
+                </div>
+            </div>
+
+            <!--ItemSupplier Fields  -->
+            <div class="Item-Supplier" id="idItemSuppliers">
+                <div class="row">
+                    <div class="col-lg-6">
+                        <div class="form-group row">
+                            <label id="itemLabelBarcode" for=""
+                                class="col-sm-3 col-form-label pr-0 text-right">QR/Barcode
+                            </label>
+                            <div class="col-sm-9">
+                                <input id="itemBarcode" type="text" class="form-control" 
+                                [ngModelOptions]="{standalone: true}" [(ngModel)]="barCodeScanned"
+                                    placeholder="Barcode" (keyup.enter)="onScanAndEnter(barCodeScanned)" (mouseup)="onMouseEnter()">
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-6">
+                        <div class="form-group row">
+                            <label for="" id="editItemSupplierLabelItem_ItemSupplier"
+                                class="col-sm-3 col-form-label pr-0 text-right">Item </label>
+                            <div class="col-sm-9">
+                                <ng-select [items]="itemsArray" id="editItemSupplierSelectItem_ItemSupplier"
+                                    bindLabel="itemName" placeholder="-- Select --"
+                                    [ngModelOptions]="{standalone: true}" (search)="searchItem($event)"
+                                    [(ngModel)]="selectedAddItemSupplierItem" (change)="onItemSelected($event)">
+                                </ng-select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="form-group row">
+                            <label for="" id="editItemSupplierLabelSupplierItemSupplier"
+                                class="col-sm-3 col-form-label pr-0 text-right">Supplier </label>
+                            <div class="col-sm-9">
+                                <ng-select [items]="unMappedSuppliers" disabled
+                                    id="editItemSupplierSelectSupplierItemSupplier" bindLabel="name"
+                                    placeholder="-- Select --" [ngModelOptions]="{standalone: true}"
+                                    [(ngModel)]="selectedAddItemSupplierSupplier"
+                                    (change)="onUnMappedSupplierSelected($event)">
+                                </ng-select>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-lg-6">
+                        <div class="form-group row">
+                            <label for="" id="editItemSupplierLabelPriorityItemSupplier"
+                                class="col-sm-3 col-form-label pr-0 text-right">Priority </label>
+                            <div class="col-sm-9">
+                                <ng-select [items]="priorityList" id="editItemSupplierSelectPriorityItemSupplier"
+                                    (change)="onChangePriority($event)" [(ngModel)]="selectedPriority"
+                                    [ngModelOptions]="{standalone: true}" placeholder="-- Select --">
+                                </ng-select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="form-group row">
+                            <label for="" id="addItemSupplierLabelUnitRateItemSupplier"
+                                class="col-sm-3 col-form-label pr-0 text-right">Unit Rate
+                                <span class="text-danger">*</span>
+                            </label>
+                            <div class="col-sm-9">
+                                <input type="text" id="addItemSupplierUnitRateItemSupplier" class="form-control"
+                                    formControlName="unitRate" [(ngModel)]="unitRate" placeholder="Unit Rate">
+                                <div *ngIf="itemSupplierInformationForm.get('unitRate')?.touched"
+                                    class="error-msg-common text-danger">
+                                    <div *ngIf="itemSupplierInformationForm.get('unitRate').errors?.required">
+                                        * required field
+                                    </div>
+                                </div>
+                                <div *ngIf="itemSupplierInformationForm.get('unitRate')?.invalid"
+                                    class="error-msg-common text-danger">
+                                    <div
+                                        *ngIf="!itemSupplierInformationForm.get('unitRate').errors?.required && itemSupplierInformationForm?.get('unitRate')?.errors">
+                                        * not a valid input
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                </div>
+                <div class="row">
+                    <div class="col-lg-6">
+                        <div class="form-group row">
+                            <label for="" id="editItemSupplierLabelDiscountItemSupplier"
+                                class="col-sm-3 col-form-label pr-0 text-right">Discount %
+                                <span class="text-danger">*</span></label>
+                            <div class="col-sm-9">
+                                <input type="text" id="editItemSupplierDiscountItemSupplier" class="form-control"
+                                    formControlName="discountPercentage" [(ngModel)]="discountPercentage"
+                                    placeholder="Discount Percentage">
+
+                                <div *ngIf="itemSupplierInformationForm.get('discountPercentage')?.touched"
+                                    class="error-msg-common text-danger">
+                                    <div *ngIf="itemSupplierInformationForm.get('discountPercentage').errors?.required">
+                                        * required field
+                                    </div>
+                                </div>
+                                <div *ngIf="itemSupplierInformationForm.get('discountPercentage')?.invalid"
+                                    class="error-msg-common text-danger">
+                                    <div
+                                        *ngIf="!itemSupplierInformationForm.get('discountPercentage').errors?.required && itemSupplierInformationForm?.get('discountPercentage')?.errors">
+                                        * not a valid input
+                                    </div>
+
+                                </div>
+
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="form-group row">
+                            <label for="" id="editItemSupplierLabelValidityItemSupplier"
+                                class="col-sm-3 col-form-label pr-0 text-right">Validity<span
+                                    class="text-danger">*</span></label>
+                            <div class="col-sm-9">
+                                <input type="date" id="editItemSupplierValidityItemSupplier" class="form-control"
+                                    formControlName="validity" (change)="selectedDate($event)" [(ngModel)]="validity" />
+                                <div *ngIf="itemSupplierInformationForm.get('validity')?.touched"
+                                    class="error-msg-common text-danger">
+                                    <div *ngIf="itemSupplierInformationForm.get('validity').errors?.required">
+                                        * required field
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group row py-3">
+                    <div class="col-lg-4">
+                        <div class="col-sm-12 justify-content-end d-flex">
+                            <div class="d-inline mr-3">
+                                <label id="editItemSupplierLabelStatusItemSupplier" class="mb-0">Status</label>
+                            </div>
+                            <div class="custom-control d-inline custom-radio mr-3">
+                                <input [(ngModel)]="activeSID" name="activeSID" type="radio" value="Y"
+                                    [ngModelOptions]="{standalone: true}" class="custom-control-input" id="active">
+                                <label id="editItemSupplierLabelActivateItemSupplier" class="custom-control-label"
+                                    for="active">Activate</label>
+                            </div>
+                            <div class="custom-control d-inline custom-radio">
+                                <input [(ngModel)]="activeSID" name="activeSID" type="radio" value="N"
+                                    [ngModelOptions]="{standalone: true}" class="custom-control-input" id="deactivate">
+                                <label id="editItemSupplierLabelDeActivateItemSupplier" class="custom-control-label"
+                                    for="deactivate">DeActivate</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+        <!--SupplierItem Fields  -->
+        <div class="Supplier-Item" id="idSupplierItem" style="display:none">
+            <div class="row">
+                <div class="col-lg-6">
+                    <div class="form-group row">
+                        <label for="" id="editItemSupplierLabelSupplier_SupplierItem"
+                            class="col-sm-3 col-form-label pr-0 text-right">Supplier </label>
+                        <div class="col-sm-9">
+                            <ng-select [items]="suppliersArray" id="editItemSupplierSelectSupplier_SupplierItem"
+                                bindLabel="name" placeholder="-- Select --" [ngModelOptions]="{standalone: true}"
+                                (search)="searchSupplier($event)" [(ngModel)]="selectedAddItemSupplierSupplier"
+                                (change)="onSupplierSelected($event)">
+                            </ng-select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-6">
+                    <div class="form-group row">
+                        <label for="" id="editItemSupplierLabelItemSupplierItem"
+                            class="col-sm-3 col-form-label pr-0 text-right">Item </label>
+                        <div class="col-sm-9">
+                            <ng-select [items]="unMappedItems" disabled id="editItemSupplierSelectItemSupplierItem"
+                                bindLabel="itemName" placeholder="-- Select --" [ngModelOptions]="{standalone: true}"
+                                [(ngModel)]="selectedAddItemSupplierItem" (change)="onSupplierItemSelected($event)">
+                            </ng-select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-lg-6">
+                    <div class="form-group row">
+                        <label for="" id="editItemSupplierLabelPrioritySupplierItem"
+                            class="col-sm-3 col-form-label pr-0 text-right">Priority </label>
+                        <div class="col-sm-9">
+                            <ng-select [items]="priorityList" id="editItemSupplierSelectPrioritySupplierItem"
+                                (change)="onChangePriority($event)" [(ngModel)]="selectedPriority"
+                                [ngModelOptions]="{standalone: true}" placeholder="-- Select --">
+                            </ng-select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-6">
+                    <div class="form-group row">
+                        <label for="" id="editItemSupplierLabelUnitRateSupplierItem"
+                            class="col-sm-3 col-form-label pr-0 text-right">Unit Rate
+                            <span class="text-danger">*</span>
+                        </label>
+                        <div class="col-sm-9">
+
+                            <input type="text" class="form-control" id="editItemSupplierUnitRateSupplierItem"
+                                [(ngModel)]="unitRate" placeholder="Unit Rate" formControlName="unitRate">
+                            <div *ngIf="itemSupplierInformationForm.get('unitRate')?.touched"
+                                class="error-msg-common text-danger">
+                                <div *ngIf="itemSupplierInformationForm.get('unitRate').errors?.required">
+                                    * required field
+                                </div>
+                            </div>
+                            <div *ngIf="itemSupplierInformationForm.get('unitRate')?.invalid"
+                                class="error-msg-common text-danger">
+                                <div
+                                    *ngIf="!itemSupplierInformationForm.get('unitRate').errors?.required && itemSupplierInformationForm?.get('unitRate')?.errors">
+                                    * not a valid input
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-6">
+                    <div class="form-group row">
+                        <label for="" id="editItemSupplierLabelDiscountSupplierItem"
+                            class="col-sm-3 col-form-label pr-0 text-right">Discount %
+                            <span class="text-danger">*</span>
+                        </label>
+                        <div class="col-sm-9">
+                            <input type="text" id="editItemSupplierDiscountSupplierItem"
+                                formControlName="discountPercentage" class="form-control"
+                                [(ngModel)]="discountPercentage" placeholder="Discount Percentage">
+
+                            <div *ngIf="itemSupplierInformationForm.get('discountPercentage')?.touched"
+                                class="error-msg-common text-danger">
+                                <div *ngIf="itemSupplierInformationForm.get('discountPercentage').errors?.required">
+                                    * required field
+                                </div>
+                            </div>
+                            <div *ngIf="itemSupplierInformationForm.get('discountPercentage')?.invalid"
+                                class="error-msg-common text-danger">
+                                <div
+                                    *ngIf="!itemSupplierInformationForm.get('discountPercentage').errors?.required && itemSupplierInformationForm?.get('discountPercentage')?.errors">
+                                    * not a valid input
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="form-group row">
+                        <label for="" id="editItemSupplierLabelValiditySupplierItem"
+                            class="col-sm-3 col-form-label pr-0 text-right">Validity
+                            <span class="text-danger">*</span>
+                        </label>
+                        <div class="col-sm-9">
+                            <input type="date" id="editItemSupplierValiditySupplierItem" formControlName="validity"
+                                class="form-control" (change)="selectedDate($event)" [(ngModel)]="validity" />
+
+                            <div *ngIf="itemSupplierInformationForm.get('validity')?.touched"
+                                class="error-msg-common text-danger">
+                                <div *ngIf="itemSupplierInformationForm.get('validity').errors?.required">
+                                    * required field
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group row py-3">
+                <div class="col-lg-4">
+                    <div class="col-sm-12 justify-content-end d-flex">
+                        <div class="d-inline mr-3">
+                            <label id="editItemSupplierLabelStatusSupplierItem" class="mb-0">Status</label>
+                        </div>
+                        <div class="custom-control d-inline custom-radio mr-3">
+                            <input [(ngModel)]="activeSDI" name="activeSDI" type="radio" value="Y"
+                                [ngModelOptions]="{standalone: true}" class="custom-control-input"
+                                id="SupplierItemActive">
+                            <label id="editItemSupplierLabelActivateSupplierItem" class="custom-control-label"
+                                for="SupplierItemActive">Activate</label>
+                        </div>
+                        <div class="custom-control d-inline custom-radio">
+                            <input [(ngModel)]="activeSDI" name="activeSDI" type="radio" value="N"
+                                [ngModelOptions]="{standalone: true}" class="custom-control-input"
+                                id="SupplierItemDeactive">
+                            <label id="editItemSupplierLabelDeActivateSupplierItem" class="custom-control-label"
+                                for="SupplierItemDeactive">DeActivate</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col text-right">
+        <button [disabled]="itemSupplierGridOptions?.api?.getSelectedRows()?.length ==0" class="btn btn-primary px-4"
+            id="common-grid-btn" (click)="editGrid()" *ngIf="showGrid">Edit</button>
+    </div>
+
+    <div class="row grid-area">
+        <div class="col py-3">
+            <ag-grid-angular id="common-grid" style="width: 100%; height: 620px;" class="ag-theme-balham"
+                [columnDefs]="columnDefs" *ngIf="showGrid" [rowData]="rowData" [gridOptions]="itemSupplierGridOptions">
+            </ag-grid-angular>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col mb-3 pt-2 text-center">
+            <button (click)="updateItemSupplier()" class="btn btn-primary px-4" id="mu-adduser-save">Update</button>
+            <input type="button" value="Cancel" (click)="reset()" class="btn btn-secondary px-4 ml-3"
+                id="mu-adduser-cancel">
+        </div>
+    </div>
+
+    <ng4-loading-spinner [loadingText]="'Please wait...'" [timeout]="1400"> </ng4-loading-spinner>

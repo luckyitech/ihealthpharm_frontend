@@ -1,0 +1,269 @@
+<form #providerForm="ngForm" [formGroup]="providerInformationForm" (keydown.enter)="$event.preventDefault()"
+  (ngSubmit)="onSubmit()" class="full-height">
+
+  <h6 class="border border-primary p-2 mt-3 mb-4 bg-light text-white">Generic Details</h6>
+
+  <div class="row">
+    <div class="col-lg-4">
+      <div class="form-group row">
+        <label for="" class="col-sm-3 col-form-label pr-0 text-right" id="addProviderLabelFirstName">First Name <span
+            class="text-danger">*</span></label>
+        <div class="col-sm-9">
+          <input type="text" formControlName="firstName" class="form-control" id="addProviderFirstName" placeholder="First Name">
+          <div *ngIf="providerInformationForm.get('firstName')?.touched" class="error-msg-common text-danger">
+            <div *ngIf="providerInformationForm.get('firstName').errors?.required">
+              * required field
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="form-group row">
+        <label for="" class="col-sm-3 col-form-label pr-0 text-right" id="addProviderLabelMidName">Mid Name </label>
+        <div class="col-sm-9">
+          <input type="text" formControlName="middleName" class="form-control" id="addProviderMidName" placeholder="Middle Name">
+        </div>
+      </div>
+      <div class="form-group row">
+        <label for="" class="col-sm-3 col-form-label pr-0 text-right" id="addProviderLabelLastName">Last Name <span
+            class="text-danger">*</span></label>
+        <div class="col-sm-9">
+          <input type="text" formControlName="lastName" class="form-control" id="addProviderLastName" placeholder="Last Name">
+          <div *ngIf="providerInformationForm.get('lastName')?.touched" class="error-msg-common text-danger">
+            <div *ngIf="providerInformationForm.get('lastName').errors?.required">
+              * required field
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-4">
+      <div class="form-group row">
+        <label for="" class="col-sm-3 col-form-label pr-0 text-right" id="addProviderLabelGender">Gender <span class="text-danger">*</span></label>
+        <div class="col-sm-9">
+          <ng-select placeholder="-- select --" [items]="genders" id="addProviderGender" bindLabel="name" [(ngModel)]="selectedGender"
+          formControlName="genderCode">
+          </ng-select>
+          <div *ngIf="providerInformationForm.get('genderCode')?.touched" class="error-msg-common text-danger">
+            <div *ngIf="providerInformationForm.get('genderCode').errors?.required">
+              * required field
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="form-group row">
+        <label for="" class="col-sm-3 col-form-label pr-0 text-right" id="addProviderLabelLicense">License <span class="text-danger">*</span></label>
+        <div class="col-sm-9">
+          <input formControlName="licenseNumber" type="text" class="form-control" id="addProviderLicense" placeholder="License">
+          <div *ngIf="providerInformationForm.get('licenseNumber')?.touched" class="error-msg-common text-danger">
+            <div *ngIf="providerInformationForm.get('licenseNumber').errors?.required">
+              * required field
+            </div>
+          </div>
+          <div *ngIf="providerInformationForm.get('licenseNumber')?.invalid" class="error-msg-common text-danger">
+              <div
+                *ngIf="!providerInformationForm.get('licenseNumber').errors?.required && providerInformationForm?.get('licenseNumber')?.errors">
+                * not a valid input
+              </div>
+            </div>
+        </div>
+      </div>
+      <div class="form-group row">
+        <label for="" class="col-sm-3 col-form-label pr-0 text-right" id="addProviderLabelDEA">DEA </label>
+        <div class="col-sm-9">
+          <input formControlName="deaNumber" type="text" class="form-control" id="addProviderDEA" placeholder="DEA Number">
+    
+            <div *ngIf="providerInformationForm.get('deaNumber')?.invalid" class="error-msg-common text-danger">
+                <div
+                  *ngIf="!providerInformationForm.get('deaNumber').errors?.required && providerInformationForm?.get('deaNumber')?.errors">
+                  * not a valid input
+                </div>
+              </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-4">
+      <div class="form-group row">
+        <label for="" class="col-sm-3 col-form-label pr-0 text-right" id="addProviderLabelType">Type <span
+            class="text-danger">*</span></label>
+        <div class="col-sm-9">
+          <ng-select  [(ngModel)]="selectedProviders" formControlName="providerLookupTypeModel" id="addProviderType" placeholder="-- select --" [items]="providerLookups"
+            bindLabel="providerTypeDesc" >
+          </ng-select>
+          <div *ngIf="providerInformationForm.get('providerLookupTypeModel')?.touched"
+            class="error-msg-common text-danger">
+            <div *ngIf="providerInformationForm.get('providerLookupTypeModel').errors?.required">
+              * required field
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="form-group row">
+        <label for="" class="col-sm-3 col-form-label pr-0 text-right" id="addProviderLabelSpeciality">Speciality </label>
+        <div class="col-sm-9">
+          <input formControlName="speciality" type="text" class="form-control" id="addProviderSpeciality" placeholder="Speciality">
+        </div>
+      </div>
+      <div class="form-group row">
+        <label for="" class="col-sm-3 col-form-label pr-0 text-right" id="addProviderLabelHospital">Hospital </label>
+        <div class="col-sm-9">
+          <ng-select  [(ngModel)]="selectedHospital" [ngModelOptions]="{standalone:true}" id="addProviderHospital" placeholder="-- select --" [items]="hospitals" bindLabel="hospitalName">
+          </ng-select>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h6 class="border border-primary p-2 mt-3 mb-4 bg-light text-white">Contact Details</h6>
+
+  <div class="row">
+    <div class="col-lg-4">
+      <div class="form-group row">
+        <label for="" class="col-sm-3 col-form-label pr-0 text-right" id="addProviderLabelPhone">Phone <span class="text-danger">*</span></label>
+        <div class="col-sm-9">
+          <input formControlName="phoneNumber" type="text" class="form-control" id="addProviderPhone" placeholder="Phone Number">
+          <div *ngIf="providerInformationForm.get('phoneNumber')?.touched" class="error-msg-common text-danger">
+            <div *ngIf="providerInformationForm.get('phoneNumber').errors?.required">
+              * required field
+            </div>
+          </div>
+          <div *ngIf="providerInformationForm.get('phoneNumber')?.invalid" class="error-msg-common text-danger">
+            <div
+              *ngIf="!providerInformationForm.get('phoneNumber').errors?.required && providerInformationForm?.get('phoneNumber')?.errors ">
+              * not a valid input
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="form-group row">
+        <label for="" class="col-sm-3 col-form-label pr-0 text-right" id="addProviderLabelEmail">Email <span class="text-danger">*</span></label>
+        <div class="col-sm-9">
+          <input formControlName="emailId" type="text" class="form-control" id="addProviderEmail" placeholder="Email">
+          <div *ngIf="providerInformationForm.get('emailId')?.touched" class="error-msg-common text-danger">
+            <div *ngIf="providerInformationForm.get('emailId').errors?.required">
+              * required field
+            </div>
+          </div>
+          <div
+            *ngIf="providerInformationForm.get('emailId')?.invalid && providerInformationForm.get('emailId')?.touched"
+            class="error-msg-common text-danger">
+            <div
+              *ngIf="!providerInformationForm.get('emailId').errors?.required && providerInformationForm?.get('emailId')?.errors">
+              * not a valid input
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="form-group row">
+        <label for="" class="col-sm-3 col-form-label pr-0 text-right" id="addProviderLabelAddressOne" >Address 1 <span
+            class="text-danger">*</span></label>
+        <div class="col-sm-9">
+          <input formControlName="addressLine1" type="text" class="form-control" id="addProviderAddressOne" placeholder="Address 1">
+          <div *ngIf="providerInformationForm.get('addressLine1')?.touched" class="error-msg-common text-danger">
+            <div *ngIf="providerInformationForm.get('addressLine1').errors?.required">
+              * required field
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-4">
+      <div class="form-group row">
+        <label for="" class="col-sm-3 col-form-label pr-0 text-right" id="addProviderLabelAddressTwo">Address 2 </label>
+        <div class="col-sm-9">
+          <input formControlName="addressLine2" type="text" class="form-control" id="addProviderAddressTwo" placeholder="Address 2">
+        </div>
+      </div>
+      <div class="form-group row">
+        <label for="" class="col-sm-3 col-form-label pr-0 text-right" id="addProviderLabelCountry">Country <span class="text-danger">*</span></label>
+        <div class="col-sm-9">
+          <ng-select [(ngModel)]="selectedCountry" formControlName="country"
+            (change)="onCountrySelected($event)" id="addProviderCountry" placeholder="-- select --" [items]="countries" bindLabel="countryName">
+          </ng-select>
+          <div *ngIf="providerInformationForm.get('country')?.touched" class="error-msg-common text-danger">
+            <div *ngIf="providerInformationForm.get('country').errors?.required">
+              * required field
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="form-group row">
+        <label for="" class="col-sm-3 col-form-label pr-0 text-right" id="addProviderLabelState">State / Province<span class="text-danger">*</span></label>
+        <div class="col-sm-9">
+          <ng-select [(ngModel)]="selectedState" formControlName="state" placeholder="-- select --"
+            [items]="states" bindLabel="provinceName" id="addProviderState">
+          </ng-select>
+          <div *ngIf="providerInformationForm.get('state')?.touched" class="error-msg-common text-danger">
+            <div *ngIf="providerInformationForm.get('state').errors?.required">
+              * required field
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-4">
+      <div class="form-group row">
+        <label for="" class="col-sm-3 col-form-label pr-0 text-right" id="addProviderLabelCity">City </label>
+        <div class="col-sm-9">
+          <input formControlName="cityName" type="text" class="form-control" id="addProviderCity" placeholder="City">
+        </div>
+      </div>
+      <div class="form-group row">
+        <label for="" class="col-sm-3 col-form-label pr-0 text-right" id="addProviderLabelPinCode">Pin Code <span
+            class="text-danger">*</span></label>
+        <div class="col-sm-9">
+          <input formControlName="zipCode" type="text" class="form-control" id="addProviderPinCode" placeholder="Pin Code">
+          <div *ngIf="providerInformationForm.get('zipCode')?.touched" class="error-msg-common text-danger">
+            <div *ngIf="providerInformationForm.get('zipCode').errors?.required">
+              * required field
+            </div>
+          </div>
+          <div *ngIf="providerInformationForm.get('zipCode')?.invalid" class="error-msg-common text-danger">
+            <div
+              *ngIf="!providerInformationForm.get('zipCode').errors?.required && providerInformationForm?.get('zipCode')?.errors">
+              * not a valid input
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="form-group row" >
+        <div class="col-sm-12 justify-content-end d-flex pt-2">
+          <div class="d-inline mr-3">
+            <label class="mb-0"id="addProviderLabelPinCode">Status</label>
+          </div>
+          <div class="custom-control d-inline custom-radio mr-3">
+            <input name="activeS" value="Y" formControlName="activeS" type="radio" class="custom-control-input"
+              id="activate">
+            <label class="custom-control-label" id="addproviderLabelActive" for="activate">Activate</label>
+          </div>
+          <div class="custom-control d-inline custom-radio">
+            <input name="activeS" value="N" formControlName="activeS" type="radio" class="custom-control-input"
+              id="deactivate">
+            <label class="custom-control-label" id="addproviderLabelDeActive" for="deactivate">De Activate</label>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h6 class="border border-primary p-2 mt-3 mb-4 bg-light text-white">Other Details</h6>
+
+  <div class="row">
+    <div class="col-lg-4">
+      <div class="form-group row">
+        <label for="" class="col-sm-3 col-form-label pr-0 text-right" id="addproviderLabelCredit" >Credit</label>
+        <div class="col-sm-9">
+          <input formControlName="credit" type="text" class="form-control" id="addproviderCredit" placeholder="Credit">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col mb-3 pt-2 text-center">
+      <button type="submit" [disabled]="checkFormDisability()" class="btn btn-primary px-4">Save</button>
+      <input type="button" value="Cancel" class="btn btn-secondary px-4 ml-3" (click)="reset();providerInformationForm.controls.activeS.setValue('Y')">
+    </div>
+  </div>
+
+</form>
+<ng4-loading-spinner [loadingText]="'Please wait...'" [timeout]="400000000"> </ng4-loading-spinner>

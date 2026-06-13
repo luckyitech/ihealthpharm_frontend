@@ -1,0 +1,237 @@
+<ul class="nav nav-pills mb-3 border-bottom border-secondary" id="pills-tab" role="tablist">
+  <li class="nav-item">
+    <a class="nav-link active" id="" data-toggle="pill" href="#pills-new" role="tab" aria-controls="pills-home"
+      aria-selected="true" (click)="TitleCheckList()">Checklists</a>
+  </li>
+</ul>
+<div>
+<ul class="nav nav-pills mb-3 " id="pills-tab" role="tablist">
+  <li class="nav-item">
+    <button class="nav-link nav-link-1 butt" id="" data-toggle="pill" aria-controls="pills-home"
+      (click)="addCheckList()" aria-selected="false">Add</button>
+  </li>
+  <li class="nav-item">
+    <button class="nav-link butt" id="" data-toggle="pill"  (click)="viewCheckList()" aria-selected="false" >View</button>
+  </li>
+  <li class="nav-item">
+    <button class="nav-link butt" id="" data-toggle="pill" (click)="EditCheckList()" aria-selected="false">Edit</button>
+  </li>
+  <li>
+    <h3 *ngIf="viewCheck || editCheck">Title: {{titleSelected}}</h3><br/>
+  </li>
+</ul>
+</div>
+<!-- -------------------------------------View Checklist--------------------------------------------------------------- -->
+<div *ngIf="viewCheck">
+  <table>
+    <tr>
+      <th>S.No</th>
+      <th>Checklist Name</th>
+      <th>Assigned By</th>
+      <th>Assigned To</th>
+      <th>Assigned Date</th>
+      <th>Target Date</th>
+      <th>Target Time</th>
+      <th>Status</th>
+      <th>Done By</th>
+      <th>Done Date Time</th>
+    </tr>
+    <br />
+    <tr *ngFor="let tr of checkLists">
+      <td>{{tr.sno}}</td>
+      <td><input type="text" value="{{tr.checkListName}}" disabled></td>
+      <td>{{tr.assignedBy}}</td>
+      <td>{{tr.assignedTo}}</td>
+      <td>{{tr.assignedDate | date: 'dd-MM-yyyy'}}</td>
+      <td>{{tr.targetDate | date: 'dd-MM-yyyy' }} </td>
+      <td>{{tr.targetTime}}</td>
+      <td>{{tr.status}}</td>
+      <td>{{tr.doneBy}}</td>
+      <td>{{tr.doneDateTS | date: 'dd-MM-yyyy hh:mm a' }}</td>
+    </tr>
+  </table>
+  <br />
+  <div class="row">
+    <div class="col mb-3 pt-2 text-center">
+      <input type="button" class="btn btn-secondary px-4 ml-3" value="Cancel" *ngIf="viewCheck" (click)="cancelView()">
+    </div>
+  </div>
+</div>
+<!-- ----------------------------------------Editing Checklist----------------------------------------------------------- -->
+
+<div *ngIf="editCheck">
+  <table>
+    <tr>
+      <th>S.No</th>
+      <th>Checklist Name</th>
+      <th>Assigned By</th>
+      <th>Assigned To</th>
+      <th>Assigned Date</th>
+      <th>Target Date</th>
+      <th>Target Time</th>
+      <th>Status</th>
+      <th>Done By</th>
+      <th>Done Date Time</th>
+    </tr>
+    <br />
+    <tr *ngFor="let tr of checkLists">
+      <td>{{tr.sno}}</td>
+      <td><input type="text" value="{{tr.checkListName}}" (change)="changesInCheckListName($event,tr.checkListId)"></td>
+      <td>{{tr.assignedBy}}</td>
+      <td>{{tr.assignedTo}}</td>
+      <td>{{tr.assignedDate | date: 'dd-MM-yyyy'}}</td>
+      <td>{{tr.targetDate | date: 'dd-MM-yyyy' }} </td>
+      <td>{{tr.targetTime}}</td>
+      <td>
+        <select (change)="editStatus($event,tr.checkListId)">
+          <option [selected]="tr.status=='Pending'">Pending</option>
+          <option [selected]="tr.status=='In Progress'">In Progress</option>
+          <option [selected]="tr.status=='Done'">Done</option>
+        </select>
+      </td>
+      <td>{{tr.doneBy}}</td>
+      <td>{{tr.doneDateTS | date: 'dd-MM-yyyy hh:mm a' }}</td>
+    </tr>
+  </table>
+  <br />
+  <div class="row">
+    <div class="col mb-3 pt-2 text-center">
+      <button type="submit" class="btn btn-primary px-4" id="mu-adduser-save" (click)="onSubmit()"
+        *ngIf="editCheck">Submit</button>
+      <input type="button" class="btn btn-secondary px-4 ml-3" value="Cancel" *ngIf="editCheck" (click)="cancelEdit()">
+    </div>
+  </div>
+</div>
+<!-------------------------------------------------Adding Checklist---------------------------------------------------------- -->
+<br />
+<form #addCheckListForm="ngForm" [formGroup]="addCheckListInformationForm" (keydown.enter)="$event.preventDefault()"
+  (ngSubmit)="onSave()" class="full-height">
+  <div *ngIf="addCheck">
+    <div class="form-group row">
+      <label class="col-sm-3 col-form-label pr-0 text-right">SNO <span class="text-danger">*</span></label>
+      <div class="col-sm-4">
+        <input type="text" class="form-control" formControlName="sno">
+        <div *ngIf="addCheckListInformationForm.get('sno')?.touched" class="error-msg-common text-danger">
+          <div *ngIf="addCheckListInformationForm.get('sno').errors?.required">
+            * required field
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="form-group row">
+      <label class="col-sm-3 col-form-label pr-0 text-right">Title <span class="text-danger">*</span></label>
+      <div class="col-sm-4">
+        <input type="text" class="form-control" formControlName="title">
+        <div *ngIf="addCheckListInformationForm.get('title')?.touched" class="error-msg-common text-danger">
+          <div *ngIf="addCheckListInformationForm.get('title').errors?.required">
+            * required field
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="form-group row">
+      <label class="col-sm-3 col-form-label pr-0 text-right">Checklist Name <span class="text-danger">*</span></label>
+      <div class="col-sm-4">
+        <input type="text" class="form-control" formControlName="checkListName">
+        <div *ngIf="addCheckListInformationForm.get('checkListName')?.touched" class="error-msg-common text-danger">
+          <div *ngIf="addCheckListInformationForm.get('checkListName').errors?.required">
+            * required field
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="form-group row">
+      <label class="col-sm-3 col-form-label pr-0 text-right">Assigned By <span class="text-danger">*</span></label>
+      <div class="col-sm-4">
+        <input type="text" class="form-control" formControlName="assignedBy">
+        <div *ngIf="addCheckListInformationForm.get('assignedBy')?.touched" class="error-msg-common text-danger">
+          <div *ngIf="addCheckListInformationForm.get('assignedBy').errors?.required">
+            * required field
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="form-group row">
+      <label class="col-sm-3 col-form-label pr-0 text-right">Assigned To <span class="text-danger">*</span></label>
+      <div class="col-sm-4">
+        <input type="text" class="form-control" formControlName="assignedTo">
+        <div *ngIf="addCheckListInformationForm.get('assignedTo')?.touched" class="error-msg-common text-danger">
+          <div *ngIf="addCheckListInformationForm.get('assignedTo').errors?.required">
+            * required field
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="form-group row">
+      <label class="col-sm-3 col-form-label pr-0 text-right">Assigned Date <span class="text-danger">*</span></label>
+      <div class="col-sm-4">
+        <input type="date" class="form-control" formControlName="assignedDate">
+        <div *ngIf="addCheckListInformationForm.get('assignedDate')?.touched" class="error-msg-common text-danger">
+          <div *ngIf="addCheckListInformationForm.get('assignedDate').errors?.required">
+            * required field
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="form-group row">
+      <label class="col-sm-3 col-form-label pr-0 text-right">Target Date <span class="text-danger">*</span></label>
+      <div class="col-sm-4">
+        <input type="date" class="form-control" formControlName="targetDate">
+        <div *ngIf="addCheckListInformationForm.get('targetDate')?.touched" class="error-msg-common text-danger">
+          <div *ngIf="addCheckListInformationForm.get('targetDate').errors?.required">
+            * required field
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="form-group row">
+      <label class="col-sm-3 col-form-label pr-0 text-right">Target Time <span class="text-danger">*</span></label>
+      <div class="col-sm-4">
+        <input type="time" class="form-control" formControlName="targetTime">
+        <div *ngIf="addCheckListInformationForm.get('targetTime')?.touched" class="error-msg-common text-danger">
+          <div *ngIf="addCheckListInformationForm.get('targetTime').errors?.required">
+            * required field
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="form-group row">
+      <label class="col-sm-3 col-form-label pr-0 text-right">Status <span class="text-danger">*</span></label>
+      <div class="col-sm-4">
+        <ng-select placeholder="-- Select --" [items]="statusDropDown" bindLabel="name" [(ngModel)]="selectedStatus"
+          [ngModelOptions]="{standalone:true}" (change)="onChangeStatus($event)">
+        </ng-select>
+      </div>
+    </div>
+    <div class="form-group row">
+      <label class="col-sm-3 col-form-label pr-0 text-right">Done By <span class="text-danger">*</span></label>
+      <div class="col-sm-4">
+        <input type="text" class="form-control" formControlName="doneBy">
+        <div *ngIf="addCheckListInformationForm.get('doneBy')?.touched" class="error-msg-common text-danger">
+          <div *ngIf="addCheckListInformationForm.get('doneBy').errors?.required">
+            * required field
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col mb-3 pt-2 text-center" style="margin-left: -83px;">
+        <button type="submit" class="btn btn-primary px-4" [disabled]="checkFormDisability()" id="mu-adduser-save">Submit</button>
+        <input type="button" class="btn btn-secondary px-4 ml-3" value="Cancel" *ngIf="addCheck" (click)="cancelAdd()">
+      </div>
+    </div>
+  </div>
+
+</form>
+<!-----------------------------------------Title CheckList------------------------------------------------>
+
+<div *ngIf="TitleCheck">
+  <table style="border-collapse: collapse;width: 700px;background-color: white;">
+    <tr *ngFor="let title of titles" style="padding: 5px;border:1px solid rgb(98, 182, 207);">
+      <td >
+        <input type="checkbox" (click)="selectedTitle($event)" value={{title.title}}>  {{title.title}} <br/>
+      </td>
+      <td>{{title.assignedDate}}</td>
+    </tr>
+  </table>
+</div>

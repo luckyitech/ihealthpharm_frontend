@@ -1,0 +1,206 @@
+<div id="editCustMemGrid" class="row pt-3">
+  <div class="col">
+    <form class="form-inline">
+      <input class="form-control no-right-border-radius" type="text" placeholder="Search here.." aria-label="Search"
+        [(ngModel)]="searchKey" [ngModelOptions]="{standalone:true}">
+      <button class="btn btn-primary no-left-border-radius" (click)="search()">Search</button>
+    </form>
+  </div>
+  <div class="col text-right">
+    <button class="btn btn-primary px-4 edit-btn"
+      [disabled]="customerMembershipGridOptions?.api?.getSelectedRows()?.length === 0" id="common-grid-btn"
+      (click)="editGrid()">Edit</button>
+  </div>
+</div>
+
+<div class="row grid-area">
+  <div class="col py-3">
+    <ag-grid-angular id="common-grid" style="width: 100%; height: 620px;" class="ag-theme-balham" *ngIf="showGrid"
+      [rowData]="rowData" [gridOptions]="customerMembershipGridOptions" [columnDefs]="columnDefs"
+      [singleClickEdit]="true">
+    </ag-grid-angular>
+  </div>
+</div>
+
+<div class="customerMembershipInformationForm" id="hospital-Information" style="display: none;">
+
+  <form #customerMemForm="ngForm" [formGroup]="customerMembershipInformationForm"
+    (keydown.enter)="$event.preventDefault()" (ngSubmit)="onCustomerMemberShipSubmit()" class="full-height">
+
+    <h6 class="border border-primary p-2 mt-3 mb-4 bg-light text-white">Generic Details</h6>
+
+    <div class="row">
+      <div class="col-lg-4">
+        <div class="form-group row">
+          <label for="" class="col-sm-3 col-form-label pr-0 text-right" id="editCustomerLabelCard">Mem Card <span
+              class="text-danger">*</span></label>
+          <div class="col-sm-9">
+            <ng-select [(ngModel)]="selectedMembership" (change)="onMembershipSelected($event)"
+               placeholder="-- select --"  formControlName="membershipCardName"
+              [items]="memberships" bindLabel="membershipCardName" id="editCustomerInputCard">
+            </ng-select>
+            <div *ngIf="customerMembershipInformationForm.get('membershipCardName')?.touched"
+              class="error-msg-common text-danger">
+              <div *ngIf="customerMembershipInformationForm.get('membershipCardName').errors?.required">
+                * required field
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="form-group row">
+          <label for="" class="col-sm-3 col-form-label pr-0 text-right" id="editCustomerLabelName">Name <span
+              class="text-danger">*</span></label>
+          <div class="col-sm-9">
+            <ng-select id="editCustomerInputName" (change)="generateMembershipCardNumber()"
+              [(ngModel)]="selectedCustomer" formControlName="customerModel" placeholder="-- select --"
+              [items]="customer" (change)="onChangeCustomer($event)" bindLabel="customerName">
+            </ng-select>
+            <div *ngIf="customerMembershipInformationForm.get('customerModel')?.touched"
+              class="error-msg-common text-danger">
+              <div *ngIf="customerMembershipInformationForm.get('customerModel').errors?.required">
+                * required field
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="form-group row">
+          <label for="" class="col-sm-3 col-form-label pr-0 text-right" id="editCustomerLabelCardNumber">Mem Card No
+            <span class="text-danger">*</span></label>
+          <div class="col-sm-9">
+            <input disabled type="text" class="form-control" id="editCustomerInputCardNumber"
+              placeholder="Membership Card Number" formControlName="membershipCardNumber" disabled>
+            <div *ngIf="customerMembershipInformationForm.get('membershipCardNumber')?.touched"
+              class="error-msg-common text-danger">
+              <div *ngIf="customerMembershipInformationForm.get('membershipCardNumber').errors?.required">
+                * required field
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group row">
+          <label for="" class="col-sm-3 col-form-label pr-0 text-right" id="editCustomerLabelStartDate">Start Date
+          </label>
+          <div class="col-sm-9">
+            <input formControlName="membershipStartDate" (ngModelChange)="modelChanged($event)" (change)="selectedStartDate($event)" type="date" class="form-control"
+              id="editCustomerInputStartDate" placeholder="">
+          </div>
+        </div>
+        <div class="form-group row">
+          <label for="" class="col-sm-3 col-form-label pr-0 text-right" id="editCustomerLabelEndDate">End Date </label>
+          <div class="col-sm-9">
+            <input formControlName="membershipEndDate" (ngModelChange)="modelChanged($event)" (change)="selectedStartDate($event)" type="date" class="form-control" id="editCustomerInputEndDate"
+              placeholder="">
+            <div class="error-msg-common text-danger" *ngIf="customerMembershipInformationForm.get('membershipEndDate').errors &&
+            customerMembershipInformationForm.get('membershipEndDate').dirty &&
+            customerMembershipInformationForm.get('membershipEndDate').errors.invalidDob">
+              not valid date
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-4">
+        <div class="form-group row">
+          <label for="" class="col-sm-3 col-form-label pr-0 text-right" id="editCustomerLabelDuration">Duration In
+            Months </label>
+          <div class="col-sm-9">
+            <input formControlName="membershipDurationInMonths" type="text" class="form-control"
+              id="editCustomerInputDuration" placeholder="Duration" disabled>
+          </div>
+        </div>
+        <div class="form-group row">
+          <label for="" class="col-sm-3 col-form-label pr-0 text-right" id="editCustomerLabelDisc">Disc %</label>
+          <div class="col-sm-9">
+
+            <input formControlName="membershipDiscountPercentage" type="text" class="form-control"
+              id="editCustomerInputDisc" placeholder="Discount %">
+            <div *ngIf="customerMembershipInformationForm.get('membershipDiscountPercentage')?.invalid"
+              class="error-msg-common text-danger">
+              <div
+                *ngIf="!customerMembershipInformationForm.get('membershipDiscountPercentage').errors?.required && customerMembershipInformationForm?.get('membershipDiscountPercentage')?.errors">
+                * not a valid input
+              </div>
+            </div>
+
+          </div>
+        </div>
+        <div class="form-group row">
+          <label for="" class="col-sm-3 col-form-label pr-0 text-right" id="editCustomerLabelBonus">Bonus % </label>
+          <div class="col-sm-9">
+
+            <input formControlName="membershipBonusPercentage" type="text" class="form-control"
+              id="editCustomerInputBonus" placeholder="Bonus %">
+            <div *ngIf="customerMembershipInformationForm.get('membershipBonusPercentage')?.invalid"
+              class="error-msg-common text-danger">
+              <div
+                *ngIf="!customerMembershipInformationForm.get('membershipBonusPercentage').errors?.required && customerMembershipInformationForm?.get('membershipBonusPercentage')?.errors">
+                * not a valid input
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <div class="form-group row">
+          <div class="col-sm-10 justify-content-end d-flex pt-2">
+            <div class="d-inline mr-3">
+              <label  class="mb-0" id="addCustomerLabelStatus">Status</label>
+            </div>
+            <div class="custom-control d-inline custom-radio mr-3">
+              <input name="activeS" type="radio" value="Y" class="custom-control-input" formControlName="activeS" id="activate">
+              <label  class="custom-control-label" for="activate">Activate</label>
+            </div>
+            <div class="custom-control d-inline custom-radio">
+              <input name="activeS" type="radio" value="N" class="custom-control-input" formControlName="activeS" id="deactivate">
+              <label  class="custom-control-label" for="deactivate">De Activate</label>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-4">
+        <div class="form-group row">
+          <label for="" class="col-sm-3 col-form-label pr-0 text-right" id="editCustomerLabelAmount">Amount </label>
+          <div class="col-sm-9">
+            <input formControlName="membershipCreditAmount" type="text" class="form-control"
+              id="editCustomerInputAmount" placeholder="Credit Amount">
+            <div *ngIf="customerMembershipInformationForm.get('membershipCreditAmount')?.invalid"
+              class="error-msg-common text-danger">
+              <div
+                *ngIf="!customerMembershipInformationForm.get('membershipCreditAmount').errors?.required && customerMembershipInformationForm?.get('membershipCreditAmount')?.errors">
+                * not a valid input
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="form-group row">
+          <label for="" class="col-sm-3 col-form-label pr-0 text-right" id="editCustomerLabelDays">Days </label>
+          <div class="col-sm-9">
+            <input formControlName="membershipCreditDays" type="text" class="form-control" id="editCustomerInputDays"
+              placeholder="Credit Days">
+            <div *ngIf="customerMembershipInformationForm.get('membershipCreditDays')?.invalid"
+              class="error-msg-common text-danger">
+              <div
+                *ngIf="!customerMembershipInformationForm.get('membershipCreditDays').errors?.required && customerMembershipInformationForm?.get('membershipCreditDays')?.errors">
+                * not a valid input
+              </div>
+            </div>
+          </div>
+        </div>
+       
+         
+       
+      </div>
+    </div>
+
+    <div class="row pt-4">
+      <div class="col mb-3 pt-2 text-center">
+        <button (click)="onCustomerMemberShipSubmit()" class="btn btn-primary px-4"
+          [disabled]="checkCustomerMemberShipFormDisability()" id="mu-adduser-save">Update</button>
+        <button type="reset" class="btn btn-secondary px-4 ml-3" (click)="reset()"
+          id="mu-adduser-cancels">Cancel</button>
+      </div>
+    </div>
+
+  </form>
+</div>
+<ng4-loading-spinner [loadingText]="'Please wait...'" [timeout]="400000000"> </ng4-loading-spinner>

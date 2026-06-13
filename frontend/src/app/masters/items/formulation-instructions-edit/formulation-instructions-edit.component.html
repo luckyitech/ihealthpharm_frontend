@@ -1,0 +1,252 @@
+<div id="itemFormulationGrid" class="row pt-3">
+  <!--    <div class="col">
+       <form class="form-inline">
+        <input class="form-control no-right-border-radius" type="text" placeholder="Search here.." aria-label="Search">
+        <button class="btn btn-primary no-left-border-radius">Search</button>
+      </form> 
+    </div> -->
+  <div class="col text-right">
+    <button class="btn btn-primary px-4 edit-btn common-grid-edit-formulation"
+      [disabled]="formulationGridOptions?.api?.getSelectedRows()?.length === 0" data-toggle="modal"
+      (click)="editGrid()">Edit</button>
+  </div>
+</div>
+
+<div class="row grid-area">
+  <div class="col py-3">
+    <ag-grid-angular id="common-grid" style="width: 100%; height: 620px;" class="ag-theme-balham common-gridformulas"
+      *ngIf="showGrid" [rowData]="rowData" [gridOptions]="formulationGridOptions" [columnDefs]="columnDefs"
+      [singleClickEdit]="true">
+    </ag-grid-angular>
+  </div>
+</div>
+
+<div class="" id="formulation-Information" style="display: none;">
+  <form #formulationForm="ngForm" [formGroup]="formulationInformationForm" (keydown.enter)="$event.preventDefault()"
+    (ngSubmit)="onSubmit()" class="full-height ">
+
+    <h6 class="border border-primary p-2 mt-3 mb-4 bg-light text-white">Generic Details</h6>
+
+    <div class="row">
+      <div class="col-lg-4">
+        <div class="form-group row">
+          <label for="" class="col-sm-3 col-form-label pr-0 text-right">Name <span class="text-danger">*</span></label>
+          <div class="col-sm-9">
+            <input type="text" class="form-control" id="" placeholder="Formulation Name"
+              formControlName="formulationName" disabled>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-4">
+        <div class="form-group row">
+          <label for="" class="col-sm-3 col-form-label pr-0 text-right">Item </label>
+          <div class="col-sm-9">
+
+            <ng-select [items]="itemsArray" bindLabel="itemName" [(ngModel)]="selectedItem" placeholder="-- Select --"
+              (search)="searchItem($event)" [ngModelOptions]="{standalone: true}" (change)="onItemChanged($event)" (keyup.enter)="alternativeItemSearch($event)">
+            </ng-select>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-4">
+        <div class="form-group row">
+          <label for="" class="col-sm-3 col-form-label pr-0 text-right">Pharmacy <span
+              class="text-danger">*</span></label>
+          <div class="col-sm-9">
+            <ng-select [items]="pharmacy" [(ngModel)]="selectedPharmacy" placeholder="-- Select --"
+              [ngModelOptions]="{standalone: true}" bindLabel="pharmacyName" (change)="onPharmacyChanged($event)"
+              id="addFormulationPharmacy">
+            </ng-select>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <h6 class="border border-primary p-2 mt-3 mb-4 bg-light text-white">Times of the Day</h6>
+
+    <div class="row">
+      <div class="col-lg-4">
+        <div class="form-group row">
+          <div class="col-sm-12 justify-content-end d-flex pt-3">
+            <div class="d-inline mr-3">
+              <label class="mb-0">Morning</label>
+            </div>
+            <div class="custom-control d-inline custom-radio mr-3">
+              <input name="morning" type="radio" formControlName="morning" class="custom-control-input" value="Y"
+                id="morningYes">
+              <label class="custom-control-label" for="morningYes">Yes</label>
+            </div>
+            <div class="custom-control d-inline custom-radio">
+              <input name="morning" type="radio" formControlName="morning" class="custom-control-input" value="N"
+                id="morningNo">
+              <label class="custom-control-label" for="morningNo">No</label>
+            </div>
+          </div>
+        </div>
+
+      </div>
+      <div class="col-lg-4">
+        <div class="form-group row">
+          <div class="col-sm-12 justify-content-end d-flex pt-3">
+            <div class="d-inline mr-3">
+              <label class="mb-0">Afternoon</label>
+            </div>
+            <div class="custom-control d-inline custom-radio mr-3">
+              <input name="afterNoon" type="radio" class="custom-control-input" formControlName="afterNoon" value="Y"
+                id="afterYes">
+              <label class="custom-control-label" for="afterYes">Yes</label>
+            </div>
+            <div class="custom-control d-inline custom-radio">
+              <input name="afterNoon" type="radio" class="custom-control-input" formControlName="afterNoon" value="N"
+                id="firstNo">
+              <label class="custom-control-label" for="firstNo">No</label>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-4">
+        <div class="form-group row">
+          <div class="col-sm-12 justify-content-end d-flex pt-3">
+            <div class="d-inline mr-3">
+              <label class="mb-0">Evening</label>
+            </div>
+            <div class="custom-control d-inline custom-radio mr-3">
+              <input name="evening" type="radio" class="custom-control-input" formControlName="evening" value="Y"
+                id="eveningYes">
+              <label class="custom-control-label" for="eveningYes">Yes</label>
+            </div>
+            <div class="custom-control d-inline custom-radio">
+              <input name="evening" type="radio" class="custom-control-input" formControlName="evening" value="N"
+                id="eveningNo">
+              <label class="custom-control-label" for="eveningNo">No</label>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-4">
+        <div class="form-group row">
+          <div class="col-sm-12 justify-content-end d-flex pt-3">
+            <div class="d-inline mr-3">
+              <label class="mb-0">Before bed</label>
+            </div>
+            <div class="custom-control d-inline custom-radio mr-3">
+              <input name="beforeBed" type="radio" class="custom-control-input" formControlName="beforeBed" value="Y"
+                id="beforeYes">
+              <label class="custom-control-label" for="beforeYes">Yes</label>
+            </div>
+            <div class="custom-control d-inline custom-radio">
+              <input name="beforeBed" type="radio" class="custom-control-input" formControlName="beforeBed" value="N"
+                id="beforeNo">
+              <label class="custom-control-label" for="beforeNo">No</label>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <h6 class="border border-primary p-2 mt-3 mb-4 bg-light text-white">Timings</h6>
+
+    <div class="row">
+      <div class="col-lg-4">
+        <div class="form-group row">
+          <div class="col-sm-12 justify-content-end d-flex pt-3">
+            <div class="d-inline mr-3">
+              <label class="mb-0">Before Meal</label>
+            </div>
+            <div class="custom-control d-inline custom-radio mr-3">
+              <input name="beforeMeal" type="radio" class="custom-control-input" formControlName="beforeMeal" value="Y"
+                id="timeYes">
+              <label class="custom-control-label" for="timeYes">Yes</label>
+            </div>
+            <div class="custom-control d-inline custom-radio">
+              <input name="beforeMeal" type="radio" class="custom-control-input" formControlName="beforeMeal" value="N"
+                id="timeNo">
+              <label class="custom-control-label" for="timeNo">No</label>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-4">
+        <div class="form-group row">
+          <div class="col-sm-12 justify-content-end d-flex pt-3">
+            <div class="d-inline mr-3">
+              <label class="mb-0">After Meal</label>
+            </div>
+            <div class="custom-control d-inline custom-radio mr-3">
+              <input name="afterMeal" type="radio" class="custom-control-input" formControlName="afterMeal" value="Y"
+                id="aftermealYes">
+              <label class="custom-control-label" for="aftermealYes">Yes</label>
+            </div>
+            <div class="custom-control d-inline custom-radio">
+              <input name="afterMeal" type="radio" class="custom-control-input" formControlName="afterMeal" value="N"
+                id="aftermealNo">
+              <label class="custom-control-label" for="aftermealNo">No</label>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-4">
+        <div class="form-group row">
+          <div class="col-sm-12 justify-content-end d-flex pt-3">
+            <div class="d-inline mr-3">
+              <label class="mb-0">Any Time</label>
+            </div>
+            <div class="custom-control d-inline custom-radio mr-3">
+              <input name="anyTime" type="radio" class="custom-control-input" formControlName="anyTime" value="Y"
+                id="anyYes">
+              <label class="custom-control-label" for="anyYes">Yes</label>
+            </div>
+            <div class="custom-control d-inline custom-radio">
+              <input name="anyTime" type="radio" class="custom-control-input" formControlName="anyTime" value="N"
+                id="anyNo">
+              <label class="custom-control-label" for="anyNo">No</label>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row pt-4">
+      <div class="col-lg-6">
+        <div class="form-group row">
+          <label for="" class="col-sm-3 col-form-label pr-0 text-right">Instructions <span
+              class="text-danger">*</span></label>
+          <div class="col-sm-9">
+            <textarea name="" id="" class="form-control" cols="30" rows="6" id="mu-adduser-pharmacy"
+              formControlName="instructions"></textarea>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-6 align-items-center justify-content-end d-flex">
+        <div class="form-group row">
+          <div class="col-sm-12">
+            <div class="d-inline mr-3">
+              <label class="mb-0">Status</label>
+            </div>
+            <div class="custom-control d-inline custom-radio mr-3">
+              <input name="activeS" type="radio" class="custom-control-input" formControlName="activeS" value="Y"
+                id="activate">
+              <label class="custom-control-label" for="activate">Activate</label>
+            </div>
+            <div class="custom-control d-inline custom-radio">
+              <input name="activeS" type="radio" class="custom-control-input" formControlName="activeS" value="N"
+                id="deactivate">
+              <label class="custom-control-label" for="deactivate">De Activate</label>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row pt-4">
+      <div class="col mb-3 pt-2 text-center">
+        <button [disabled]="checkFormDisability()" class="btn btn-primary px-4" (click)="onSubmit()"
+          id="mu-adduser-saving-Formula">Update</button>
+        <input value="Cancel" type="button" id="editFormulationCancel"
+          class="btn btn-secondary px-4 ml-3 mu-adduser-cancel-formulation" (click)="reset()">
+      </div>
+    </div>
+
+  </form>
+</div>
+<ng4-loading-spinner [loadingText]="'Please wait...'" [timeout]="400000000"> </ng4-loading-spinner>

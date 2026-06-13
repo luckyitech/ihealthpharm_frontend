@@ -1,0 +1,16 @@
+<div class="single-select-dropdown-div">
+    <div class="input-select-dropdown-main">
+      <input class="input-select-dropdown" type="text" [(ngModel)]="searchTerm" (ngModelChange)="onSearchTermChanged()">
+      <i class="fa fa-search search-select-dropdown"></i>
+    </div>
+   <ul *ngIf="list?.length > 0" class="single-select-dropdown-list">
+    <li *ngFor="let item of list">
+        <span (click)="onItemClick(item)"> {{getItemTitle(item)}}</span>
+    </li>
+   </ul>
+   <ul *ngIf="list?.length === 0" class="single-select-dropdown-list">
+    <li >
+        <span > No Items to Show</span>
+    </li>
+   </ul>
+</div>

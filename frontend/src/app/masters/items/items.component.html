@@ -1,0 +1,152 @@
+<ul class="nav nav-pills mb-3 border-bottom border-secondary" id="pills-tab" role="tablist">
+  <li class="nav-item">
+    <a class="nav-link active" id="" (click)="changeTab('app-item-add')" data-toggle="pill" href="#pills-add" role="tab"
+      aria-controls="pills-add" aria-selected="true">Add Item</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" (click)="changeTab('app-item-edit')" id="" data-toggle="pill" href="#pills-edit" role="tab"
+      aria-controls="pills-edit" aria-selected="true">Edit Item</a>
+  </li>
+</ul>
+<div class="tab-content" id="pills-tabContent">
+
+  <div class="tab-pane fade show active" id="pills-add" role="tabpanel" aria-labelledby="pills-add-tab">
+
+    <nav>
+      <div class="nav nav-tabs" id="nav-tab" role="tablist">
+        <a class="nav-item nav-link active" id="nav-item-tab" data-toggle="tab" (click)="changeTab('app-item-add')"
+          href="#nav-item-single" role="tab" aria-controls="nav-item" aria-selected="true">Item</a>
+        <a class="nav-item nav-link" id="nav-category-tab" data-toggle="tab" (click)="changeTab('app-item-cat-add')"
+          href="#nav-category" role="tab" aria-controls="nav-category" aria-selected="false">Category</a>
+        <a class="nav-item nav-link" id="nav-form-tab" data-toggle="tab" (click)="changeTab('app-item-form-add')"
+          href="#nav-form" role="tab" aria-controls="nav-form" aria-selected="false">Form</a>
+        <a class="nav-item nav-link" id="nav-generic-tab" data-toggle="tab" (click)="changeTab('app-item-generic-add')"
+          href="#nav-generic" role="tab" aria-controls="nav-generic" aria-selected="false">Generic Code</a>
+        <a class="nav-item nav-link" id="nav-groups-tab" data-toggle="tab" (click)="changeTab('app-item-group-add')"
+          href="#nav-groups" role="tab" aria-controls="nav-groups" aria-selected="false">Groups</a>
+        <a class="nav-item nav-link" id="nav-special-tab" data-toggle="tab" (click)="changeTab('app-item-spec-add')"
+          href="#nav-special" role="tab" aria-controls="nav-special" aria-selected="false">Specialization</a>
+        <a class="nav-item nav-link" id="nav-uom-tab" data-toggle="tab" (click)="changeTab('app-item-uom-add')"
+          href="#nav-uom" role="tab" aria-controls="nav-uom" aria-selected="false">UOM</a>
+        <a class="nav-item nav-link" id="nav-formulation-tab" data-toggle="tab"
+          (click)="changeTab('app-item-formula-add')" href="#nav-formulation" role="tab" aria-controls="nav-formulation"
+          aria-selected="false">Formulation Instructions</a>
+      </div>
+    </nav>
+
+    <div class="tab-content" id="nav-item">
+
+      <div *ngIf="selectedTab === 'app-item-add'" class="tab-pane fade show active" id="nav-item-single" role="tabpanel"
+        aria-labelledby="nav-item-tab">
+        <app-item></app-item>
+      </div>
+      <div *ngIf="selectedTab ==='app-item-cat-add'" class="tab-pane fade" id="nav-category" role="tabpanel"
+        aria-labelledby="nav-category-tab">
+        <app-item-category></app-item-category>
+      </div>
+      <div *ngIf=" selectedTab ==='app-item-form-add'" class="tab-pane fade" id="nav-form" role="tabpanel"
+        aria-labelledby="nav-form-tab">
+        <app-item-forum></app-item-forum>
+      </div>
+      <div *ngIf="selectedTab ==='app-item-generic-add'" class="tab-pane fade" id="nav-generic" role="tabpanel"
+        aria-labelledby="nav-generic-tab">
+        <app-item-generic-code></app-item-generic-code>
+      </div>
+      <div *ngIf="selectedTab ==='app-item-group-add'" class="tab-pane fade" id="nav-groups" role="tabpanel"
+        aria-labelledby="nav-groups-tab">
+        <app-item-groups></app-item-groups>
+      </div>
+      <div *ngIf="selectedTab ==='app-item-spec-add'" class="tab-pane fade" id="nav-special" role="tabpanel"
+        aria-labelledby="nav-special-tab">
+        <app-specialization></app-specialization>
+      </div>
+      <div *ngIf="selectedTab ==='app-item-uom-add'" class="tab-pane fade" id="nav-uom" role="tabpanel"
+        aria-labelledby="nav-uom-tab">
+        <app-uom></app-uom>
+      </div>
+      <div *ngIf="selectedTab ==='app-item-formula-add'" class="tab-pane fade" id="nav-formulation" role="tabpanel"
+        aria-labelledby="nav-formulation-tab">
+        <app-formulation-instructions></app-formulation-instructions>
+      </div>
+
+    </div>
+
+  </div>
+
+  <div class="tab-pane fade show" id="pills-edit" role="tabpanel" aria-labelledby="pills-edit-tab">
+
+    <nav>
+      <div class="nav nav-tabs" id="nav-tab-edit" role="tablist">
+        <a class="nav-item nav-link active" id="nav-item-tab-edit" data-toggle="tab"
+          (click)="changeTab('app-item-edit')" href="#nav-item-single-edit" role="tab" aria-controls="nav-item"
+          aria-selected="true">Item</a>
+        <a class="nav-item nav-link" id="nav-category-tab-edit" data-toggle="tab"
+          (click)="changeTab('app-item-cat-edit')" href="#nav-category-edit" role="tab" aria-controls="nav-category"
+          aria-selected="false">Category</a>
+        <a class="nav-item nav-link" id="nav-form-tab-edit" data-toggle="tab" (click)="changeTab('app-item-form-edit')"
+          href="#nav-form-edit" role="tab" aria-controls="nav-form" aria-selected="false">Form</a>
+        <a class="nav-item nav-link" id="nav-generic-tab-edit" data-toggle="tab"
+          (click)="changeTab('app-item-generic-edit')" href="#nav-generic-edit" role="tab" aria-controls="nav-generic"
+          aria-selected="false">Generic Code</a>
+        <a class="nav-item nav-link" id="nav-groups-tab-edit" data-toggle="tab"
+          (click)="changeTab('app-item-group-edit')" href="#nav-groups-edit" role="tab" aria-controls="nav-groups"
+          aria-selected="false">Groups</a>
+        <a class="nav-item nav-link" id="nav-special-tab-edit" data-toggle="tab"
+          (click)="changeTab('app-item-spec-edit')" href="#nav-special-edit" role="tab" aria-controls="nav-special"
+          aria-selected="false">Specialization</a>
+        <a class="nav-item nav-link" id="nav-uom-tab-edit" data-toggle="tab" (click)="changeTab('app-item-uom-edit')"
+          href="#nav-uom-edit" role="tab" aria-controls="nav-uom" aria-selected="false">UOM</a>
+        <a class="nav-item nav-link" id="nav-formulation-tab-edit" (click)="changeTab('app-item-formula-edit')"
+          data-toggle="tab" href="#nav-formulation-edit" role="tab" aria-controls="nav-formulation"
+          aria-selected="false">Formulation Instructions</a>
+      </div>
+    </nav>
+
+    <div class="tab-content" id="nav-item-edit">
+
+      <div *ngIf="selectedTab === 'app-item-edit'" class="tab-pane fade show active" id="nav-item-single-edit"
+        role="tabpanel" aria-labelledby="nav-item-tab-edit">
+        <app-item-edit></app-item-edit>
+
+      </div>
+      <div *ngIf="selectedTab === 'app-item-cat-edit'" class="tab-pane fade" id="nav-category-edit" role="tabpanel"
+        aria-labelledby="nav-category-tab-edit">
+        <app-item-category-edit></app-item-category-edit>
+
+      </div>
+      <div *ngIf="selectedTab === 'app-item-form-edit'" class="tab-pane fade" id="nav-form-edit" role="tabpanel"
+        aria-labelledby="nav-form-tab-edit">
+        <app-item-forum-edit></app-item-forum-edit>
+
+      </div>
+      <div *ngIf="selectedTab === 'app-item-generic-edit'" class="tab-pane fade" id="nav-generic-edit" role="tabpanel"
+        aria-labelledby="nav-generic-tab-edit">
+        <app-item-generic-code-edit></app-item-generic-code-edit>
+
+      </div>
+      <div *ngIf="selectedTab === 'app-item-group-edit'" class="tab-pane fade" id="nav-groups-edit" role="tabpanel"
+        aria-labelledby="nav-groups-tab-edit">
+        <app-item-groups-edit></app-item-groups-edit>
+
+      </div>
+      <div *ngIf="selectedTab === 'app-item-spec-edit'" class="tab-pane fade" id="nav-special-edit" role="tabpanel"
+        aria-labelledby="nav-special-tab-edit">
+        <app-specialization-edit></app-specialization-edit>
+
+      </div>
+      <div *ngIf="selectedTab === 'app-item-uom-edit'" class="tab-pane fade" id="nav-uom-edit" role="tabpanel"
+        aria-labelledby="nav-uom-tab-edit">
+        <app-uom-edit></app-uom-edit>
+
+      </div>
+      <div *ngIf="selectedTab === 'app-item-formula-edit'" class="tab-pane fade" id="nav-formulation-edit"
+        role="tabpanel" aria-labelledby="nav-formulation-tab-edit">
+        <app-formulation-instructions-edit></app-formulation-instructions-edit>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>

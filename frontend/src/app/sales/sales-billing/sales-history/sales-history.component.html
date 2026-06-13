@@ -1,0 +1,68 @@
+<h6 class="border border-primary p-2 mt-3 mb-4 bg-light text-white">Sales History Details</h6>
+
+<div class="row">
+  <div class="col-lg-6">
+    <div class="form-group row">
+      <label for="" class="col-sm-2 col-form-label px-0 text-right" id="newStockLabelItemCd">Date</label>
+      <div class="col-sm-5">
+        <input type="date" class="form-control" id="" [(ngModel)]="startDate">
+      </div>
+      <div class="col-sm-5">
+        <input type="date" class="form-control" id="" [(ngModel)]="endDate">
+      </div>
+    </div>
+  </div>
+  <div class="col-lg-6">
+    <div class="form-group row">
+      <label for="" class="col-sm-4 col-form-label px-0 text-right" id="newStockLabelItemCd">Status</label>
+      <div class="col-sm-8">
+        <ng-select [items]="paymentStatusArr" placeholder="-- Select --"  id="newStockBatch#"
+          [(ngModel)]="paymentStatus">
+        </ng-select>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-lg-5">
+    <div class="form-group row">
+      <label for="" class="col-sm-4 col-form-label px-0 text-right" id="newStockLabelItemCd">Search By</label>
+      <div class="col-sm-8">
+        <ng-select [items]="searchCodeArr" placeholder="-- Select --"  id="newStockBatch#"
+          [(ngModel)]="searchCode">
+        </ng-select>
+      </div>
+    </div>
+  </div>
+  <div class="col-lg-5">
+    <div class="form-group row">
+      <div class="col-sm-12">
+        <input type="text" class="form-control" id="" placeholder="Bill # / Customer Name"
+          [(ngModel)]="searchCodeValue">
+      </div>
+    </div>
+  </div>
+  <div class="col-lg-2">
+    <div class="form-group row">
+      <div class="col-sm-12">
+        <button class="btn btn-primary" (click)="getSalesBySearch()">Search</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col text-right pb-2 ">
+    <button class="btn btn-primary " id="Editclickbtn" (click)="getSelectedSalesRecord()"
+      [disabled]="saleEditGridOptions?.api?.getSelectedRows()?.length === 0">Edit</button>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-12 py-3">
+    <ag-grid-angular style="width: 100%; height: 200px;" class="ag-theme-balham" 
+      [gridOptions]='saleEditGridOptions'>
+    </ag-grid-angular>
+  </div>
+</div>
