@@ -7,7 +7,8 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { NgSelectModule } from '@ng-select/ng-select';
 import { AgGridModule } from 'ag-grid-angular';
-import { HighchartsChartComponent } from 'highcharts-angular';
+// import { HighchartsChartComponent } from 'highcharts-angular';
+import { HighchartsChartModule } from 'highcharts-angular';
 import { ChartModule } from 'angular-highcharts';
 
 @NgModule({
@@ -15,10 +16,11 @@ import { ChartModule } from 'angular-highcharts';
     CheckBoxComponent,
     DateRenderer,
     NumericEditor,
-    HighchartsChartComponent
+    // HighchartsChartComponent
   ],
   imports: [
     ChartModule,
+    HighchartsChartModule,
     BrowserModule,
     NgSelectModule,
     FormsModule,
@@ -30,7 +32,8 @@ import { ChartModule } from 'angular-highcharts';
     CheckBoxComponent,
     DateRenderer,
     NumericEditor,
-    HighchartsChartComponent
+    // HighchartsChartComponent
+    HighchartsChartModule,
   ],
   providers: [],
 })
