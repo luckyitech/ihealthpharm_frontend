@@ -167,7 +167,7 @@
         </select>
       </div>
       <div class="col-sm-7">
-        <input type="button" class="btn btn-warning px-4" (click)="confirmOrderAndPreview()"
+        <input type="button" class="btn btn-primary px-4" (click)="confirmOrderAndPreview()"
           value="Confirm Order and Preview">
       </div>
     </div>
@@ -244,7 +244,7 @@
 
     <div class="form-group row">
       <div class="col-sm-12">
-        <input type="button" class="btn btn-success px-4" (click)="apply()" [disabled]="applying"
+        <input type="button" class="btn btn-primary px-4" (click)="apply()" [disabled]="applying"
           value="Apply Settlement">
         <input type="button" class="btn btn-secondary px-4 ml-3" (click)="resetPlan()" value="Discard Preview">
       </div>
@@ -263,7 +263,7 @@
   </div>
 
   <div class="table-responsive" *ngIf="settlements.length">
-    <table class="table table-sm table-bordered">
+    <table class="table table-bordered border-primary">
       <thead>
         <tr>
           <th>Reference</th>
@@ -318,9 +318,9 @@
             </div>
           </td>
           <td style="white-space:nowrap;">
-            <button type="button" class="btn btn-sm btn-outline-success mr-1"
+            <button type="button" class="btn btn-primary px-4 mr-2"
               *ngIf="canApproveBatch(batch)" (click)="startApproveCheque(batch)">Approve Cheque</button>
-            <button type="button" class="btn btn-sm btn-outline-danger"
+            <button type="button" class="btn btn-secondary px-4"
               *ngIf="canReverseBatch(batch)" (click)="startReverse(batch)">Reverse</button>
           </td>
         </tr>
