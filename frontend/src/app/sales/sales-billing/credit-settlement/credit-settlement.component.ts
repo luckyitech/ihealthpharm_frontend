@@ -166,6 +166,16 @@ export class CreditSettlementComponent implements OnInit {
       headerName: 'Amount Applied', field: 'amountApplied', resizable: true, width: 140,
       type: 'numericColumn', valueFormatter: this.moneyFormatter
     },
+    // Comes from the server already worked out. Subtracting it here would put
+    // money arithmetic in the browser, where 11111 - 5997 can render as
+    // 5113.999999999; the engine holds every figure to whole cents.
+    {
+      headerName: 'Balance After', field: 'resultingBalance', resizable: true, width: 140,
+      type: 'numericColumn', valueFormatter: this.moneyFormatter,
+      cellStyle: function (params) {
+        return Number(params.value) === 0 ? { color: '#155724', fontWeight: 'bold' } : null;
+      }
+    },
     { headerName: 'Status Before', field: 'priorPaymentStatus', resizable: true, width: 140 },
     {
       headerName: 'Status After', field: 'resultingPaymentStatus', resizable: true, width: 140,
