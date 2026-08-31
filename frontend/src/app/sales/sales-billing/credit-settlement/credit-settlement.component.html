@@ -1,0 +1,375 @@
+<!-- Shown only once the server has said what this user may do. -->
+<div *ngIf="accessLoaded && !access.canSettle" class="alert alert-warning mt-3">
+  You do not have permission to settle credit. Ask an administrator to grant you
+  <strong>Credit Settlement</strong>.
+</div>
+
+<div *ngIf="access.canSettle">
+
+  <h6 class="border border-primary p-2 mt-3 mb-4 bg-light text-white">Credit Settlement</h6>
+
+  <!-- Step 1: whose bills. Type any part of a name or an account number. -->
+  <div class="row">
+    <div class="col-lg-9">
+      <div class="form-group row">
+        <label class="col-sm-3 col-form-label px-0 text-right">
+          Customer / Account<span class="text-danger">*</span>
+        </label>
+        <div class="col-sm-9">
+          <ng-select [items]="accountResults" [(ngModel)]="selectedAccount"
+            (search)="onAccountSearch($event)" (change)="onAccountSelected()"
+            [loading]="searching" bindLabel="customerNames" [searchFn]="keepServerResults"
+            placeholder="Start typing a customer name or account number">
+
+            <!-- Each result carries who is on the account and what is owed, so
+                 the right one can be picked without opening it. -->
+            <ng-template ng-option-tmp let-item="item">
+              <div class="d-flex justify-content-between align-items-start">
+                <div class="mr-3" style="min-width:0;">
+                  <div style="font-weight:600;">{{item.customerNames}}</div>
+                  <small class="text-muted">
+                    <span *ngIf="item.masterAccountNo">{{item.masterAccountNo}}</span>
+                    <span *ngIf="!item.masterAccountNo" class="text-warning">No credit account</span>
+                    · {{item.openBills}} open bill<span *ngIf="item.openBills !== 1">s</span>
+                    <span *ngIf="item.customerCount > 1"> · {{item.customerCount}} customers on this account</span>
+                  </small>
+                </div>
+                <div class="text-right" style="white-space:nowrap;">
+                  <span class="badge badge-danger text-white">{{item.outstanding | number:'1.2-2'}}</span>
+                </div>
+              </div>
+            </ng-template>
+
+            <ng-template ng-label-tmp let-item="item">
+              {{accountLabel(item)}}
+            </ng-template>
+
+            <ng-template ng-notfound-tmp let-searchTerm="searchTerm">
+              <div class="p-2 text-muted">
+                No credit account with outstanding bills matches "{{searchTerm}}".
+              </div>
+            </ng-template>
+          </ng-select>
+
+          <small class="form-text text-muted">
+            Search by name or account number. Only customers with outstanding bills are listed.
+          </small>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-3">
+      <input type="button" class="btn btn-secondary px-4" (click)="reset()" value="Reset">
+    </div>
+  </div>
+
+  <!-- More than one person is on this account: say so before money moves. -->
+  <div *ngIf="selectedAccount && selectedAccount.customerCount > 1" class="alert alert-info py-2">
+    This account covers <strong>{{selectedAccount.customerCount}}</strong> customers —
+    {{selectedAccount.customerNames}}. A payment here settles bills for all of them.
+  </div>
+
+  <!-- Step 2: what is outstanding -->
+  <div *ngIf="billsLoaded && openBills.length">
+    <div class="row mb-2">
+      <div class="col-sm-4">
+        <span class="badge badge-secondary text-white px-3 py-2" style="font-size: 14px;">
+          Open Bills: {{openBills.length}}
+        </span>
+      </div>
+      <div class="col-sm-4">
+        <span class="badge badge-danger text-white px-3 py-2" style="font-size: 14px;">
+          Total Outstanding: {{totalOutstanding | number:'1.2-2'}}
+        </span>
+      </div>
+      <div class="col-sm-4">
+        <span class="badge badge-info text-white px-3 py-2" style="font-size: 14px;">
+          Oldest Bill: {{oldestBillDate}}
+        </span>
+      </div>
+    </div>
+
+    <ag-grid-angular class="ag-theme-balham mb-4" style="width: 100%; height: 260px;"
+      [gridOptions]="openBillsGridOptions" [rowData]="openBills">
+    </ag-grid-angular>
+
+    <!-- Step 3: the payment -->
+    <h6 class="border border-primary p-2 mt-3 mb-4 bg-light text-white">Payment Received</h6>
+
+    <div class="row">
+      <div class="col-lg-6">
+        <div class="form-group row">
+          <label class="col-sm-4 col-form-label px-0 text-right">Amount Paid<span class="text-danger">*</span></label>
+          <div class="col-sm-8">
+            <input type="number" class="form-control" [(ngModel)]="paymentAmount" (ngModelChange)="resetPlan()">
+          </div>
+        </div>
+        <div class="form-group row">
+          <label class="col-sm-4 col-form-label px-0 text-right">Payment Type</label>
+          <div class="col-sm-8">
+            <select class="form-control" [(ngModel)]="paymentType" (ngModelChange)="resetPlan()">
+              <option *ngFor="let type of paymentTypes" [value]="type">{{type}}</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group row" *ngIf="isCheque">
+          <label class="col-sm-4 col-form-label px-0 text-right">Cheque Date<span class="text-danger">*</span></label>
+          <div class="col-sm-8">
+            <input type="date" class="form-control" [(ngModel)]="chequeDate" (ngModelChange)="resetPlan()">
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-6">
+        <div class="form-group row">
+          <label class="col-sm-4 col-form-label px-0 text-right">Settle Order</label>
+          <div class="col-sm-8">
+            <select class="form-control" [(ngModel)]="allocationOrder" (ngModelChange)="resetPlan()">
+              <option [value]="ORDER_OLDEST">Oldest bills first (default)</option>
+              <option [value]="ORDER_NEWEST">Newest bills first</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group row">
+          <label class="col-sm-4 col-form-label px-0 text-right">Reference</label>
+          <div class="col-sm-8">
+            <input type="text" class="form-control" placeholder="Cheque no, M-Pesa code or auth code"
+              [(ngModel)]="paymentRef">
+          </div>
+        </div>
+        <div class="form-group row">
+          <label class="col-sm-4 col-form-label px-0 text-right">Receipt No</label>
+          <div class="col-sm-8">
+            <input type="text" class="form-control" [(ngModel)]="receiptNumber">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-group row">
+      <div class="col-sm-12">
+        <input type="button" class="btn btn-primary px-4" (click)="preview()" value="Preview Allocation">
+      </div>
+    </div>
+  </div>
+
+  <!-- The account has debt past the ageing threshold: the user picks the order. -->
+  <div *ngIf="orderConfirmationRequired" class="alert alert-warning">
+    <h6 class="alert-heading">Confirm which order to settle in</h6>
+    <p class="mb-2">
+      This account has debt going back to <strong>{{plan['oldestBillDate']}}</strong>, which is older than
+      the allowed age. Nothing has been allocated. Choose the order deliberately, then confirm.
+    </p>
+    <div class="form-group row mb-2">
+      <div class="col-sm-5">
+        <select class="form-control" [(ngModel)]="allocationOrder">
+          <option [value]="ORDER_OLDEST">Oldest bills first</option>
+          <option [value]="ORDER_NEWEST">Newest bills first</option>
+        </select>
+      </div>
+      <div class="col-sm-7">
+        <input type="button" class="btn btn-warning px-4" (click)="confirmOrderAndPreview()"
+          value="Confirm Order and Preview">
+      </div>
+    </div>
+  </div>
+
+  <!-- Step 4: what would happen -->
+  <div *ngIf="planIsApplicable">
+    <h6 class="border border-primary p-2 mt-3 mb-4 bg-light text-white">
+      What This Payment Would Settle
+    </h6>
+
+    <div class="row mb-2">
+      <div class="col-sm-4">
+        <span class="badge badge-secondary text-white px-3 py-2" style="font-size: 14px;">
+          Bills Settled: {{plan['lines'].length}}
+        </span>
+      </div>
+      <div class="col-sm-4">
+        <span class="badge badge-success text-white px-3 py-2" style="font-size: 14px;">
+          Allocated: {{plan['allocatedAmount'] | number:'1.2-2'}}
+        </span>
+      </div>
+      <div class="col-sm-4">
+        <span class="badge text-white px-3 py-2" style="font-size: 14px;"
+          [ngClass]="hasOverpayment ? 'badge-warning' : 'badge-secondary'">
+          Left Over: {{plan['unallocatedAmount'] | number:'1.2-2'}}
+        </span>
+      </div>
+    </div>
+
+    <ag-grid-angular class="ag-theme-balham mb-4" style="width: 100%; height: 260px;"
+      [gridOptions]="planGridOptions" [rowData]="plan['lines']">
+    </ag-grid-angular>
+
+    <!-- Money left once every bill is settled has to be dealt with explicitly. -->
+    <div *ngIf="hasOverpayment" class="alert alert-warning">
+      <h6 class="alert-heading">This payment clears every outstanding bill</h6>
+      <p class="mb-2">
+        <strong>{{plan['unallocatedAmount'] | number:'1.2-2'}}</strong> is left over. Choose what happens to it.
+      </p>
+      <div class="custom-control custom-radio custom-control-inline">
+        <input type="radio" id="holdOnAccount" class="custom-control-input" value="HOLD_ON_ACCOUNT"
+          [(ngModel)]="overpaymentAction">
+        <label class="custom-control-label" for="holdOnAccount">Hold on account as credit</label>
+      </div>
+      <div class="custom-control custom-radio custom-control-inline">
+        <input type="radio" id="refund" class="custom-control-input" value="REFUND"
+          [(ngModel)]="overpaymentAction">
+        <label class="custom-control-label" for="refund">Refund to the customer</label>
+      </div>
+    </div>
+
+    <!-- A cheque is recorded now but does not clear the debt until approved.
+         It then shows in Recent Settlements as Held, to be approved there. -->
+    <div *ngIf="isCheque" class="alert alert-info">
+      This is a cheque. The settlement will be recorded but the bills stay outstanding
+      until the cheque is approved under Recent Settlements below.
+    </div>
+
+    <!-- Step 5: authorise -->
+    <h6 class="border border-primary p-2 mt-3 mb-4 bg-light text-white">Approval</h6>
+
+    <div class="row">
+      <div class="col-lg-6">
+        <div class="form-group row">
+          <label class="col-sm-4 col-form-label px-0 text-right">Approval PIN<span class="text-danger">*</span></label>
+          <div class="col-sm-8">
+            <input type="password" class="form-control" placeholder="Your approval PIN"
+              [(ngModel)]="approvalPin" autocomplete="off">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-group row">
+      <div class="col-sm-12">
+        <input type="button" class="btn btn-success px-4" (click)="apply()" [disabled]="applying"
+          value="Apply Settlement">
+        <input type="button" class="btn btn-secondary px-4 ml-3" (click)="resetPlan()" value="Discard Preview">
+      </div>
+    </div>
+  </div>
+
+
+  <!-- Past settlements: reverse one, or approve a cheque that was held. -->
+  <h6 class="border border-primary p-2 mt-4 mb-3 bg-light text-white">
+    Recent Settlements
+    <span *ngIf="selectedAccount" style="font-weight:normal;"> — {{selectedAccount.masterAccountNo || selectedAccount.customerNames}}</span>
+  </h6>
+
+  <div *ngIf="settlementsLoaded && !settlements.length" class="text-muted mb-3">
+    No settlements recorded yet.
+  </div>
+
+  <div class="table-responsive" *ngIf="settlements.length">
+    <table class="table table-sm table-bordered">
+      <thead>
+        <tr>
+          <th>Reference</th>
+          <th>Account</th>
+          <th class="text-right">Paid</th>
+          <th class="text-right">Allocated</th>
+          <th class="text-right">Left Over</th>
+          <th>Bills</th>
+          <th>Type</th>
+          <th>Status</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let batch of settlements">
+          <td>{{batch.batchRef}}</td>
+          <td>{{batch.masterAccountNo}}</td>
+          <td class="text-right">{{batch.paymentAmount | number:'1.2-2'}}</td>
+          <!-- A refund the business still owes has to stay visible after the
+               settlement is applied, not just while it is being previewed. -->
+          <td class="text-right">
+            <span *ngIf="owesRefund(batch)" class="badge badge-warning text-white"
+              title="Owed back to the customer - not yet paid out">
+              {{batch.unallocatedAmount | number:'1.2-2'}} refund due
+            </span>
+            <span *ngIf="!owesRefund(batch) && batch.unallocatedAmount > 0" class="text-muted">
+              {{batch.unallocatedAmount | number:'1.2-2'}} on account
+            </span>
+          </td>
+          <td>{{batch.billCount}}</td>
+          <td>{{batch.paymentType}}</td>
+          <td>
+            <span class="badge text-white"
+              [ngClass]="{
+                'badge-success': batch.status === STATUS_ALLOCATED,
+                'badge-warning': batch.status === STATUS_HELD,
+                'badge-secondary': batch.status === STATUS_REVERSED,
+                'badge-danger': batch.status === STATUS_FLAGGED
+              }">{{batch.status}}</span>
+            <div *ngIf="batch.reversalReason" class="text-muted" style="font-size:11px;">
+              {{batch.reversalReason}}
+            </div>
+          </td>
+          <td style="white-space:nowrap;">
+            <button type="button" class="btn btn-sm btn-outline-success mr-1"
+              *ngIf="canApproveBatch(batch)" (click)="startApproveCheque(batch)">Approve Cheque</button>
+            <button type="button" class="btn btn-sm btn-outline-danger"
+              *ngIf="canReverseBatch(batch)" (click)="startReverse(batch)">Reverse</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Confirming a reversal or a cheque approval. -->
+  <div *ngIf="actionBatch" class="card border-primary mb-3">
+    <div class="card-body">
+      <h6 class="card-title">
+        {{isReversing ? 'Reverse' : 'Approve cheque for'}} {{actionBatch.batchRef}}
+      </h6>
+
+      <p class="mb-2" *ngIf="isReversing">
+        This puts all <strong>{{actionBatch.billCount}}</strong> bills back exactly as they were,
+        and returns the credit limit.
+      </p>
+      <p class="mb-2" *ngIf="!isReversing">
+        The cheque has cleared. This settles the bills it was recorded against.
+      </p>
+
+      <div class="form-group row" *ngIf="isReversing">
+        <label class="col-sm-3 col-form-label px-0 text-right">Reason<span class="text-danger">*</span></label>
+        <div class="col-sm-9">
+          <input type="text" class="form-control" [(ngModel)]="actionReason"
+            placeholder="e.g. cheque bounced">
+        </div>
+      </div>
+
+      <div class="form-group row" *ngIf="isReversing">
+        <label class="col-sm-3 col-form-label px-0 text-right">Action</label>
+        <div class="col-sm-9">
+          <div class="custom-control custom-radio">
+            <input type="radio" id="reverseNow" class="custom-control-input"
+              [value]="true" [(ngModel)]="reverseAutomatically">
+            <label class="custom-control-label" for="reverseNow">Reverse it now</label>
+          </div>
+          <div class="custom-control custom-radio">
+            <input type="radio" id="flagOnly" class="custom-control-input"
+              [value]="false" [(ngModel)]="reverseAutomatically">
+            <label class="custom-control-label" for="flagOnly">
+              Only flag it for review — the settlement stands until someone looks at it
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group row">
+        <label class="col-sm-3 col-form-label px-0 text-right">Approval PIN<span class="text-danger">*</span></label>
+        <div class="col-sm-4">
+          <input type="password" class="form-control" [(ngModel)]="actionPin" autocomplete="off">
+        </div>
+      </div>
+
+      <input type="button" class="btn btn-primary px-4" (click)="confirmAction()"
+        [disabled]="actionInProgress" [value]="isReversing ? 'Confirm Reversal' : 'Approve Cheque'">
+      <input type="button" class="btn btn-secondary px-4 ml-3" (click)="cancelAction()" value="Cancel">
+    </div>
+  </div>
+
+</div>

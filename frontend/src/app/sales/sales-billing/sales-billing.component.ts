@@ -12,6 +12,7 @@ import { Component, OnInit } from '@angular/core';
 import { stringify } from '@angular/compiler/src/util';
 import * as $ from 'jquery';
 import { AppService } from 'src/app/core/app.service';
+import { CreditSettlementService } from './credit-settlement/credit-settlement.service';
 
 
 @Component({
@@ -35,8 +36,19 @@ export class SalesBillingComponent implements OnInit {
   showStaff: boolean
   showCreditNotePayType: boolean
 
+  /**
+   * Whether to offer the Credit Settlement tab.
+   *
+   * Answered by the server rather than read out of the permissions array by
+   * position: that array holds each permission as a bare id with no name, and
+   * a user who has not been granted every permission gets a shorter array in
+   * which a fixed index points somewhere else, or past the end.
+   */
+  showCreditSettlement = false
+
   constructor(private salesService: SalesBillingService, private toasterService: ToastrService, private datePipe: DatePipe,
-    private spinnerService: Ng4LoadingSpinnerService, private appService: AppService) {
+    private spinnerService: Ng4LoadingSpinnerService, private appService: AppService,
+    private creditSettlementService: CreditSettlementService) {
 
     this.appService.getPermissions().subscribe(res => {
       if (res['responseStatus']['code'] === 200) {
@@ -68,6 +80,16 @@ export class SalesBillingComponent implements OnInit {
           }
         }
       }
+    });
+
+    this.creditSettlementService.getAccess().subscribe(res => {
+      if (res['responseStatus']['code'] === 200) {
+        this.showCreditSettlement = res['result']['canSettle'];
+      }
+    }, () => {
+      // Hiding the tab is the safe failure: the endpoints check the permission
+      // themselves, so a user who gets past this cannot settle anything anyway.
+      this.showCreditSettlement = false;
     });
 
     this.getConfigurationStatus();

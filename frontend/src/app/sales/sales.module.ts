@@ -14,10 +14,12 @@ import { SalesBillingComponent } from './sales-billing/sales-billing.component';
 import { SalesReturnsComponent } from './sales-returns/sales-returns.component';
 import { SalesHistoryComponent } from './sales-billing/sales-history/sales-history.component';
 import { SalesChartComponent } from './sales-chart/sales-chart.component';
+import { CreditSettlementComponent } from './sales-billing/credit-settlement/credit-settlement.component';
 
 @NgModule({
   declarations: [SalesComponent, SalesBillingComponent,
-    SalesReturnsComponent, SalesHistoryComponent, SalesChartComponent],
+    SalesReturnsComponent, SalesHistoryComponent, SalesChartComponent,
+    CreditSettlementComponent],
   imports: [
     CommonModule,
     AgGridModule.withComponents([]),
