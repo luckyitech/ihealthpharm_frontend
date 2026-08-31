@@ -282,6 +282,7 @@
           <td>{{batch.batchRef}}</td>
           <td>{{batch.masterAccountNo}}</td>
           <td class="text-right">{{batch.paymentAmount | number:'1.2-2'}}</td>
+          <td class="text-right">{{batch.allocatedAmount | number:'1.2-2'}}</td>
           <!-- A refund the business still owes has to stay visible after the
                settlement is applied, not just while it is being previewed. -->
           <td class="text-right">
