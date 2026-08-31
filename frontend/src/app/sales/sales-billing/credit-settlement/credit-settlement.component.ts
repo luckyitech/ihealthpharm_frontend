@@ -434,6 +434,17 @@ export class CreditSettlementComponent implements OnInit {
   }
 
   /**
+   * True while a settlement is recorded but has not moved any money yet.
+   *
+   * Only cheques reach this state. What the batch calls its allocated amount is
+   * the plan, not the outcome: the bills are untouched and the ledger is empty
+   * until the cheque is approved.
+   */
+  isPending(batch: any): boolean {
+    return batch['status'] === this.STATUS_HELD;
+  }
+
+  /**
    * True when this settlement left money the customer is owed back.
    *
    * Money held on account looks after itself - it shows up as credit against

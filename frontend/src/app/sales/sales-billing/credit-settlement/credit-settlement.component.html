@@ -282,7 +282,16 @@
           <td>{{batch.batchRef}}</td>
           <td>{{batch.masterAccountNo}}</td>
           <td class="text-right">{{batch.paymentAmount | number:'1.2-2'}}</td>
-          <td class="text-right">{{batch.allocatedAmount | number:'1.2-2'}}</td>
+          <!-- A held cheque has allocated nothing yet; the figure is the plan.
+               Saying "Allocated" of money that has not moved is the same kind of
+               claim that had operators entering cheque payments twice. -->
+          <td class="text-right">
+            <span *ngIf="!isPending(batch)">{{batch.allocatedAmount | number:'1.2-2'}}</span>
+            <span *ngIf="isPending(batch)" class="text-muted"
+              title="Planned. Nothing is allocated until the cheque is approved.">
+              {{batch.allocatedAmount | number:'1.2-2'}} planned
+            </span>
+          </td>
           <!-- A refund the business still owes has to stay visible after the
                settlement is applied, not just while it is being previewed. -->
           <td class="text-right">
