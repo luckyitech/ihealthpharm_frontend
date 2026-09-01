@@ -24,6 +24,25 @@ export class CreditSettlementService {
    * has not been granted every permission gets a shorter array in which a
    * fixed position points at the wrong entry.
    */
+  /**
+   * The printed receipt for a settlement.
+   *
+   * The same ACCOUNT_RECEIVABLES_RECEIPT report the Receipts screen prints,
+   * gathered by the receipt number stamped on every bill the payment touched,
+   * so a customer gets the same document either way. No Authorization header
+   * is set here on purpose - the global interceptor attaches the real token,
+   * and the copy of this call on the Receipts screen sets a broken literal one
+   * that only works because the interceptor overrides it.
+   */
+  public downloadReceipt(receiptNumber: string) {
+    const inputJson = encodeURI(JSON.stringify({
+      ReportCode: 'ACCOUNT_RECEIVABLES_RECEIPT',
+      UNIQUE_RECEIPT_NO: receiptNumber
+    }));
+    return this.http.get(this.urlRef.url + 'reports/generateReportPdf?inputJson=' + inputJson,
+      { responseType: 'blob' as 'json' });
+  }
+
   public getAccess() {
     return this.http.get(this.urlRef.url + 'creditAllocation/access');
   }

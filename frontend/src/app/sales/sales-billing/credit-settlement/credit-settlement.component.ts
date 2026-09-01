@@ -61,7 +61,6 @@ export class CreditSettlementComponent implements OnInit {
   paymentType = 'Cash';
   paymentRef = '';
   chequeDate: string;
-  receiptNumber = '';
 
   plan: any = undefined;
 
@@ -409,6 +408,7 @@ export class CreditSettlementComponent implements OnInit {
       } else {
         this.toasterService.success(res['message'], 'Settled ' + (applied['batchRef'] || ''),
           { timeOut: 6000 });
+        this.printReceipt(applied['receiptNumber']);
       }
 
       this.approvalPin = '';
@@ -540,6 +540,11 @@ export class CreditSettlementComponent implements OnInit {
       }
 
       this.toasterService.success(res['message'], '', { timeOut: 6000 });
+      if (!this.isReversing) {
+        // Approving is the moment the cheque settles, so that is when the
+        // customer's receipt is issued.
+        this.printReceipt((res['result'] || {})['receiptNumber']);
+      }
       this.cancelAction();
       this.loadSettlements();
 
@@ -576,7 +581,6 @@ export class CreditSettlementComponent implements OnInit {
       paymentRef: this.paymentRef.trim() || undefined,
       chequeDate: this.isCheque ? this.chequeDate : undefined,
       overpaymentAction: this.overpaymentAction,
-      receiptNumber: this.receiptNumber.trim() || undefined,
       approvalPin: this.approvalPin || undefined
     };
   }
@@ -611,13 +615,42 @@ export class CreditSettlementComponent implements OnInit {
     this.paymentType = 'Cash';
     this.paymentRef = '';
     this.chequeDate = undefined;
-    this.receiptNumber = '';
     this.approvalPin = '';
     this.openBills = [];
     this.billsLoaded = false;
     this.resetPlan();
     this.cancelAction();
     this.loadSettlements();
+  }
+
+  /**
+   * Prints the customer's receipt for a settlement.
+   *
+   * The same report the Receipts screen prints after a bulk payment, gathered
+   * by the receipt number the settlement issued, so a customer gets the same
+   * document whether their payment was ticked off by hand or cascaded here.
+   *
+   * A failure here is reported but never treated as a failed settlement: the
+   * money is already applied by this point, and telling the user otherwise
+   * would invite them to enter it a second time.
+   */
+  private printReceipt(receiptNumber: string) {
+    if (!receiptNumber) {
+      return;
+    }
+
+    this.creditSettlementService.downloadReceipt(receiptNumber).subscribe((data: any) => {
+      const url = window.URL.createObjectURL(data);
+      const frame = document.createElement('iframe');
+      frame.style.display = 'none';
+      frame.src = url;
+      document.body.appendChild(frame);
+      frame.onload = () => frame.contentWindow.print();
+    }, () => {
+      this.toasterService.warning(
+        'The settlement is saved. Print the receipt from Reports if you need it.',
+        'Receipt ' + receiptNumber + ' could not be printed', { timeOut: 8000 });
+    });
   }
 
   private showError(err: any, fallback: string) {
