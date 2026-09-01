@@ -43,6 +43,23 @@ export class CreditSettlementService {
       { responseType: 'blob' as 'json' });
   }
 
+  /**
+   * The customer's credit statement: every bill still owed, what was bought on
+   * it, and how long it has been owed.
+   *
+   * Filtered by credit account where there is one and by name otherwise, which
+   * is how the settlement screen identifies a customer with no account.
+   */
+  public downloadStatement(masterAccountNo: string, customerName: string) {
+    const filter = masterAccountNo
+      ? { MASTER_ACC_NO: masterAccountNo }
+      : { CUSTOMER_NAME: customerName };
+    const inputJson = encodeURI(JSON.stringify(
+      Object.assign({ ReportCode: 'CUSTOMER_CREDIT_STATEMENT' }, filter)));
+    return this.http.get(this.urlRef.url + 'reports/generateReportPdf?inputJson=' + inputJson,
+      { responseType: 'blob' as 'json' });
+  }
+
   public getAccess() {
     return this.http.get(this.urlRef.url + 'creditAllocation/access');
   }

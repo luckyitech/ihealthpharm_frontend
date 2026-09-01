@@ -58,6 +58,8 @@
       </div>
     </div>
     <div class="col-lg-3">
+      <input type="button" class="btn btn-primary px-4 mr-2" (click)="printStatement()"
+        [disabled]="!selectedAccount" value="Print Statement">
       <input type="button" class="btn btn-secondary px-4" (click)="reset()" value="Reset">
     </div>
   </div>

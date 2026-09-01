@@ -634,18 +634,49 @@ export class CreditSettlementComponent implements OnInit {
    * money is already applied by this point, and telling the user otherwise
    * would invite them to enter it a second time.
    */
+  /**
+   * Prints the customer's statement of what they still owe.
+   *
+   * Offered beside the account rather than after a payment: it is as often
+   * wanted by someone who has come in to ask what they owe as by someone
+   * settling.
+   */
+  printStatement() {
+    if (!this.selectedAccount) {
+      this.toasterService.error('Search for the customer or credit account first',
+        'Nothing to print', { timeOut: 5000 });
+      return;
+    }
+
+    this.spinnerService.show();
+    this.creditSettlementService.downloadStatement(
+      this.selectedAccount['masterAccountNo'], this.selectedAccount['customerNames'])
+      .subscribe((data: any) => {
+        this.spinnerService.hide();
+        this.openPdf(data);
+      }, err => {
+        this.spinnerService.hide();
+        this.showError(err, 'The statement could not be printed');
+      });
+  }
+
+  /** Hands a generated PDF to the browser's printer. */
+  private openPdf(data: any) {
+    const url = window.URL.createObjectURL(data);
+    const frame = document.createElement('iframe');
+    frame.style.display = 'none';
+    frame.src = url;
+    document.body.appendChild(frame);
+    frame.onload = () => frame.contentWindow.print();
+  }
+
   private printReceipt(receiptNumber: string) {
     if (!receiptNumber) {
       return;
     }
 
     this.creditSettlementService.downloadReceipt(receiptNumber).subscribe((data: any) => {
-      const url = window.URL.createObjectURL(data);
-      const frame = document.createElement('iframe');
-      frame.style.display = 'none';
-      frame.src = url;
-      document.body.appendChild(frame);
-      frame.onload = () => frame.contentWindow.print();
+      this.openPdf(data);
     }, () => {
       this.toasterService.warning(
         'The settlement is saved. Print the receipt from Reports if you need it.',
