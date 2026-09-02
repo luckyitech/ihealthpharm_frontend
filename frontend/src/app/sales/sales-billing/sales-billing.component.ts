@@ -8,6 +8,7 @@ import { GridOptions, ColDef, IGetRowsParams } from 'ag-grid-community';
 import { ToastrService } from 'ngx-toastr';
 import { SalesBillingService } from './sales-billing.service';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
+import { ActivatedRoute } from '@angular/router';
 import { Component, OnInit } from '@angular/core';
 import { stringify } from '@angular/compiler/src/util';
 import * as $ from 'jquery';
@@ -48,7 +49,7 @@ export class SalesBillingComponent implements OnInit {
 
   constructor(private salesService: SalesBillingService, private toasterService: ToastrService, private datePipe: DatePipe,
     private spinnerService: Ng4LoadingSpinnerService, private appService: AppService,
-    private creditSettlementService: CreditSettlementService) {
+    private creditSettlementService: CreditSettlementService, private route: ActivatedRoute) {
 
     this.appService.getPermissions().subscribe(res => {
       if (res['responseStatus']['code'] === 200) {
@@ -203,6 +204,7 @@ export class SalesBillingComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.openCreditSettlementIfAsked();
     this.getAllDiscounts();
     this.getMaxDiscount();
     this.getMargin();
@@ -321,6 +323,40 @@ export class SalesBillingComponent implements OnInit {
   editScreen: boolean = false;
   customerPhoneNumber
   tab = "sales"
+
+  /**
+   * Opens the Credit Settlement tab when arrived at with ?tab=creditSettlement.
+   *
+   * Account Receivables links here so the person taking a payment can choose
+   * between ticking bills off by hand there and cascading a payment here,
+   * without having to find the screen themselves.
+   *
+   * The tab is opened by clicking its pill rather than by setting `tab`
+   * directly: the panes are hidden by Angular but faded in by Bootstrap, so
+   * setting the variable alone shows an empty panel. Clicking does both, the
+   * same way a person would.
+   *
+   * Waits for the permission answer, because the pill does not exist until
+   * showCreditSettlement is true.
+   */
+  private openCreditSettlementIfAsked() {
+    if (this.route.snapshot.queryParamMap.get('tab') !== 'creditSettlement') {
+      return;
+    }
+
+    let waited = 0;
+    const open = setInterval(() => {
+      const pill = document.getElementById('creditSettlementTab');
+      if (pill) {
+        clearInterval(open);
+        pill.click();
+      } else if ((waited += 100) > 8000) {
+        // The permission was refused, or the tab never appeared. Leave them on
+        // Sales Billing rather than spinning.
+        clearInterval(open);
+      }
+    }, 100);
+  }
   blob: Blob;
   griddata: any[] = [];
   itemGridOptions: GridOptions;

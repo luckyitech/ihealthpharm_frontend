@@ -1,8 +1,10 @@
 import { InsuranceService } from './../../masters/insurance/shared/insurance.service';
+import { Router } from '@angular/router';
 import { Component, OnInit } from '@angular/core';
 import { ReceiptsService } from './shared/receipts.service';
 import { CustomerService } from 'src/app/masters/customer/shared/customer.service';
 import { SalesBillingService } from 'src/app/sales/sales-billing/sales-billing.service';
+import { CreditSettlementService } from 'src/app/sales/sales-billing/credit-settlement/credit-settlement.service';
 import { ToastrService } from 'ngx-toastr';
 import { GridOptions, ColDef, IGetRowsParams, RowNode } from 'ag-grid-community';
 import * as $ from 'jquery';
@@ -30,7 +32,16 @@ export class ReceiptsComponent implements OnInit {
   constructor(private employeeService: EmployeeService,
     private datePipe: DatePipe, private receiptsService: ReceiptsService,
     private insuranceService: InsuranceService,
-    private toasterService: ToastrService, private spinnerService: Ng4LoadingSpinnerService) {
+    private toasterService: ToastrService, private spinnerService: Ng4LoadingSpinnerService,
+    private creditSettlementService: CreditSettlementService, private router: Router) {
+
+    // Only offered to people who may actually settle credit, so the link never
+    // leads to a tab that is not there for them.
+    this.creditSettlementService.getAccess().subscribe(res => {
+      this.canSettleCredit = res['responseStatus']['code'] === 200 && res['result']['canSettle'];
+    }, () => {
+      this.canSettleCredit = false;
+    });
 
     this.getPolicyData();
     this.getEmployeeData();
@@ -170,6 +181,22 @@ export class ReceiptsComponent implements OnInit {
   }
 
   makePayment = true;
+  /** Whether to offer the cascade as an alternative to ticking bills by hand. */
+  canSettleCredit = false;
+
+  /**
+   * Hands the payment over to the Credit Settlement screen.
+   *
+   * The same debts, settled the other way: there a payment cascades over the
+   * outstanding bills oldest first and is previewed before anything is written,
+   * rather than being ticked off one at a time here. Both routes are kept
+   * because they suit different payments - a customer clearing several old
+   * bills at once, against a payment aimed at particular ones.
+   */
+  goToCreditSettlement() {
+    this.router.navigate(['/sales/salesbilling'], { queryParams: { tab: 'creditSettlement' } });
+  }
+
   receiptStatusArray: any[] = ["Pending", "Paid", "Partially Paid", "Cancel", "Over Paid"];
   cashCheckbox: boolean = false;
   mPesaCheckbox: boolean = false;

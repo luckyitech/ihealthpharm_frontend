@@ -41,6 +41,11 @@
                   [ngModelOptions]="{standalone:true}" name="Bulk" (change)="onBulkRecClicked($event)">
                 <label class="custom-control-label" for="bulk">Bulk Payment</label>
               </div>
+
+              <!-- The other way to take the same payment: cascade it over the
+                   outstanding bills instead of ticking them off here. -->
+              <input *ngIf="canSettleCredit" type="button" class="btn btn-primary px-4 ml-3"
+                (click)="goToCreditSettlement()" value="Use Credit Settlement">
             </div>
           </div>
 
