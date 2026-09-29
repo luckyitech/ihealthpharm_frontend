@@ -292,7 +292,7 @@ export class EditstockComponent implements OnInit {
     unitSaleRate: new FormControl(null, [Validators.required, Validators.pattern(/^[0-9]+(.[0-9]{0,2})?$/)]),
     bonus: new FormControl(''),
     spVat: new FormControl(),
-    mrp: new FormControl('', Validators.pattern(/^[0-9]+(.[0-9]{0,2})?$/)),
+    mrp: new FormControl('', [Validators.required, Validators.pattern(/^[0-9]+(.[0-9]{0,2})?$/)]),
     margin: new FormControl(),
     marginAmount: new FormControl(),
     remarks: new FormControl(),
@@ -444,6 +444,7 @@ export class EditstockComponent implements OnInit {
       (this.stockForm.get('shelf').errors instanceof Object) ||
       this.stockForm.get('quantity').errors ||
       this.stockForm.get('unitSaleRate').errors ||
+      this.stockForm.get('mrp').errors ||
       this.stockForm.get('unitPurchaseRate').errors ||
       //this.stockForm.get('expiryDt').errors ||
       this.stockForm.get('vat').errors ||
@@ -463,6 +464,7 @@ export class EditstockComponent implements OnInit {
       this.stockForm.get('vat').setValue(this.selectedTax['categoryValue']);
     }
     this.marginPercentageCalculation()
+    this.syncMrpToSalePrice();
   }
 
   setSPVAT() {
@@ -499,13 +501,18 @@ export class EditstockComponent implements OnInit {
   }
   unitSalePriceCalc() {
     this.stockForm.get('unitSaleRate').setValue(((this.prevSP / this.stockForm.get('pack').value)).toFixed(2));
+    this.syncMrpToSalePrice();
   }
 
   setMRP() {
     this.prevMRP = this.stockForm.get('mrp').value
   }
   unitMRPCalc() {
-    this.stockForm.get('mrp').setValue(((this.prevMRP / this.stockForm.get('pack').value)).toFixed(2));
+    this.syncMrpToSalePrice();
+  }
+
+  syncMrpToSalePrice() {
+    this.stockForm.get('mrp').setValue(this.stockForm.get('unitSaleRate').value);
   }
   setUnitMRPCalc() {
     this.stockForm.get('mrp').setValue(((this.prevSP / this.stockForm.get('pack').value)).toFixed(2));
