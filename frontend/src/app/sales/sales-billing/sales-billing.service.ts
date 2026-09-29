@@ -75,6 +75,10 @@ export class SalesBillingService {
       searchCode + "&pharmacyId=" + pharmacyId + "&pageNumber=" + pageNumber + "&pageSize=" + pageSize);
   }
 
+  public updateStockMrp(stockId, mrp) {
+    return this.http.put(this.urlRef.url + 'update/stockmrp?stockId=' + stockId + '&mrp=' + mrp, {});
+  }
+
   public getStockDataByItemAndPharmacyIdCount(searchTerm, searchCode, pharmacyId) {
     return this.http.get(this.urlRef.url + 'getstockbyitemandpharmacyidcount?searchTerm=' + searchTerm + "&searchCode=" +
       searchCode + "&pharmacyId=" + pharmacyId);

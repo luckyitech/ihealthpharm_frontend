@@ -157,7 +157,7 @@ export class NewStockComponent implements OnInit {
     quantity: new FormControl(null, Validators.required),
     unitSaleRate: new FormControl(null, [Validators.required, Validators.pattern(/^[0-9]+(.[0-9]{0,2})?$/)]),
     spVat: new FormControl(),
-    mrp: new FormControl('', Validators.pattern(/^[0-9]+(.[0-9]{0,2})?$/)),
+    mrp: new FormControl('', [Validators.required, Validators.pattern(/^[0-9]+(.[0-9]{0,2})?$/)]),
     margin: new FormControl(),
     marginAmount: new FormControl(),
     remarks: new FormControl(),
@@ -419,6 +419,7 @@ export class NewStockComponent implements OnInit {
       'saleDiscountAmount': this.sdiscAmt.toFixed(2)
     })
     this.marginPercentageCalculation()
+    this.syncMrpToSalePrice();
   }
 
   addToGrid() {
@@ -517,6 +518,7 @@ export class NewStockComponent implements OnInit {
       (this.stockForm.get('shelf').errors instanceof Object) ||
       this.stockForm.get('quantity').errors ||
       this.stockForm.get('unitSaleRate').errors ||
+      this.stockForm.get('mrp').errors ||
       this.stockForm.get('unitPurchaseRate').errors ||
       this.stockForm.get('expiryDt').errors ||
       this.stockForm.get('vat').errors ||
@@ -602,16 +604,18 @@ export class NewStockComponent implements OnInit {
     //if (!this.stockForm.get('pack').errors && !this.stockForm.get('unitSaleRate').errors) {
     this.stockForm.get('unitSaleRate').setValue(((this.prevSP / this.stockForm.get('pack').value)).toFixed(2));
     // }
+    this.syncMrpToSalePrice();
   }
 
   setMRP() {
     this.prevMRP = this.stockForm.get('mrp').value
   }
   unitMRPCalc() {
-    // if (!this.stockForm.get('pack').errors && !this.stockForm.get('mrp').errors) {
-    this.stockForm.get('mrp').setValue(((this.prevMRP / this.stockForm.get('pack').value)).toFixed(2));
-    // }
+    this.syncMrpToSalePrice();
+  }
 
+  syncMrpToSalePrice() {
+    this.stockForm.get('mrp').setValue(this.stockForm.get('unitSaleRate').value);
   }
 
   changePrevPack() {

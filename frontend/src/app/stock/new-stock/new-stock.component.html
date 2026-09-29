@@ -322,10 +322,16 @@
         <div class="col-lg-4">
 
           <div class="form-group row">
-            <label for="" class="col-sm-4 col-form-label px-0 text-right" id="newStockMRPLabel">MRP</label>
+            <label for="" class="col-sm-4 col-form-label px-0 text-right" id="newStockMRPLabel">MRP <span
+                class="text-danger">*</span></label>
             <div class="col-sm-8">
-              <input type="text" class="form-control" id="newStockMRP" placeholder="MRP" formControlName="mrp"
-                (keyup)="setMRP()" (change)="unitMRPCalc()">
+              <input type="text" class="form-control bg-light" id="newStockMRP" placeholder="MRP" formControlName="mrp"
+                readonly title="MRP is always the same as S Price">
+              <div *ngIf="stockForm.get('mrp')?.touched" class="error-msg-common text-danger">
+                <div *ngIf="stockForm.get('mrp').errors?.required">
+                  * required field
+                </div>
+              </div>
               <div *ngIf="stockForm.get('mrp')?.invalid" class="error-msg-common text-danger">
                 <div *ngIf="!stockForm.get('mrp').errors?.required && stockForm?.get('mrp')?.errors">
                   * not a valid input

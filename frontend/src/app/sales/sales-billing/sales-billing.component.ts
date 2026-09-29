@@ -812,7 +812,11 @@ export class SalesBillingComponent implements OnInit {
     { headerName: 'TAX', field: 'taxCategoryModel.categoryCode', sortable: true, filter: true, resizable: true, width: 100, cellStyle: { 'border': '1px solid #BDC3C7' } },
     { headerName: 'TAX', field: 'vat', hide: true, sortable: true, filter: true, resizable: true, width: 100, cellStyle: { 'border': '1px solid #BDC3C7' } },
     { headerName: 'S Disc %', field: 'saleDiscountPercentage', hide: true, sortable: true, filter: true, resizable: true, width: 100, editable: true, cellStyle: { 'border': '1px solid #BDC3C7' } },
-    { headerName: 'MRP', field: 'mrp', sortable: true, filter: true, resizable: true, width: 100, cellStyle: { 'border': '1px solid #BDC3C7' } },
+    {
+      headerName: 'MRP', field: 'mrp', sortable: true, filter: true, resizable: true, width: 100, cellStyle: { 'border': '1px solid #BDC3C7' },
+      editable: true, singleClickEdit: true, cellEditorFramework: NumericEditor,
+      onCellValueChanged: this.stockMrpEdited.bind(this)
+    },
     { headerName: 'Pack', field: 'pack', sortable: true, hide: false, filter: true, resizable: true, cellStyle: { 'border': '1px solid #BDC3C7' }, width: 120 },
   ]
   // checkboxes
@@ -2724,10 +2728,10 @@ export class SalesBillingComponent implements OnInit {
               salesItem['expiryDate'] = data['expiryDt'];
               salesItem['purchasePrice'] = isNaN(data['unitPurchaseRate']) ? 0 : data['unitPurchaseRate'];
               salesItem['markupPercenage'] = 0;//isNaN(data['purchaseDiscountPercentage']) ? 0 : data['purchaseDiscountPercentage'];
-              salesItem['mrp'] = (data['mrp'] != null && data['mrp'] != undefined && data['mrp'] != 0) ? data['mrp'].toFixed(2) : 0;
+              salesItem['mrp'] = (data['mrp'] != null && data['mrp'] != undefined && data['mrp'] != 0) ? data['mrp'].toFixed(2) : (data['unitSaleRate'] != null && data['unitSaleRate'] != undefined) ? data['unitSaleRate'].toFixed(2) : 0;
 
-              salesItem['saleWithVAT'] = (data['mrp'] != null && data['mrp'] != undefined && data['mrp'] != 0) ? data['mrp'].toFixed(2) : 0;
-              salesItem['salesPrice'] = (data['mrp'] != null && data['mrp'] != undefined && data['mrp'] != 0) && data['mrp'] ? data['mrp'].toFixed(2) : salesItem['unitSaleRate'].toFixed(2);
+              salesItem['saleWithVAT'] = (data['mrp'] != null && data['mrp'] != undefined && data['mrp'] != 0) ? data['mrp'].toFixed(2) : (data['unitSaleRate'] != null && data['unitSaleRate'] != undefined) ? data['unitSaleRate'].toFixed(2) : 0;
+              salesItem['salesPrice'] = (data['mrp'] != null && data['mrp'] != undefined && data['mrp'] != 0) ? data['mrp'].toFixed(2) : (data['unitSaleRate'] != null && data['unitSaleRate'] != undefined) ? data['unitSaleRate'].toFixed(2) : 0;
               salesItem['salesDiscount'] = isNaN(data['saleDiscountPercentage']) ? 0 : data['saleDiscountPercentage'];
               salesItem['marginPercentage'] = isNaN(data['marginPercentage']) ? 0 : data['marginPercentage'];
               salesItem['VAT'] = (data['vat'] == null || data['vat'] == undefined || data['vat'] == '') ? 0 : data['vat'];
@@ -2785,8 +2789,57 @@ export class SalesBillingComponent implements OnInit {
 
   }
 
+  editedStockMrps: any[] = [];
+
+  stockMrpEdited(params) {
+    var stockId = params.data['stockId'];
+    if (stockId != null && stockId != undefined && this.editedStockMrps.indexOf(stockId) === -1) {
+      this.editedStockMrps.push(stockId);
+    }
+  }
+
+  // MRP must equal the sale price. Returns the rows that break that rule.
+  mrpMismatchedRows(rows) {
+    var mismatched = [];
+    for (var i = 0; i < rows.length; i++) {
+      var sp = Number(rows[i]['unitSaleRate']);
+      var mrp = Number(rows[i]['mrp']);
+      if (!sp || isNaN(sp) || !mrp || isNaN(mrp) || mrp.toFixed(2) !== sp.toFixed(2)) {
+        mismatched.push(rows[i]);
+      }
+    }
+    return mismatched;
+  }
+
+  // Persist any MRP the user typed in the search popup, so the next sale of the
+  // same batch already has it. Only the MRP column is written.
+  saveEditedStockMrps(rows) {
+    for (var i = 0; i < rows.length; i++) {
+      var stockId = rows[i]['stockId'];
+      if (this.editedStockMrps.indexOf(stockId) === -1) {
+        continue;
+      }
+      this.salesService.updateStockMrp(stockId, Number(rows[i]['mrp']).toFixed(2)).subscribe(res => {
+      }, error => {
+        this.toasterService.warning('MRP was used for this bill but could not be saved to stock, please update it in Edit Stock', 'MRP Not Saved', {
+          timeOut: 5000
+        });
+      });
+    }
+  }
+
   getSelectedStockItems() {
 
+    var selectedRows = this.stockGridOptions.api.getSelectedRows();
+    var mismatched = this.mrpMismatchedRows(selectedRows);
+    if (mismatched.length) {
+      this.toasterService.error('MRP must be entered and must be the same as S Price (' +
+        Number(mismatched[0]['unitSaleRate']).toFixed(2) + ') for ' + mismatched[0]['batchNo'], 'Invalid MRP', {
+        timeOut: 5000
+      });
+      return;
+    }
+    this.saveEditedStockMrps(selectedRows);
 
     this.salesItemModelsArray = [];
     var data = this.stockGridOptions.api.getSelectedRows();
@@ -2810,9 +2863,9 @@ export class SalesBillingComponent implements OnInit {
       salesItem['expiryDate'] = data['expiryDt'];
       salesItem['purchasePrice'] = isNaN(data['unitPurchaseRate']) ? 0 : data['unitPurchaseRate'];
       salesItem['markupPercenage'] = 0;//isNaN(data['purchaseDiscountPercentage']) ? 0 : data['purchaseDiscountPercentage'];
-      salesItem['mrp'] = (data['mrp'] != null && data['mrp'] != undefined && data['mrp'] != 0) ? data['mrp'].toFixed(2) : 0;
-      salesItem['saleWithVAT'] = (data['mrp'] != null && data['mrp'] != undefined && data['mrp'] != 0) ? data['mrp'].toFixed(2) : 0;
-      salesItem['salesPrice'] = (data['mrp'] != null && data['mrp'] != undefined && data['mrp'] != 0) ? data['mrp'].toFixed(2) : salesItem['unitSaleRate'].toFixed(2);
+      salesItem['mrp'] = (data['mrp'] != null && data['mrp'] != undefined && data['mrp'] != 0) ? data['mrp'].toFixed(2) : (data['unitSaleRate'] != null && data['unitSaleRate'] != undefined) ? data['unitSaleRate'].toFixed(2) : 0;
+      salesItem['saleWithVAT'] = (data['mrp'] != null && data['mrp'] != undefined && data['mrp'] != 0) ? data['mrp'].toFixed(2) : (data['unitSaleRate'] != null && data['unitSaleRate'] != undefined) ? data['unitSaleRate'].toFixed(2) : 0;
+      salesItem['salesPrice'] = (data['mrp'] != null && data['mrp'] != undefined && data['mrp'] != 0) ? data['mrp'].toFixed(2) : (data['unitSaleRate'] != null && data['unitSaleRate'] != undefined) ? data['unitSaleRate'].toFixed(2) : 0;
       salesItem['salesDiscount'] = isNaN(data['saleDiscountPercentage']) ? 0 : data['saleDiscountPercentage'];
       salesItem['marginPercentage'] = isNaN(data['marginPercentage']) ? 0 : data['marginPercentage'];
       salesItem['VAT'] = (data['vat'] == null || data['vat'] == undefined || data['vat'] == '') ? 0 : data['vat'];
@@ -2850,6 +2903,7 @@ export class SalesBillingComponent implements OnInit {
   }
 
   close() {
+    this.editedStockMrps = [];
     this.stockGridOptions.api.setRowData([]);
     document.getElementById('itemSearchModal').classList.remove("show");
     document.getElementById('itemSearchModal').style.display = "none";
