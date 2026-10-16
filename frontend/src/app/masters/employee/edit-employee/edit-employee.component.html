@@ -1312,8 +1312,16 @@
             <label id="accessEmployeeLabelUserName" for="" class="col-sm-3 col-form-label pr-0 text-right">Username
               <span class="text-danger">*</span></label>
             <div class="col-sm-9">
+              <!--
+                Locked once a login exists, because renaming it would strand
+                everything that refers to the person by username. But editable
+                while there is no login yet: an employee saved from the Employee
+                tab without completing Access has no credentials row, and a
+                permanently disabled box meant they could never be given one
+                from this screen.
+              -->
               <input type="text" formControlName="userName" class="form-control" id="accessEmployeeUserName"
-                placeholder="Username" disabled>
+                placeholder="Username" [attr.disabled]="employeeCredentialUpdate ? 'disabled' : null">
               <div *ngIf="employeeCredentialsInformationForm.get('userName')?.touched"
                 class="error-msg-common text-danger">
                 <div *ngIf="employeeCredentialsInformationForm.get('userName').errors?.required">
@@ -1388,6 +1396,136 @@
           </div>
         </div>
       </div>
+      <!--
+        Two-factor. Outside the credentials form on purpose: that form posts a
+        whole row, and two-factor state is written only by its own endpoints.
+        Inside the form, an unrelated edit here would clear someone's enrolment.
+      -->
+      <h6 class="border border-primary p-2 mt-3 mb-4 bg-light text-white">Sign-in code (two-factor)</h6>
+
+      <!--
+        Everything here acts on an existing credentials row by id, so it cannot
+        do anything until one has been loaded. Showing the controls before then
+        offered a Work Email box that could only answer "save the login details
+        first" - accurate, and no use to anybody. Say what is needed instead.
+      -->
+      <div class="row" *ngIf="!twoFactorCredentialsId">
+        <div class="col-lg-12">
+          <p class="text-muted mb-3" id="twoFactorNoCredentials">
+            Save this person's username and password first. Sign-in codes can be set up once they
+            have a login.
+          </p>
+        </div>
+      </div>
+
+      <div class="row" *ngIf="twoFactorCredentialsId">
+        <!-- 6/6, matching the Status row above, so the controls line up with it
+             rather than running to the edge of the screen. -->
+        <div class="col-lg-6">
+          <div class="form-group row">
+            <label class="col-sm-3 col-form-label pr-0 text-right">Status</label>
+            <div class="col-sm-9 pt-2">
+              <span id="twoFactorStatus">{{ twoFactorStatus }}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-6">
+          <div class="form-group row">
+            <div class="col-sm-12 justify-content-end d-flex pt-2">
+              <div class="custom-control d-inline custom-radio mr-3">
+                <input type="radio" name="twoFactorOn" id="twoFactorOn"
+                       [checked]="twoFactorEnabled" (change)="toggleTwoFactor(true)">
+                <label class="custom-control-label" for="twoFactorOn">Require a code</label>
+              </div>
+              <div class="custom-control d-inline custom-radio">
+                <input type="radio" name="twoFactorOn" id="twoFactorOff"
+                       [checked]="!twoFactorEnabled" (change)="toggleTwoFactor(false)">
+                <label class="custom-control-label" for="twoFactorOff">Password only</label>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!--
+        The work email. This is what sign-in codes go to - NOT the Email on the
+        Employee tab, which is the personnel record and is never used to sign
+        in. Two separate fields on purpose: an edit to personnel details must
+        not be able to redirect anybody's sign-in codes.
+      -->
+      <div class="row" *ngIf="twoFactorCredentialsId">
+        <div class="col-lg-6">
+          <div class="form-group row">
+            <label class="col-sm-3 col-form-label pr-0 text-right" for="twoFactorWorkEmail">Work Email</label>
+            <div class="col-sm-9">
+              <div class="input-group">
+                <input type="email" class="form-control" id="twoFactorWorkEmail"
+                       [(ngModel)]="workEmailInput" [ngModelOptions]="{standalone: true}"
+                       placeholder="name@docpharmkenya.com">
+                <div class="input-group-append">
+                  <button type="button" class="btn btn-secondary" id="twoFactorWorkEmailSave"
+                          (click)="saveWorkEmail()">Save</button>
+                </div>
+              </div>
+              <small class="text-muted">
+                Where this person's sign-in codes are sent. Takes effect at their next sign-in.
+                Leave it empty and they choose their own the first time they sign in.
+              </small>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-6">
+          <div class="form-group row">
+            <div class="col-sm-12 pt-2">
+              <small class="text-muted">
+                This is <strong>not</strong> the Email on the Employee tab &mdash; that one stays
+                personal and is never used to sign in.
+              </small>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row" *ngIf="twoFactorCredentialsId && twoFactorEmail">
+        <div class="col-lg-12">
+          <div class="form-group row">
+            <div class="col-sm-4 text-right">
+              <button type="button" class="btn btn-sm btn-outline-danger" id="twoFactorResetToggle"
+                      (click)="showTwoFactorReset = !showTwoFactorReset">
+                {{ showTwoFactorReset ? 'Cancel' : 'Reset two-factor' }}
+              </button>
+            </div>
+            <div class="col-sm-8">
+              <p class="text-muted mb-2" style="font-size: 0.78rem;" *ngIf="!showTwoFactorReset">
+                Use this if they have lost access to that mailbox, or want their codes sent somewhere else.
+                They choose the new address themselves at their next sign-in.
+              </p>
+
+              <div *ngIf="showTwoFactorReset">
+                <!--
+                  The warning is the control here, not the code. Someone who
+                  already has the password only needs an administrator to
+                  believe "I've lost my email" to take the account for good.
+                -->
+                <p class="mb-2 p-2" style="font-size: 0.8rem; background-color: #fff6f6; border-left: 3px solid #c0392b;">
+                  <strong>Check who you are talking to first.</strong>
+                  Confirm in person or by a voice you know &mdash; never from an email or a chat message.
+                  This clears their address and signs out every computer they had remembered,
+                  and it is recorded against your name.
+                </p>
+                <input type="text" class="form-control form-control-sm mb-2" id="twoFactorResetReason"
+                       [(ngModel)]="twoFactorResetReason" [ngModelOptions]="{standalone: true}"
+                       placeholder="Why are you resetting this? e.g. Confirmed in person - left the company email">
+                <button type="button" class="btn btn-sm btn-danger" id="twoFactorResetConfirm"
+                        (click)="resetTwoFactor()">Reset two-factor for this person</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <form #employeePharmacyRoleForm="ngForm" [formGroup]="employeePharmacyRoleInformationForm"
         (keydown.enter)="$event.preventDefault()" class="full-height">
         <h6 class="border border-primary p-2 mt-3 mb-4 bg-light text-white">Role</h6>

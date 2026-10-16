@@ -1137,6 +1137,47 @@
           </div>
         </div>
 
+        <!--
+          Two-factor for a new employee. Outside the credentials form on
+          purpose: that form posts a whole row and these fields are written by
+          their own endpoint, so inside it they would be nulled on every later
+          save of this screen.
+        -->
+        <div class="col-lg-6">
+          <div class="form-group row">
+            <label class="col-sm-3 col-form-label pr-0 text-right" for="newWorkEmail">Work Email</label>
+            <div class="col-sm-9">
+              <input type="email" class="form-control" id="newWorkEmail"
+                     [(ngModel)]="newWorkEmail" [ngModelOptions]="{standalone: true}"
+                     placeholder="name@docpharmkenya.com">
+              <small class="text-muted">
+                Where this person's sign-in codes go. Not the Email on the Employee tab, which stays
+                personal and is never used to sign in. Leave it empty and they choose their own at
+                first sign-in.
+              </small>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-6">
+          <div class="form-group row">
+            <div class="col-sm-12 pt-2">
+              <!-- A plain checkbox laid out with flexbox. Bootstrap's own
+                   .form-check and .custom-checkbox both rely on absolutely
+                   positioned pseudo-elements that do not survive this screen's
+                   styling - one stacked the label underneath, the other hid the
+                   box entirely. This depends on no framework CSS. -->
+              <div class="d-flex align-items-center">
+                <input type="checkbox" id="newRequireTwoFactor" class="mr-2"
+                       [(ngModel)]="newRequireTwoFactor" [ngModelOptions]="{standalone: true}">
+                <label for="newRequireTwoFactor" class="mb-0">
+                  Require a sign-in code for this person
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+
         <div class="col-lg-6">
           <div class="form-group row">
             <div class="col-sm-12 justify-content-end d-flex pt-2" id="statusLeft">

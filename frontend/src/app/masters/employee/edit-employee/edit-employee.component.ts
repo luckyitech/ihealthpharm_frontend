@@ -2045,6 +2045,16 @@ export class EditEmployeeComponent implements OnInit {
               employee: employeeCredentials["result"]["employee"],
               createdUser: employeeCredentials["result"]["createdUser"]
             };
+            // Deliberately kept OUT of the form. The form is posted back as a
+            // whole credentials row, and two-factor state is written only by
+            // its own targeted endpoints - putting it here would let an
+            // unrelated edit on this screen clear somebody's enrolment.
+            this.twoFactorCredentialsId = employeeCredentials["result"]["employeeCredentialsId"];
+            this.twoFactorEnabled = employeeCredentials["result"]["twoFactorEnabledS"] === 'Y';
+            this.twoFactorEmail = employeeCredentials["result"]["twoFactorEmail"];
+            this.twoFactorVerified = employeeCredentials["result"]["twoFactorEmailVerifiedS"] === 'Y';
+            this.workEmailInput = employeeCredentials["result"]["twoFactorEmail"] || '';
+
             this.accessObj = employeeCredentialsValues;
             this.employeeCredentialsInformationForm.setValue(employeeCredentialsValues);
             this.empCredential = employeeCredentialsValues;
@@ -3902,5 +3912,97 @@ export class EditEmployeeComponent implements OnInit {
     else {
       this.getGridRowData();
     }
+  }
+
+  // ---- Two-factor administration ------------------------------------------
+
+  twoFactorCredentialsId: any = null;
+  twoFactorEnabled = false;
+  twoFactorEmail: string = null;
+  twoFactorVerified = false;
+  twoFactorResetReason = '';
+  showTwoFactorReset = false;
+
+  /** What the admin has typed into the Work Email box, before saving it. */
+  workEmailInput = '';
+
+  /** What the Access tab shows about this account's second factor. */
+  get twoFactorStatus(): string {
+    if (!this.twoFactorEnabled) {
+      return 'Off - this person signs in with a password only';
+    }
+    if (this.twoFactorVerified && this.twoFactorEmail) {
+      return 'On - codes go to ' + this.twoFactorEmail;
+    }
+    return 'On - waiting for this person to set up their email at next sign-in';
+  }
+
+  /**
+   * Saves the work email. Codes go there from the person's next sign-in, with
+   * nothing for them to confirm.
+   *
+   * A typo therefore locks them out until this is corrected or they are
+   * switched to Password only - both on this screen, so it is recoverable in
+   * seconds, but it is worth getting right.
+   */
+  saveWorkEmail() {
+    if (!this.twoFactorCredentialsId) {
+      this.toasterService.error('Save this employee\'s login details first', 'Error Occurred', { timeOut: 5000 });
+      return;
+    }
+    this.employeeService.setTwoFactorWorkEmail(this.twoFactorCredentialsId, this.workEmailInput).subscribe(
+      response => {
+        this.twoFactorEmail = response['result'];
+        this.twoFactorVerified = !!response['result'];
+        this.workEmailInput = response['result'] || '';
+        this.toasterService.success(response['message'], 'Saved', { timeOut: 7000 });
+      },
+      error => this.showTwoFactorError(error)
+    );
+  }
+
+  toggleTwoFactor(enabled: boolean) {
+    if (!this.twoFactorCredentialsId) {
+      this.toasterService.error('Save this employee\'s login details first', 'Error Occurred', { timeOut: 5000 });
+      return;
+    }
+    this.employeeService.setTwoFactorEnabled(this.twoFactorCredentialsId, enabled).subscribe(
+      response => {
+        this.twoFactorEnabled = enabled;
+        this.toasterService.success(response['message'], 'Saved', { timeOut: 6000 });
+      },
+      error => this.showTwoFactorError(error)
+    );
+  }
+
+  /**
+   * Clears the enrolment. Serves both "I have lost access to my email" and "I
+   * want to change which address gets my codes" - the remedy is the same, and
+   * in neither case does an administrator type the address.
+   */
+  resetTwoFactor() {
+    if (!this.twoFactorResetReason || this.twoFactorResetReason.trim().length < 5) {
+      this.toasterService.error('Say why you are resetting this - it is recorded', 'Reason required', { timeOut: 5000 });
+      return;
+    }
+    const resetBy = localStorage.getItem('id');
+    this.employeeService.resetTwoFactor(this.twoFactorCredentialsId, this.twoFactorResetReason, resetBy).subscribe(
+      response => {
+        this.twoFactorEnabled = false;
+        this.twoFactorEmail = null;
+        this.twoFactorVerified = false;
+        this.workEmailInput = '';
+        this.twoFactorResetReason = '';
+        this.showTwoFactorReset = false;
+        this.toasterService.success(response['message'], 'Two-factor reset', { timeOut: 8000 });
+      },
+      error => this.showTwoFactorError(error)
+    );
+  }
+
+  private showTwoFactorError(error: any) {
+    const message = (error && error['error'] && error['error']['message'])
+      ? error['error']['message'] : 'Please contact administrator';
+    this.toasterService.error(message, 'Error Occurred', { timeOut: 5000 });
   }
 }
