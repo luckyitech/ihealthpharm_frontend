@@ -266,4 +266,52 @@ export class EmployeeService {
     return this.http.get(this.urlRef.url + 'getimagesbyemployeeid?employeeId='+employeeId);
   }
 
+  // ---- Two-factor administration ----------------------------------------
+  //
+  // These go through their own endpoints rather than the employee-credentials
+  // save, because that save posts a whole row and the two-factor fields are
+  // written only by targeted updates. Putting them in the form would let an
+  // unrelated edit on this screen clear somebody's enrolment.
+
+  /**
+   * Turns the code challenge on or off. Turning it on does not enrol anyone -
+   * the user supplies and proves their address at their next sign-in.
+   */
+  setTwoFactorEnabled(employeeCredentialsId, enabled: boolean) {
+    return this.http.put(this.urlRef.url
+      + 'update/twofactor/enabled?employeeCredentialsId=' + employeeCredentialsId
+      + '&enabled=' + enabled, {});
+  }
+
+  /**
+   * Sets the work email this person's sign-in codes go to. Live immediately -
+   * the user confirms nothing. An empty value clears it, which hands enrolment
+   * back to the user at their next sign-in.
+   *
+   * Does not touch the personnel email on the Employee tab: that is HR data and
+   * is never used for signing in.
+   */
+  setTwoFactorWorkEmail(employeeCredentialsId, email: string) {
+    return this.http.put(this.urlRef.url
+      + 'update/twofactor/workemail?employeeCredentialsId=' + employeeCredentialsId
+      + '&email=' + encodeURIComponent(email || ''), {});
+  }
+
+  /**
+   * Clears the stored address and signs out every machine the account had
+   * remembered, so the user enrols again. The administrator never supplies an
+   * address.
+   */
+  resetTwoFactor(employeeCredentialsId, reason: string, resetByEmployeeId) {
+    return this.http.put(this.urlRef.url
+      + 'update/twofactor/reset?resetByEmployeeId=' + resetByEmployeeId,
+      { employeeCredentialsId, reason });
+  }
+
+  /** Who has reset this account before, and why. */
+  getTwoFactorResetHistory(employeeCredentialsId) {
+    return this.http.get(this.urlRef.url
+      + 'get/twofactor/resethistory?employeeCredentialsId=' + employeeCredentialsId);
+  }
+
 }

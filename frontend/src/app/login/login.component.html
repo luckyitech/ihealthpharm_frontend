@@ -6,13 +6,14 @@
         </div>
         <div class="card-body pb-0">
 
-            <form #loginInformation="ngForm" [formGroup]="loginInformationForm" (keydown.enter)="$event.preventDefault()"
+            <!-- Step one: username and password. The only step most accounts ever see. -->
+            <form *ngIf="step === 'credentials'" #loginInformation="ngForm" [formGroup]="loginInformationForm" (keydown.enter)="$event.preventDefault()"
             (ngSubmit)="onSubmit()" class="login-form">
                 <div class="input-group form-group">
                     <div class="input-group-prepend">
                         <span class="input-group-text bg-secondary"><i class="fas fa-envelope text-white"></i></span>
                     </div>
-                    <input id="loginUserName" type="text" class="form-control" placeholder="Email Address" formControlName="userName">
+                    <input id="loginUserName" type="text" class="form-control" placeholder="Username or work email" formControlName="userName" autocomplete="username">
 
                 </div>
                 <div class="input-group form-group">
@@ -28,7 +29,83 @@
                 </div>
             </form>
 
-            <form class="forgot-password-form" style="display: none;">
+            <!--
+              Step two, enrolment: the address this account's codes will go to.
+              The user types it themselves - an administrator never does, so no
+              address is ever set without someone proving they can read it.
+            -->
+            <form *ngIf="step === 'captureEmail'" [formGroup]="twoFactorEmailForm"
+                  (keydown.enter)="$event.preventDefault()" (ngSubmit)="submitTwoFactorEmail()">
+
+                <p class="text-center mb-3" style="font-size: 0.9rem;">
+                    Set up sign-in codes for this account. Enter the email address you want them sent to
+                    &mdash; work or personal, whichever you check.
+                </p>
+
+                <div class="input-group form-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text bg-secondary"><i class="fas fa-envelope text-white"></i></span>
+                    </div>
+                    <input id="twoFactorEmail" type="email" class="form-control" placeholder="you@example.com"
+                           formControlName="email" autocomplete="email">
+                </div>
+
+                <p class="text-muted mb-3" style="font-size: 0.78rem;">
+                    We will send a code to confirm it before anything changes, so a typo costs you nothing.
+                </p>
+
+                <div class="form-group text-center">
+                    <input id="twoFactorEmailBtn" type="submit" value="SEND CODE" class="btn btn-secondary px-5"
+                           [disabled]="twoFactorEmailForm.invalid">
+                </div>
+            </form>
+
+            <!-- Step three: the code, for either a login or an address confirmation. -->
+            <form *ngIf="step === 'enterCode'" [formGroup]="twoFactorCodeForm"
+                  (keydown.enter)="$event.preventDefault()" (ngSubmit)="submitCode()">
+
+                <p class="text-center mb-3" style="font-size: 0.9rem;">
+                    <ng-container *ngIf="isEnrolment">Enter the code we sent to confirm that address.</ng-container>
+                    <ng-container *ngIf="!isEnrolment">
+                        Enter the code sent to <strong>{{ maskedEmail }}</strong>.
+                    </ng-container>
+                </p>
+
+                <div class="input-group form-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text bg-secondary"><i class="fas fa-shield-alt text-white"></i></span>
+                    </div>
+                    <!-- inputmode numeric so phones show a number pad; letter-spacing
+                         so six digits are readable at a glance. -->
+                    <input id="twoFactorCode" type="text" class="form-control text-center"
+                           placeholder="000000" formControlName="code"
+                           maxlength="6" inputmode="numeric" autocomplete="one-time-code"
+                           style="letter-spacing: 0.4em; font-size: 1.15rem;">
+                </div>
+
+                <div class="d-flex justify-content-between align-items-center mb-3" style="font-size: 0.78rem;">
+                    <span class="text-muted">
+                        <ng-container *ngIf="secondsLeft > 0">Expires in {{ countdownLabel }}</ng-container>
+                        <ng-container *ngIf="secondsLeft === 0">This code has expired</ng-container>
+                    </span>
+                    <a href="javascript:void(0)" id="twoFactorResend" (click)="resendCode()">Send a new code</a>
+                </div>
+
+                <div class="d-flex align-items-center mb-3">
+                    <input type="checkbox" id="rememberDevice" class="mr-2"
+                           [(ngModel)]="rememberDevice" [ngModelOptions]="{standalone: true}">
+                    <label for="rememberDevice" class="mb-0" style="font-size: 0.82rem;">
+                        Remember this computer for today, so it does not ask again until tomorrow
+                    </label>
+                </div>
+
+                <div class="form-group text-center">
+                    <input id="twoFactorCodeBtn" type="submit" value="SIGN IN" class="btn btn-secondary px-5"
+                           [disabled]="twoFactorCodeForm.invalid">
+                </div>
+            </form>
+
+            <form *ngIf="step === 'credentials'" class="forgot-password-form" style="display: none;">
                 <div class="input-group form-group">
                     <div class="input-group-prepend">
                         <span class="input-group-text bg-secondary"><i class="fas fa-envelope text-white"></i></span>
@@ -44,8 +121,12 @@
         </div>
         <div class="card-footer pb-4">
             <div class="d-flex justify-content-center">
-                <a href="#" id="forgotYourPassword" class="forgot-password-link">Forgot your password?</a>
-                <a href="#" id="backToLogin" class="login-link" style="display: none;">Back to Login</a>
+                <ng-container *ngIf="step === 'credentials'">
+                    <a href="#" id="forgotYourPassword" class="forgot-password-link">Forgot your password?</a>
+                    <a href="#" id="backToLogin" class="login-link" style="display: none;">Back to Login</a>
+                </ng-container>
+                <a *ngIf="step !== 'credentials'" href="javascript:void(0)" id="cancelTwoFactor"
+                   (click)="backToLogin()">Back to Login</a>
             </div>
         </div>
     </div>

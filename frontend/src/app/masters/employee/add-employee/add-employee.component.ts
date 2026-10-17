@@ -730,6 +730,16 @@ export class AddEmployeeComponent implements OnInit {
     createdUser: new FormControl(localStorage.getItem('id'))
   };
 
+  /**
+   * Two-factor set-up for a brand new employee.
+   *
+   * Kept out of employeeCredentialsInformationForm on purpose: that form is
+   * posted as a whole credentials row, and two-factor state is written only by
+   * its own endpoint. Inside the form it would be nulled by every later save.
+   */
+  newWorkEmail = '';
+  newRequireTwoFactor = false;
+
   employeeCredentialsInformationForm: FormGroup;
   employeeCredentialsInformationFormValidations = {
     userName: new FormControl('',Validators.required),
@@ -1387,6 +1397,7 @@ export class AddEmployeeComponent implements OnInit {
         payload['createdUser'] = localStorage.getItem('id');
         if (saveFormResponse instanceof Object) {
           if (saveFormResponse['responseStatus']['code'] === 200) {
+            this.applyTwoFactorSetup(saveFormResponse);
             this.employeeCredentialsInformationForm.reset();
             this.employeeService.saveEmployeePharmacyrole(this.employeePharmacyRoleInformationForm.value).subscribe(
               pharmacyroleRes => {
@@ -1587,4 +1598,46 @@ export class AddEmployeeComponent implements OnInit {
     }
   }
 
+
+  /**
+   * Applies the two-factor choices made while creating the employee.
+   *
+   * Runs after the credentials row exists, because both calls need the id it
+   * was given. Failures are reported but do not fail the employee creation:
+   * the person has been created either way, and two-factor can be set on the
+   * Edit screen afterwards.
+   */
+  private applyTwoFactorSetup(credentialsResponse: any) {
+    const credentialsId = credentialsResponse
+      && credentialsResponse['result']
+      && credentialsResponse['result']['employeeCredentialsId'];
+
+    if (!credentialsId) {
+      return;
+    }
+
+    const workEmail = (this.newWorkEmail || '').trim();
+    const requireCode = this.newRequireTwoFactor;
+
+    if (workEmail) {
+      this.employeeService.setTwoFactorWorkEmail(credentialsId, workEmail).subscribe(
+        () => { },
+        () => this.toasterService.error(
+          'The employee was created, but the work email could not be saved. Set it on the Edit screen.',
+          'Work email not saved', { timeOut: 8000 })
+      );
+    }
+
+    if (requireCode) {
+      this.employeeService.setTwoFactorEnabled(credentialsId, true).subscribe(
+        () => { },
+        () => this.toasterService.error(
+          'The employee was created, but sign-in codes could not be switched on. Do it on the Edit screen.',
+          'Two-factor not switched on', { timeOut: 8000 })
+      );
+    }
+
+    this.newWorkEmail = '';
+    this.newRequireTwoFactor = false;
+  }
 }
