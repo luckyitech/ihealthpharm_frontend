@@ -341,7 +341,9 @@ export class EditstockComponent implements OnInit {
         quantity: selectedStockItem['quantity'] != null && selectedStockItem['quantity'] != undefined ? selectedStockItem['quantity'] : null,
         unitSaleRate: selectedStockItem['unitSaleRate'] != null && selectedStockItem['unitSaleRate'] != undefined ? selectedStockItem['unitSaleRate'] : null,
         spVat: selectedStockItem['spVat'] != null && selectedStockItem['spVat'] != undefined ? selectedStockItem['spVat'] : null,
-        mrp: selectedStockItem['mrp'] != null && selectedStockItem['mrp'] != undefined ? selectedStockItem['mrp'] : null,
+        mrp: (selectedStockItem['mrp'] != null && selectedStockItem['mrp'] != undefined && selectedStockItem['mrp'] != 0)
+          ? selectedStockItem['mrp']
+          : (selectedStockItem['unitSaleRate'] != null && selectedStockItem['unitSaleRate'] != undefined ? selectedStockItem['unitSaleRate'] : null),
         margin: selectedStockItem['margin'] != null && selectedStockItem['margin'] != undefined ? selectedStockItem['margin'] : null,
         marginAmount: selectedStockItem['marginAmount'] != null && selectedStockItem['marginAmount'] != undefined ? selectedStockItem['marginAmount'] : null,
         remarks: selectedStockItem['remarks'] != null && selectedStockItem['remarks'] != undefined ? selectedStockItem['remarks'] : null,
@@ -464,7 +466,6 @@ export class EditstockComponent implements OnInit {
       this.stockForm.get('vat').setValue(this.selectedTax['categoryValue']);
     }
     this.marginPercentageCalculation()
-    this.syncMrpToSalePrice();
   }
 
   setSPVAT() {
@@ -527,6 +528,7 @@ export class EditstockComponent implements OnInit {
       'saleDiscountAmount': this.sdiscAmt.toFixed(2)
     })
     this.marginPercentageCalculation()
+    this.syncMrpToSalePrice();
   }
 
   valueCalculator(event) {
