@@ -29,6 +29,9 @@ import { Router } from '@angular/router';
 export class ReportsComponent implements OnInit {
   urlRef = new Environment();
   reportURI;
+  // The filters the grid was last loaded with. The download buttons overwrite
+  // reportURI for single-row documents, so "download the whole table" uses this.
+  gridReportURI;
   slowMovingReportURI
   reportData;
   reportGroups = [];
@@ -253,7 +256,10 @@ export class ReportsComponent implements OnInit {
     this.reportsGridOptions = <GridOptions>{
       context: {
         componentParent: this
-      }
+      },
+      // Lets the Credit Note report tick several rows; ticking a row's box adds it
+      // to the selection instead of replacing it.
+      rowSelection: 'multiple'
     };
     this.showMasterReports();
     this.reportsGridOptions.getRowStyle = function (params) {
@@ -610,6 +616,7 @@ export class ReportsComponent implements OnInit {
           this.reportURI = encodeURIComponent(JSON.stringify({ "ReportCode": this.reportDetails['reportCode'], "FROM_AS_OF_DATE": this.datePipe.transform(new Date(), 'yyyy-MM-dd') }))
         }
 
+        this.gridReportURI = this.reportURI;
         this.reportService.getReportData(this.reportURI).subscribe((res) => {
           if (res instanceof Object) {
             if (res['responseStatus']['code'] == 200) {
@@ -654,6 +661,7 @@ export class ReportsComponent implements OnInit {
       } else {
 
         this.spinnerservice.show();
+        this.gridReportURI = this.reportURI;
         this.reportService.getReportDataByInputParams(this.reportURI).subscribe((res) => {
           if (res instanceof Object) {
             if (res['responseStatus']['code'] == 200) {
@@ -785,6 +793,9 @@ export class ReportsComponent implements OnInit {
               headerName: "#",
               field: "",
               checkboxSelection: true,
+              // Select-all box in the header, Credit Note only: the other
+              // document reports still print one document at a time.
+              headerCheckboxSelection: this.reportDetails['reportCode'] == "CREDIT_NOTE",
               suppressSizeToFit: true,
               width: 40, cellStyle: { 'border': '1px solid #BDC3C7' }
             })
@@ -2948,7 +2959,62 @@ export class ReportsComponent implements OnInit {
     
 
   }
+  // Reports whose download prints the document for exactly one ticked row.
+  singleDocumentReports = ["SALES_RECEIPT_DUAL", "DELIVERY_NOTE_DUAL", "DEBIT_NOTE", "PURCHASE_RETURNS",
+    "SALES_RETURN", "ACCOUNT_RECEIVABLES_RECEIPT_DUAL"];
+
+  // False (after telling the user) when a single-document report has no row, or
+  // several rows, ticked. Without this the download failed silently.
+  hasOneRowTicked() {
+    if (this.singleDocumentReports.indexOf(this.reportDetails['reportCode']) < 0) {
+      return true;
+    }
+    if (this.reportsGridOptions.api.getSelectedRows().length != 1) {
+      this.toasterService.warning('Tick one row to download', ' ', { timeOut: 3000 });
+      return false;
+    }
+    return true;
+  }
+
+  // Credit Note report: nothing ticked downloads the whole table as loaded,
+  // otherwise one file per ticked credit note.
+  downloadCreditNotes(format: string) {
+    const ext = format == 'pdf' ? '.pdf' : '.xlsx';
+    const selected = this.reportsGridOptions.api.getSelectedRows();
+    if (selected.length == 0) {
+      const uri = this.gridReportURI || encodeURIComponent(JSON.stringify({ "ReportCode": "CREDIT_NOTE" }));
+      this.saveReportFile(format, uri, this.reportDetails['reportName'] + ext);
+      return;
+    }
+    selected.forEach(row => {
+      const uri = encodeURIComponent(JSON.stringify({ "ReportCode": "CREDIT_NOTE", "credit_note_no": row['credit_note_no'] }));
+      this.saveReportFile(format, uri, row['credit_note_no'] + ext);
+    });
+  }
+
+  saveReportFile(format: string, uri, fileName: string) {
+    this.spinnerservice.show();
+    const request = format == 'pdf' ? this.reportService.downloadPdfFile(uri) : this.reportService.downloadExcelFile(uri);
+    request.subscribe((data: any) => {
+      const link = document.createElement('a');
+      link.href = window.URL.createObjectURL(data);
+      link.download = fileName;
+      link.click();
+      this.spinnerservice.hide();
+    }, () => {
+      this.spinnerservice.hide();
+      this.toasterService.error('Please contact administrator', 'Download failed', { timeOut: 5000 });
+    });
+  }
+
   downloadPdf() {
+    if (this.reportDetails['reportCode'] == "CREDIT_NOTE") {
+      this.downloadCreditNotes('pdf');
+      return;
+    }
+    if (!this.hasOneRowTicked()) {
+      return;
+    }
 
     if (this.reportDetails['reportCode'] == "SALES_RECEIPT_DUAL") {
       this.reportURI = undefined
@@ -2966,14 +3032,7 @@ export class ReportsComponent implements OnInit {
       }
       this.reportURI = encodeURIComponent(JSON.stringify(saleJson));
     }
-    else if (this.reportDetails['reportCode'] == "CREDIT_NOTE") {
-      this.reportURI = undefined
-      let creditNoteJson = {
-        "ReportCode": "CREDIT_NOTE",
-        "credit_note_no": this.reportsGridOptions.api.getSelectedRows()[0]['credit_note_no']
-      }
-      this.reportURI = encodeURIComponent(JSON.stringify(creditNoteJson));
-    } else if (this.reportDetails['reportCode'] == "PURCHASE_RETURNS") {
+    else if (this.reportDetails['reportCode'] == "PURCHASE_RETURNS") {
       this.reportURI = undefined
       let pReturnJson = {
         "ReportCode": "PURCHASE_RETURNS",
@@ -3054,6 +3113,13 @@ export class ReportsComponent implements OnInit {
 
   }
   downloadExcel() {
+    if (this.reportDetails['reportCode'] == "CREDIT_NOTE") {
+      this.downloadCreditNotes('excel');
+      return;
+    }
+    if (!this.hasOneRowTicked()) {
+      return;
+    }
     if (this.reportDetails['reportCode'] == "SALES_RECEIPT_DUAL") {
       this.reportURI = undefined
       let saleJson = {
@@ -3077,14 +3143,6 @@ export class ReportsComponent implements OnInit {
         "UNIQUE_RECEIPT_NO": this.reportsGridOptions.api.getSelectedRows()[0]['UNIQUE_RECEIPT_NO']
       }
       this.reportURI = encodeURIComponent(JSON.stringify(pReturnJson));
-    }
-    else if (this.reportDetails['reportCode'] == "CREDIT_NOTE") {
-      this.reportURI = undefined
-      let creditNoteJson = {
-        "ReportCode": "CREDIT_NOTE",
-        "credit_note_no": this.reportsGridOptions.api.getSelectedRows()[0]['credit_note_no']
-      }
-      this.reportURI = encodeURIComponent(JSON.stringify(creditNoteJson));
     }
     else if (this.reportDetails['reportCode'] == "DEBIT_NOTE") {
 
