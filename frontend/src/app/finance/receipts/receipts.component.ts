@@ -170,7 +170,7 @@ export class ReceiptsComponent implements OnInit {
   }
 
   makePayment = true;
-  receiptStatusArray: any[] = ["Pending", "Paid", "Partially Paid", "Cancel", "Over Paid"];
+  receiptStatusArray: any[] = ["Partially Paid & Pending", "Paid", "Cancel", "Over Paid"];
   cashCheckbox: boolean = false;
   mPesaCheckbox: boolean = false;
   card: boolean = false;

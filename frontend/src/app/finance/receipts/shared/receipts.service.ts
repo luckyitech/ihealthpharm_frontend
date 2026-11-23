@@ -53,12 +53,12 @@ export class ReceiptsService {
     }
 
     getAllAccRecievablessBySearchCount(paymentStatus, paymentStartDate, paymentEndDate, SourceRef, pageNumber, pageSize, customerName) {
-        return this.http.get(this.urlRef.url + 'getAccRecievables/forPopupSearchCount?paymentStatus=' + paymentStatus + '&paymentStartDate=' + paymentStartDate + '&paymentEndDate=' + paymentEndDate + '&SourceRef=' + SourceRef
+        return this.http.get(this.urlRef.url + 'getAccRecievables/forPopupSearchCount?paymentStatus=' + encodeURIComponent(paymentStatus) + '&paymentStartDate=' + paymentStartDate + '&paymentEndDate=' + paymentEndDate + '&SourceRef=' + SourceRef
             + '&pageNumber=' + pageNumber + '&pageSize=' + pageSize + '&customerName=' + customerName);
     }
 
     getAllAccRecievablessBySearch(paymentStatus, paymentStartDate, paymentEndDate, SourceRef, pageNumber, pageSize, customerName) {
-        return this.http.get(this.urlRef.url + 'getAccRecievables/forPopupSearch?paymentStatus=' + paymentStatus + '&paymentStartDate=' + paymentStartDate + '&paymentEndDate=' + paymentEndDate + '&SourceRef=' + SourceRef
+        return this.http.get(this.urlRef.url + 'getAccRecievables/forPopupSearch?paymentStatus=' + encodeURIComponent(paymentStatus) + '&paymentStartDate=' + paymentStartDate + '&paymentEndDate=' + paymentEndDate + '&SourceRef=' + SourceRef
             + '&pageNumber=' + pageNumber + '&pageSize=' + pageSize + '&customerName=' + customerName);
     }
 
@@ -100,12 +100,12 @@ export class ReceiptsService {
 
     // account recieables for accounts data
     getAllAccRecievablessBySearchCountForAccounts(paymentStatus, paymentStartDate, paymentEndDate, SourceRef, pageNumber, pageSize, creditNumber) {
-        return this.http.get(this.urlRef.url + 'getAccRecievables/forPopupSearchCount/forAccounts?paymentStatus=' + paymentStatus + '&paymentStartDate=' + paymentStartDate + '&paymentEndDate=' + paymentEndDate + '&SourceRef=' + SourceRef
+        return this.http.get(this.urlRef.url + 'getAccRecievables/forPopupSearchCount/forAccounts?paymentStatus=' + encodeURIComponent(paymentStatus) + '&paymentStartDate=' + paymentStartDate + '&paymentEndDate=' + paymentEndDate + '&SourceRef=' + SourceRef
             + '&pageNumber=' + pageNumber + '&pageSize=' + pageSize + '&creditNumber=' + creditNumber);
     }
 
     getAllAccRecievablessBySearchForAccounts(paymentStatus, paymentStartDate, paymentEndDate, SourceRef, pageNumber, pageSize, creditNumber) {
-        return this.http.get(this.urlRef.url + 'getAccRecievables/forPopupSearch/forAccounts?paymentStatus=' + paymentStatus + '&paymentStartDate=' + paymentStartDate + '&paymentEndDate=' + paymentEndDate + '&SourceRef=' + SourceRef
+        return this.http.get(this.urlRef.url + 'getAccRecievables/forPopupSearch/forAccounts?paymentStatus=' + encodeURIComponent(paymentStatus) + '&paymentStartDate=' + paymentStartDate + '&paymentEndDate=' + paymentEndDate + '&SourceRef=' + SourceRef
             + '&pageNumber=' + pageNumber + '&pageSize=' + pageSize + '&creditNumber=' + creditNumber);
     }
 
