@@ -1452,6 +1452,7 @@ export class ReceiptsComponent implements OnInit {
     this.FinalAmt = undefined;
     this.userEnteredAmt = undefined;
     this.accRecievablesPageNumber = 0;
+    this.accRecievablesPageNumberForAccounts = 0;
     this.receiptsService.getAllAccRecievablessBySearchCount(this.selectedPaymentStatus, this.startDate, this.endDate, this.searchCodeValue, 0, 100, this.selectedCustomerName).subscribe(
       searchRes => {
         if (searchRes['responseStatus']['code'] === 200) {
@@ -1593,6 +1594,7 @@ export class ReceiptsComponent implements OnInit {
     this.userEnteredAmt = undefined;
 
     this.accRecievablesPageNumber = 0;
+    this.accRecievablesPageNumberForAccounts = 0;
     this.receiptsService.getAllAccRecievablessBySearchCountForAccounts(this.selectedPaymentStatus, this.startDate, this.endDate, this.searchCodeValue, 0, 100, this.creditNumber).subscribe(
       searchRes => {
         if (searchRes['responseStatus']['code'] === 200) {
