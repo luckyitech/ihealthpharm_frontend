@@ -2993,35 +2993,51 @@ export class ReportsComponent implements OnInit {
     });
   }
 
-  // Account Receivables Receipt report: one receipt file per receipt number in
-  // the ticked rows, or, with nothing ticked, in every row the current filters
-  // (and any grid column filter) show. A receipt can cover several bills, so
-  // rows sharing a receipt number give one file.
+  // Account Receivables Receipt report: one file holding every row the current
+  // filters show, or only the ticked rows' receipts, laid out as a plain table
+  // (AS_TABLE) so it can be added up and sorted in Excel. One request, not one
+  // per receipt: several downloads at once used to corrupt each other's files.
   downloadARReceipts(format: string) {
     const ext = format == 'pdf' ? '.pdf' : '.xlsx';
-    let rows = this.reportsGridOptions.api.getSelectedRows();
-    if (rows.length == 0) {
-      rows = [];
-      this.reportsGridOptions.api.forEachNodeAfterFilterAndSort(node => rows.push(node.data));
+    if (!this.gridReportURI) {
+      this.toasterService.warning('Search first, then download.', ' ', { timeOut: 3000 });
+      return;
     }
-    const receiptNos = [];
-    rows.forEach(row => {
-      const no = row && row['UNIQUE_RECEIPT_NO'];
-      if (no && receiptNos.indexOf(no) < 0) {
-        receiptNos.push(no);
-      }
-    });
-    if (receiptNos.length == 0) {
+    const api = this.reportsGridOptions.api;
+    const shown = [];
+    api.forEachNodeAfterFilter(node => shown.push(node.data));
+    let rows = api.getSelectedRows();
+    if (rows.length == 0) {
+      rows = shown;
+    }
+    if (rows.length == 0) {
       this.toasterService.warning('No receipts to download. Search first, or tick rows.', ' ', { timeOut: 3000 });
       return;
     }
-    if (receiptNos.length > 10 && !confirm('This will download ' + receiptNos.length + ' receipts, one file each. Continue?')) {
+    const request = JSON.parse(decodeURIComponent(this.gridReportURI));
+    request['AS_TABLE'] = true;
+    // Everything the search returned needs no list; anything narrower (ticked
+    // rows, or a grid column filter) names its receipts.
+    let total = 0;
+    api.forEachNode(() => total++);
+    if (rows.length < total || api.isAnyFilterPresent()) {
+      const receiptNos = [];
+      rows.forEach(row => {
+        const no = row && row['UNIQUE_RECEIPT_NO'];
+        if (no && receiptNos.indexOf(no) < 0) {
+          receiptNos.push(no);
+        }
+      });
+      request['ONLY_ROWS_WITH'] = { "UNIQUE_RECEIPT_NO": receiptNos };
+    }
+    const uri = encodeURIComponent(JSON.stringify(request));
+    // The request is a URL; past this the server refuses it.
+    if (uri.length > 7000) {
+      this.toasterService.warning('Too many rows ticked. Untick them to download the whole search, or narrow the filters.', ' ', { timeOut: 5000 });
       return;
     }
-    receiptNos.forEach(no => {
-      const uri = encodeURIComponent(JSON.stringify({ "ReportCode": "ACCOUNT_RECEIVABLES_RECEIPT", "UNIQUE_RECEIPT_NO": no }));
-      this.saveReportFile(format, uri, no + ext);
-    });
+    const stamp = this.datePipe.transform(new Date(), 'yyyy-MM-dd');
+    this.saveReportFile(format, uri, this.reportDetails['reportName'] + ' ' + stamp + ext);
   }
 
   saveReportFile(format: string, uri, fileName: string) {
