@@ -793,9 +793,10 @@ export class ReportsComponent implements OnInit {
               headerName: "#",
               field: "",
               checkboxSelection: true,
-              // Select-all box in the header, Credit Note only: the other
-              // document reports still print one document at a time.
-              headerCheckboxSelection: this.reportDetails['reportCode'] == "CREDIT_NOTE",
+              // Select-all box in the header, Credit Note and AR Receipt only:
+              // the other document reports still print one document at a time.
+              headerCheckboxSelection: this.reportDetails['reportCode'] == "CREDIT_NOTE" ||
+                this.reportDetails['reportCode'] == "ACCOUNT_RECEIVABLES_RECEIPT_DUAL",
               suppressSizeToFit: true,
               width: 40, cellStyle: { 'border': '1px solid #BDC3C7' }
             })
@@ -2961,7 +2962,7 @@ export class ReportsComponent implements OnInit {
   }
   // Reports whose download prints the document for exactly one ticked row.
   singleDocumentReports = ["SALES_RECEIPT_DUAL", "DELIVERY_NOTE_DUAL", "DEBIT_NOTE", "PURCHASE_RETURNS",
-    "SALES_RETURN", "ACCOUNT_RECEIVABLES_RECEIPT_DUAL"];
+    "SALES_RETURN"];
 
   // False (after telling the user) when a single-document report has no row, or
   // several rows, ticked. Without this the download failed silently.
@@ -2992,6 +2993,37 @@ export class ReportsComponent implements OnInit {
     });
   }
 
+  // Account Receivables Receipt report: one receipt file per receipt number in
+  // the ticked rows, or, with nothing ticked, in every row the current filters
+  // (and any grid column filter) show. A receipt can cover several bills, so
+  // rows sharing a receipt number give one file.
+  downloadARReceipts(format: string) {
+    const ext = format == 'pdf' ? '.pdf' : '.xlsx';
+    let rows = this.reportsGridOptions.api.getSelectedRows();
+    if (rows.length == 0) {
+      rows = [];
+      this.reportsGridOptions.api.forEachNodeAfterFilterAndSort(node => rows.push(node.data));
+    }
+    const receiptNos = [];
+    rows.forEach(row => {
+      const no = row && row['UNIQUE_RECEIPT_NO'];
+      if (no && receiptNos.indexOf(no) < 0) {
+        receiptNos.push(no);
+      }
+    });
+    if (receiptNos.length == 0) {
+      this.toasterService.warning('No receipts to download. Search first, or tick rows.', ' ', { timeOut: 3000 });
+      return;
+    }
+    if (receiptNos.length > 10 && !confirm('This will download ' + receiptNos.length + ' receipts, one file each. Continue?')) {
+      return;
+    }
+    receiptNos.forEach(no => {
+      const uri = encodeURIComponent(JSON.stringify({ "ReportCode": "ACCOUNT_RECEIVABLES_RECEIPT", "UNIQUE_RECEIPT_NO": no }));
+      this.saveReportFile(format, uri, no + ext);
+    });
+  }
+
   saveReportFile(format: string, uri, fileName: string) {
     this.spinnerservice.show();
     const request = format == 'pdf' ? this.reportService.downloadPdfFile(uri) : this.reportService.downloadExcelFile(uri);
@@ -3010,6 +3042,10 @@ export class ReportsComponent implements OnInit {
   downloadPdf() {
     if (this.reportDetails['reportCode'] == "CREDIT_NOTE") {
       this.downloadCreditNotes('pdf');
+      return;
+    }
+    if (this.reportDetails['reportCode'] == "ACCOUNT_RECEIVABLES_RECEIPT_DUAL") {
+      this.downloadARReceipts('pdf');
       return;
     }
     if (!this.hasOneRowTicked()) {
@@ -3115,6 +3151,10 @@ export class ReportsComponent implements OnInit {
   downloadExcel() {
     if (this.reportDetails['reportCode'] == "CREDIT_NOTE") {
       this.downloadCreditNotes('excel');
+      return;
+    }
+    if (this.reportDetails['reportCode'] == "ACCOUNT_RECEIVABLES_RECEIPT_DUAL") {
+      this.downloadARReceipts('excel');
       return;
     }
     if (!this.hasOneRowTicked()) {
