@@ -77,6 +77,7 @@ import { EditStockGuard } from './authguards/edit-stock.guard';
 import { ConfigurationGuard } from './authguards/configuration.guard';
 import { SalesByHourAndPersonComponent } from './home/sales-by-hour-and-person/sales-by-hour-and-person.component';
 import { AccountGuard } from './authguards/account.guard';
+import { AuthGuard } from './authguards/auth.guard';
 import { ApprovedPayablesComponent } from './finance/payables/approved-payables/approved-payables.component';
 import { EditPettyCashComponent } from './finance/petty-cash/edit-petty-cash/edit-petty-cash.component';
 import { AutoQuotationComponent } from './stock/auto-quotation/auto-quotation.component';
@@ -89,7 +90,8 @@ const routes: Routes = [
     path: 'stock',
     component: StockComponent,
     data: { title: 'Stock' },
-    canActivate: [StockGuard],
+    canActivate: [AuthGuard, StockGuard],
+    canActivateChild: [AuthGuard],
     children: [
       { path: '', redirectTo: 'stockChart', pathMatch: 'full' },
       { path: 'stockChart', component: StockChartComponent },
@@ -185,7 +187,8 @@ const routes: Routes = [
     path: 'master',
     component: MastersComponent,
     data: { title: 'Master' },
-    canActivate: [MasterGuard],
+    canActivate: [AuthGuard, MasterGuard],
+    canActivateChild: [AuthGuard],
     children: [
       {
         path: 'account',
@@ -268,7 +271,8 @@ const routes: Routes = [
     path: 'sales',
     component: SalesComponent,
     data: { title: 'Sales' },
-    canActivate: [SalesguardGuard],
+    canActivate: [AuthGuard, SalesguardGuard],
+    canActivateChild: [AuthGuard],
     children: [
       { path: '', redirectTo: 'salesChart', pathMatch: 'full' },
       { path: 'salesChart', component: SalesChartComponent },
@@ -289,7 +293,8 @@ const routes: Routes = [
     path: 'finance',
     component: FinanceComponent,
     data: { title: 'Finance' },
-    canActivate: [FinanceGuard],
+    canActivate: [AuthGuard, FinanceGuard],
+    canActivateChild: [AuthGuard],
     children: [
       { path: '', redirectTo: 'financeChart', pathMatch: 'full' },
       { path: 'financeChart', component: FinanceChartComponent },
@@ -359,6 +364,8 @@ const routes: Routes = [
     path: 'home',
     component: HomeComponent,
     data: { title: 'home' },
+    canActivate: [AuthGuard],
+    canActivateChild: [AuthGuard],
     children: [
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
       {
@@ -393,11 +400,13 @@ const routes: Routes = [
   },
 
   {
-    path: 'reports', component: ReportsComponent, data: { title: 'Reports' }, canActivate: [ReportsGuard]
+    path: 'reports', component: ReportsComponent, data: { title: 'Reports' }, canActivate: [AuthGuard, ReportsGuard]
   },
 
   { path: 'carona', component: CaronaChartComponent },
-  { path: 'carona/entry', component: CaronaEntryComponent }
+  { path: 'carona/entry', component: CaronaEntryComponent, canActivate: [AuthGuard] },
+  // An address that is not a screen goes to the login page, not to a blank page.
+  { path: '**', redirectTo: 'login' }
 ];
 
 // @NgModule({

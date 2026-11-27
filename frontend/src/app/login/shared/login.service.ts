@@ -1,5 +1,6 @@
 import { Environment } from 'src/app/core/environment';
 import { AppService } from 'src/app/core/app.service';
+import { SessionService } from 'src/app/core/session/session.service';
 
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
@@ -11,7 +12,7 @@ import { Observable } from 'rxjs';
 export class LoginService {
   url = new Environment();
   urlRef = new Environment();
-  constructor(private http: HttpClient, private appservice: AppService) { }
+  constructor(private http: HttpClient, private appservice: AppService, private sessionService: SessionService) { }
 
   /*
    * withCredentials lets the trusted-device cookie be sent and set. In
@@ -74,7 +75,7 @@ export class LoginService {
     const result = data && data['result'];
     if (result && result['token']) {
       localStorage.setItem("user", userName);
-      localStorage.setItem("token", `Bearer ${result['token']}`);
+      this.sessionService.storeToken(result['token']);
       localStorage.setItem("id", `${result['id']}`);
       this.appservice.setPermissions(result['permissions']);
     }
@@ -87,11 +88,7 @@ export class LoginService {
   }
 
   isLoggedIn() {
-    if (localStorage.getItem("token") != null && localStorage.getItem("token") != '') {
-      return true;
-    } else {
-      return false;
-    }
+    return this.sessionService.isSignedIn();
   }
   getLoggedInUser() {
     const user = localStorage.getItem("user")

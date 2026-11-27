@@ -30,7 +30,6 @@ import { DashboardComponent } from './home/dashboard/dashboard.component';
 import { Dashboard2Component } from './home/dashboard2/dashboard2.component';
 import { ChecklistComponent } from './checklist/checklist.component';
 import { NotificationsComponent } from './notifications/notifications.component';
-import { UserIdleModule } from 'angular-user-idle';
 import { CaronaChartComponent } from './carona-chart/carona-chart.component';
 import { CaronaEntryComponent } from './carona-chart/carona-entry/carona-entry.component';
 import { Ng4LoadingSpinnerModule } from 'ng4-loading-spinner';
@@ -74,8 +73,7 @@ import { HomeModule } from './home/home.module';
     StockModule,
     BrowserAnimationsModule,
     SharedModule,
-    ModalModule.forRoot(),
-    UserIdleModule.forRoot({ idle: 1500, timeout: 300 })
+    ModalModule.forRoot()
 
   ],
   providers: [AppService, { provide: HTTP_INTERCEPTORS, useClass: HttpInterceptorAuthService, multi: true }, DatePipe],

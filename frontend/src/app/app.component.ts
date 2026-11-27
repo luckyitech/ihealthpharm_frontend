@@ -22,7 +22,7 @@ import { LoginService } from './login/shared/login.service';
 import { AppService } from './core/app.service';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { ToastrService } from 'ngx-toastr';
-import { UserIdleService } from 'angular-user-idle';
+import { SessionService } from './core/session/session.service';
 
 @Component({
   selector: 'app-root',
@@ -57,7 +57,7 @@ export class AppComponent {
   checkCfrmPwd = false;
   resetBtn = true;
   userHistoryModel: UserHistoryModel;
-  constructor(private router: Router, private employeeService: EmployeeService, private userIdle: UserIdleService,
+  constructor(private router: Router, private employeeService: EmployeeService, private sessionService: SessionService,
     private loginService: LoginService, private appService: AppService, private toasterService: ToastrService,
     private userHistoryService: UserHistoryService) {
     this.getCheckListCountForPending();
@@ -180,11 +180,13 @@ export class AppComponent {
   }
   logout() {
     this.userHistoryModel = new UserHistoryModel("logout", "Authentication", "logout");
-    this.userHistoryService.saveUserhistoryDetails(this.userHistoryModel).subscribe(res => {
-      localStorage.clear();
+    // Sign out whether or not the history line could be saved: the session
+    // may already have run out on the server, and the user must still get out.
+    const signOut = () => {
       this.userId = undefined;
-      this.router.navigate(['/']);
-    });
+      this.sessionService.signOut();
+    };
+    this.userHistoryService.saveUserhistoryDetails(this.userHistoryModel).subscribe(signOut, signOut);
 
 
   }
@@ -307,71 +309,7 @@ export class AppComponent {
     });
 
 
-    this.userIdle.startWatching();
-    this.userIdle.onTimerStart().subscribe(count => {
-
-    });
-
-    this.userIdle.onTimeout().subscribe(
-      res => {
-        this.userHistoryModel = new UserHistoryModel("TimeOut", "Authentication", "logout");
-        this.userHistoryService.saveUserhistoryDetails(this.userHistoryModel).subscribe(res => {
-          localStorage.clear();
-          this.router.navigate(['/']);
-        });
-      }
-    );
-
-  }
-
-  onMouseLeave() {
-    this.userIdle.stopTimer();
-  }
-
-  onMouseEnter() {
-    this.userIdle.stopTimer();
-  }
-
-  mouseMove() {
-    this.userIdle.stopTimer();
-  }
-
-
-  clickFun() {
-    this.userIdle.stopTimer();
-  }
-
-  hotKeys(event) {
-
-    if (event.keyCode == 76 || event.keyCode == 13 || event.keyCode == 17 || event.keyCode == 20 || event.keyCode == 8
-      || event.keyCode == 45 || event.keyCode == 32 || event.keyCode == 18 || event.keyCode == 91 || event.keyCode == 9
-      || event.keyCode == 91) {
-
-      this.userIdle.stopTimer();
-
-    } else if (event.keyCode == 33 || event.keyCode == 34 || event.keyCode == 40 || event.keyCode == 38
-      || event.keyCode == 27 || event.keyCode == 36 || event.keyCode == 35 || event.keyCode == 39 || event.keyCode == 37
-      || event.keyCode == 46 || event.keyCode == 16 || event.keyCode == 192 || event.keyCode == 255) {
-
-      this.userIdle.stopTimer();
-
-    } else if (event.keyCode == 49 || event.keyCode == 50 || event.keyCode == 51 || event.keyCode == 52 || event.keyCode == 53 || event.keyCode == 54
-      || event.keyCode == 55 || event.keyCode == 116 || event.keyCode == 119 || event.keyCode == 120 || event.keyCode == 122 || event.keyCode == 78 ||
-      event.keyCode == 56 || event.keyCode == 57 || event.keyCode == 48 || event.keyCode == 189 || event.keyCode == 187 || event.keyCode == 112
-      || event.keyCode == 113 || event.keyCode == 112 || event.keyCode == 115 || event.keyCode == 117 || event.keyCode == 118 || event.keyCode == 121
-      || event.keyCode == 123) {
-
-      this.userIdle.stopTimer();
-
-    } else if (event.keyCode == 220 || event.keyCode == 221 || event.keyCode == 219 || event.keyCode == 80 || event.keyCode == 79 || event.keyCode == 73 ||
-      event.keyCode == 85 || event.keyCode == 89 || event.keyCode == 84 || event.keyCode == 82 || event.keyCode == 69 || event.keyCode == 87 || event.keyCode == 81 ||
-      event.keyCode == 77 || event.keyCode == 86 || event.keyCode == 90 || event.keyCode == 65 || event.keyCode == 83 || event.keyCode == 68 || event.keyCode == 70 ||
-      event.keyCode == 71 || event.keyCode == 72 || event.keyCode == 74 || event.keyCode == 75 || event.keyCode == 76 || event.keyCode == 186 || event.keyCode == 222 ||
-      event.keyCode == 191 || event.keyCode == 190 || event.keyCode == 188 || event.keyCode == 66 || event.keyCode == 67 || event.keyCode == 88) {
-
-      this.userIdle.stopTimer();
-
-    }
+    this.sessionService.start();
 
   }
 }
