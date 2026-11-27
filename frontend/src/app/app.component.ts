@@ -26,14 +26,6 @@ import { SessionService } from './core/session/session.service';
 
 @Component({
   selector: 'app-root',
-  host: {
-    '(window:keydown)': 'hotKeys($event)',
-    '(mouseenter)': 'onMouseEnter()',
-    '(mouseleave)': 'onMouseLeave()',
-    '(mousemove)': 'mouseMove()',
-    '(click)': 'clickFun()'
-
-  },
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
   providers: [EmployeeService]
